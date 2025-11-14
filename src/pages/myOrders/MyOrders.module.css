@@ -1,125 +1,120 @@
 /* MyOrders.module.css */
-.myOrders {
-  padding: 24px;
+
+.container {
+  padding: 20px;
   background-color: var(--background);
   min-height: 100vh;
 }
 
-.ordersHeader {
-  margin-bottom: 32px;
+.header {
+  margin-bottom: 30px;
   text-align: center;
 }
 
 .title {
-  color: var(--text) !important;
-  font-weight: 700 !important;
-  margin-bottom: 8px !important;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text);
+  font-weight: 700;
+  margin-bottom: 8px;
+  font-size: 2rem;
 }
 
 .subtitle {
-  color: var(--text-light) !important;
-  opacity: 0.8;
+  color: var(--text-light);
+  font-size: 1rem;
 }
 
-.ordersGrid {
-  margin-bottom: 32px;
+.content {
+  margin-top: 30px;
+  margin-bottom: 30px;
 }
 
+/* Loading States */
 .loadingContainer {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  height: 60vh;
-}
-
-.loadingSpinner {
-  text-align: center;
+  justify-content: center;
+  height: 50vh;
+  gap: 16px;
 }
 
 .spinner {
-  color: var(--primary) !important;
+  color: var(--primary);
 }
 
 .loadingText {
-  color: var(--text) !important;
-  margin-top: 16px !important;
+  color: var(--text);
+  font-weight: 600;
+  font-size: 1.1rem;
 }
 
 .errorAlert {
-  margin: 24px;
+  margin: 20px;
+  padding: 16px;
+  border-radius: 8px;
+  background-color: var(--surface);
+  color: var(--error);
+  border: 1px solid var(--border);
+  font-weight: 500;
 }
 
+/* Empty State */
 .emptyCard {
-  background: var(--surface) !important;
-  border: 1px solid var(--border) !important;
-  border-radius: 16px !important;
-  box-shadow: var(--shadow) !important;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
   text-align: center;
   max-width: 400px;
   margin: 0 auto;
 }
 
 .emptyContent {
-  padding: 48px 32px !important;
+  padding: 40px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
 }
 
 .emptyIcon {
-  font-size: 80px !important;
+  font-size: 56px;
   color: var(--text-light);
-  margin-bottom: 24px;
   opacity: 0.5;
 }
 
 .emptyTitle {
-  color: var(--text) !important;
-  margin-bottom: 12px !important;
-  font-weight: 600 !important;
+  color: var(--text);
+  font-weight: 600;
+  font-size: 1.25rem;
+  margin: 0;
 }
 
 .emptyDescription {
-  color: var(--text-light) !important;
-  margin-bottom: 24px !important;
-  opacity: 0.8;
+  color: var(--text-light);
+  text-align: center;
+  margin: 0;
 }
 
-.emptyButton {
-  background: var(--primary) !important;
-  border-radius: 12px !important;
-  padding: 12px 32px !important;
-  font-weight: 600 !important;
-  text-transform: none !important;
-}
-
-.emptyButton:hover {
-  background: var(--primary-dark) !important;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(184, 80, 66, 0.3);
-}
-
+/* Order Cards */
 .orderCard {
-  background: var(--surface) !important;
-  border: 1px solid var(--border) !important;
-  border-radius: 16px !important;
-  box-shadow: var(--shadow) !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  width: 100%;
+  margin-bottom: 16px;
 }
 
-.orderCard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-  border-color: var(--primary);
+.cardContent {
+  padding: 20px;
 }
 
 .orderHeader {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   gap: 16px;
 }
 
@@ -128,14 +123,17 @@
 }
 
 .orderNumber {
-  color: var(--text) !important;
-  font-weight: 700 !important;
-  margin-bottom: 4px !important;
+  color: var(--text);
+  font-weight: 600;
+  margin-bottom: 4px;
+  font-size: 1.1rem;
+  margin: 0;
 }
 
 .orderDate {
-  color: var(--text-light) !important;
-  opacity: 0.8;
+  color: var(--text-light);
+  font-size: 0.85rem;
+  margin: 0;
 }
 
 .orderActions {
@@ -144,190 +142,248 @@
   gap: 12px;
 }
 
+/* Status Chips */
 .statusChip {
-  font-weight: 600 !important;
-  border: 2px solid !important;
-  border-radius: 20px !important;
-  padding: 4px 12px !important;
+  font-weight: 600;
+  border: 1px solid;
+  border-radius: 14px;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.statusNew {
+  background-color: rgba(255, 152, 0, 0.1);
+  border-color: rgba(255, 152, 0, 0.3);
+  color: var(--warning);
+}
+
+.statusDelivered {
+  background-color: rgba(76, 175, 80, 0.1);
+  border-color: rgba(76, 175, 80, 0.3);
+  color: var(--success);
+}
+
+.statusCancelled {
+  background-color: rgba(244, 67, 54, 0.1);
+  border-color: rgba(244, 67, 54, 0.3);
+  color: var(--error);
 }
 
 .editButton {
-  border: 2px solid var(--primary) !important;
-  color: var(--primary) !important;
-  border-radius: 10px !important;
-  font-weight: 600 !important;
-  text-transform: none !important;
-  padding: 6px 16px !important;
-  transition: all 0.3s ease !important;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  border-radius: 5px;
+  font-weight: 500;
+  text-transform: none;
+  padding: 5px 10px;
+  font-size: 0.8rem;
 }
 
 .editButton:hover {
-  background: var(--primary) !important;
-  color: white !important;
-  transform: translateY(-1px);
+  background: var(--primary);
+  color: white;
 }
 
-.productsTable {
-  background: var(--surface) !important;
-  border: 1px solid var(--border) !important;
-  border-radius: 12px !important;
+/* Table Styles */
+.tableContainer {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
   overflow: hidden;
   margin-bottom: 16px;
 }
 
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
 .tableHeader {
-  background: var(--item) !important;
-  color: var(--text) !important;
-  font-weight: 700 !important;
-  border-bottom: 2px solid var(--border) !important;
-  padding: 16px !important;
+  background: var(--item);
+  color: var(--text);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  text-align: left;
 }
 
 .tableRow {
-  border-bottom: 1px solid var(--border) !important;
-  transition: background-color 0.2s ease;
-}
-
-.tableRow:hover {
-  background: var(--item) !important;
+  border-bottom: 1px solid var(--border);
 }
 
 .tableRow:last-child {
-  border-bottom: none !important;
+  border-bottom: none;
+}
+
+.tableCell {
+  border: none;
+  padding: 10px 14px;
+  background: var(--surface);
 }
 
 .productName {
-  color: var(--text) !important;
-  font-weight: 600 !important;
+  color: var(--text);
+  font-weight: 500;
+  font-size: 0.9rem;
 }
 
 .productQuantity {
-  color: var(--text) !important;
-  font-weight: 700 !important;
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.9rem;
 }
 
 .productUnit {
-  color: var(--text-light) !important;
-  opacity: 0.8;
+  color: var(--text-light);
+  font-size: 0.9rem;
 }
 
+/* Order Footer */
 .orderFooter {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 16px;
+  padding-top: 12px;
   border-top: 1px solid var(--border);
 }
 
 .totalItems {
-  color: var(--text-light) !important;
-  opacity: 0.8;
+  color: var(--text-light);
+  font-weight: 500;
+  font-size: 0.85rem;
+  margin: 0;
 }
 
 .statusBadge {
-  font-weight: 600 !important;
-  border: 1px solid !important;
-  border-radius: 16px !important;
+  font-weight: 600;
+  border: 1px solid;
+  border-radius: 10px;
+  padding: 3px 6px;
+  font-size: 0.7rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
-.statsSection {
-  margin-top: 32px;
-}
-
+/* Statistics Section */
 .statsCard {
-  background: var(--surface) !important;
-  border: 1px solid var(--border) !important;
-  border-radius: 16px !important;
-  box-shadow: var(--shadow) !important;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+
+.statsContent {
+  padding: 20px;
 }
 
 .statsTitle {
-  color: var(--text) !important;
-  font-weight: 700 !important;
-  margin-bottom: 20px !important;
+  color: var(--text);
+  font-weight: 600;
+  margin-bottom: 16px;
   text-align: center;
+  font-size: 1.25rem;
+  margin: 0 0 20px 0;
 }
 
 .statsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 16px;
+  gap: 12px;
 }
 
 .statItem {
   text-align: center;
-  padding: 20px 16px;
+  padding: 16px 8px;
   background: var(--item);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  transition: all 0.3s ease;
+  border-radius: 6px;
+  height: 100%;
 }
 
-.statItem:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+.statIcon {
+  font-size: 24px;
+  color: var(--primary);
+  margin-bottom: 8px;
 }
 
 .statNumber {
-  font-weight: 800 !important;
-  margin-bottom: 8px !important;
+  font-weight: 700;
+  margin-bottom: 6px;
+  font-size: 1.5rem;
 }
 
-.primary { color: var(--primary) !important; }
-.success { color: var(--success) !important; }
-.warning { color: var(--warning) !important; }
-.error { color: var(--error) !important; }
+.statNumberPrimary {
+  color: var(--primary);
+}
+
+.statNumberSuccess {
+  color: var(--success);
+}
+
+.statNumberWarning {
+  color: var(--warning);
+}
+
+.statNumberCancelled {
+  color: var(--error);
+}
 
 .statLabel {
-  color: var(--text-light) !important;
-  opacity: 0.8;
-  font-weight: 500 !important;
+  color: var(--text-light);
+  font-weight: 500;
+  font-size: 0.8rem;
 }
 
-.editDialog {
-  background: var(--surface) !important;
-  border: 1px solid var(--border) !important;
-  border-radius: 20px !important;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2) !important;
+/* Dialog Styles */
+.dialogPaper {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
 }
 
 .dialogTitle {
-  color: var(--text) !important;
-  font-weight: 700 !important;
-  padding: 24px 24px 16px !important;
-  border-bottom: 1px solid var(--border) !important;
-  text-align: center;
+  color: var(--text);
+  font-weight: 600;
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 1.1rem;
+  background: var(--surface);
 }
 
 .dialogContent {
-  padding: 24px !important;
+  padding: 16px 20px;
+  background: var(--surface);
 }
 
+/* Edit Container */
 .editContainer {
   padding: 8px 0;
 }
 
 .editTitle {
-  color: var(--text) !important;
-  font-weight: 600 !important;
-  margin-bottom: 20px !important;
+  color: var(--text);
+  font-weight: 600;
+  margin-bottom: 12px;
+  font-size: 1rem;
+  margin: 0 0 12px 0;
 }
 
 .editProductItem {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px;
-  margin-bottom: 12px;
+  padding: 10px;
+  margin-bottom: 6px;
   background: var(--item);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  transition: all 0.3s ease;
-}
-
-.editProductItem:hover {
-  border-color: var(--primary);
-  transform: translateX(4px);
+  border-radius: 6px;
 }
 
 .productInfo {
@@ -335,126 +391,164 @@
 }
 
 .productNameEdit {
-  color: var(--text) !important;
-  font-weight: 600 !important;
-  margin-bottom: 4px !important;
+  color: var(--text);
+  font-weight: 500;
+  margin-bottom: 2px;
+  font-size: 0.9rem;
 }
 
 .productDetails {
-  color: var(--text-light) !important;
-  opacity: 0.8;
+  color: var(--text-light);
+  font-size: 0.8rem;
 }
 
 .editForm {
   flex: 1;
   display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.selectField, .quantityField {
-  background: var(--surface) !important;
-}
-
-.selectField fieldset, .quantityField fieldset {
-  border: 2px solid var(--border) !important;
-  border-radius: 10px !important;
-}
-
-.selectField:hover fieldset, .quantityField:hover fieldset {
-  border-color: var(--primary) !important;
-}
-
-.productActions {
-  display: flex;
   gap: 8px;
   align-items: center;
 }
 
+.selectField, .quantityField {
+  background: var(--surface);
+}
+
+.productActions {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
 .saveButton {
-  color: var(--success) !important;
-  font-weight: 600 !important;
-  border: 2px solid var(--success) !important;
-  border-radius: 8px !important;
-  padding: 6px 16px !important;
+  color: var(--success);
+  font-weight: 500;
+  border: 1px solid var(--success);
+  border-radius: 4px;
+  padding: 3px 6px;
+  text-transform: none;
+  font-size: 0.75rem;
+}
+
+.saveButton:hover {
+  background: var(--success);
+  color: white;
 }
 
 .cancelButton {
-  color: var(--text-light) !important;
-  font-weight: 600 !important;
-  border: 2px solid var(--border) !important;
-  border-radius: 8px !important;
-  padding: 6px 16px !important;
+  color: var(--text-light);
+  font-weight: 500;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 3px 6px;
+  text-transform: none;
+  font-size: 0.75rem;
+}
+
+.cancelButton:hover {
+  background: var(--border);
+}
+
+.editIcon, .deleteIcon {
+  background: none;
+  border: none;
+  padding: 3px;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .editIcon {
-  color: var(--primary) !important;
-  background: rgba(184, 80, 66, 0.1) !important;
-  border-radius: 8px !important;
+  color: var(--primary);
+}
+
+.editIcon:hover {
+  background: rgba(184, 80, 66, 0.1);
 }
 
 .deleteIcon {
-  color: var(--error) !important;
-  background: rgba(244, 67, 54, 0.1) !important;
-  border-radius: 8px !important;
+  color: var(--error);
+}
+
+.deleteIcon:hover {
+  background: rgba(244, 67, 54, 0.1);
 }
 
 .addProductButton {
-  border: 2px dashed var(--primary) !important;
-  color: var(--primary) !important;
-  border-radius: 12px !important;
-  padding: 12px !important;
-  font-weight: 600 !important;
-  text-transform: none !important;
-  margin-top: 16px !important;
-  transition: all 0.3s ease !important;
+  border: 1px dashed var(--primary);
+  color: var(--primary);
+  border-radius: 6px;
+  padding: 10px;
+  font-weight: 500;
+  text-transform: none;
+  margin-top: 10px;
+  font-size: 0.85rem;
 }
 
 .addProductButton:hover {
-  background: var(--primary) !important;
-  color: white !important;
-  border-style: solid !important;
-  transform: translateY(-2px);
+  background: var(--primary);
+  color: white;
+  border-style: solid;
 }
 
 .dialogActions {
-  padding: 16px 24px !important;
-  border-top: 1px solid var(--border) !important;
-  gap: 12px;
+  padding: 12px 20px;
+  border-top: 1px solid var(--border);
+  gap: 8px;
+  background: var(--surface);
+  display: flex;
+  justify-content: flex-end;
 }
 
 .dialogCancel {
-  color: var(--text-light) !important;
-  font-weight: 600 !important;
-  border: 2px solid var(--border) !important;
-  border-radius: 10px !important;
-  padding: 10px 24px !important;
-  text-transform: none !important;
+  color: var(--text-light);
+  font-weight: 500;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 5px 12px;
+  text-transform: none;
+  font-size: 0.8rem;
+}
+
+.dialogCancel:hover {
+  background: var(--border);
 }
 
 .dialogSave {
-  background: var(--primary) !important;
-  border-radius: 10px !important;
-  padding: 10px 32px !important;
-  font-weight: 600 !important;
-  text-transform: none !important;
+  background: var(--primary);
+  border-radius: 5px;
+  padding: 5px 16px;
+  font-weight: 500;
+  text-transform: none;
+  color: white;
+  font-size: 0.8rem;
 }
 
 .dialogSave:hover {
-  background: var(--primary-dark) !important;
-  transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(184, 80, 66, 0.3);
+  background: var(--primary-dark);
 }
 
+.ordersGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
-  .myOrders {
+  .container {
     padding: 16px;
+  }
+
+  .title {
+    font-size: 1.6rem;
   }
 
   .orderHeader {
     flex-direction: column;
-    gap: 12px;
-    align-items: flex-start;
+    gap: 10px;
   }
 
   .orderActions {
@@ -464,18 +558,17 @@
 
   .orderFooter {
     flex-direction: column;
-    gap: 12px;
+    gap: 6px;
     align-items: flex-start;
   }
 
   .statsGrid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
   }
 
   .editProductItem {
     flex-direction: column;
-    gap: 12px;
+    gap: 6px;
     align-items: flex-start;
   }
 
@@ -487,13 +580,25 @@
   .editForm {
     flex-direction: column;
     width: 100%;
-    gap: 8px;
+    gap: 6px;
+  }
+
+  .cardContent {
+    padding: 16px;
+  }
+
+  .tableCell {
+    padding: 8px 10px;
+  }
+
+  .tableHeader {
+    padding: 8px 10px;
   }
 }
 
 @media (max-width: 480px) {
   .title {
-    font-size: 1.75rem !important;
+    font-size: 1.4rem;
   }
 
   .statsGrid {
@@ -502,11 +607,40 @@
 
   .orderActions {
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     align-items: flex-start;
   }
 
   .productActions {
     justify-content: space-between;
+    width: 100%;
+  }
+
+  .dialogContent {
+    padding: 12px 16px;
+  }
+
+  .dialogTitle {
+    padding: 12px 16px 8px;
+  }
+
+  .dialogActions {
+    padding: 10px 16px;
+  }
+
+  .emptyContent {
+    padding: 32px 20px;
+  }
+
+  .emptyIcon {
+    font-size: 48px;
+  }
+
+  .statItem {
+    padding: 12px 6px;
+  }
+
+  .statNumber {
+    font-size: 1.3rem;
   }
 }

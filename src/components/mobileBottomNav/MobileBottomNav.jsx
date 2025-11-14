@@ -15,8 +15,8 @@ import {
 } from 'react-icons/md';
 
 const menuItems = [
-  { name: "Buyurtma Berish", path: "/", icon: <MdShoppingCart size={22} /> },
-  { name: "Mening Buyurtmalarim", path: "/myorders", icon: <MdListAlt size={22} /> },
+  { name: "Mahsulotlar", path: "/", icon: <MdShoppingCart size={22} /> },
+  { name: "Buyurtmalarim", path: "/myorders", icon: <MdListAlt size={22} /> },
   { name: "Profil", path: "/profile", icon: <MdPerson size={22} /> },
   { name: "Yordam", path: "/help", icon: <MdHelp size={22} /> },
 ];

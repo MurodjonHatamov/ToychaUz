@@ -1,29 +1,6 @@
+// MyOrders.js
 import React, { useState, useEffect } from 'react';
-import {
-  Card,
-  CardContent,
-  Typography,
-  Box,
-  Chip,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  CircularProgress,
-  Alert,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  MenuItem,
-  IconButton,
-  Grid
-} from '@mui/material';
+import { Button, TextField, MenuItem, CircularProgress, Dialog } from '@mui/material';
 import {
   MdShoppingCart,
   MdCheckCircle,
@@ -35,6 +12,7 @@ import {
 } from 'react-icons/md';
 import styles from './MyOrders.module.css';
 
+// Mock ma'lumotlar
 const mockProducts = [
   { "_id": "1", "name": "Coca-Cola 1,5", "unit": "dona" },
   { "_id": "2", "name": "Sariyog' 500g", "unit": "dona" },
@@ -72,72 +50,79 @@ const mockOrders = [
     "_id": "691493cf8a17859b85e95f5f",
     "products": [
       { "productId": "6", "quantity": 5, "_id": "691493cf8a17859b85e95f60" },
-      { "productId": "7", "quantity": 3, "_id": "691493cf8a17859b85e95f61" },
-      { "productId": "8", "quantity": 2, "_id": "691493cf8a17859b85e95f62" }
+      { "productId": "7", "quantity": 3, "_id": "691493cf8a17859b85e95f61" }
     ],
     "status": "cancelled",
     "createdAt": "2025-11-12T14:03:59.805Z",
   }
 ];
 
-function MyOrders() {
-  const [orders, setOrders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [currentOrder, setCurrentOrder] = useState(null);
-  const [editingProduct, setEditingProduct] = useState(null);
+// OrderStats komponenti
+const OrderStats = ({ orders }) => {
+  const stats = {
+    total: orders.length,
+    delivered: orders.filter(order => order.status === 'delivered').length,
+    new: orders.filter(order => order.status === 'new').length,
+    cancelled: orders.filter(order => order.status === 'cancelled').length
+  };
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        setLoading(true);
-        setTimeout(() => {
-          const ordersWithProducts = mockOrders.map(order => ({
-            ...order,
-            products: order.products.map(product => {
-              const productInfo = mockProducts.find(p => p._id === product.productId);
-              return {
-                ...product,
-                productName: productInfo?.name || "Noma'lum mahsulot",
-                unit: productInfo?.unit || "dona"
-              };
-            })
-          }));
-          setOrders(ordersWithProducts);
-          setLoading(false);
-        }, 800);
-      } catch (err) {
-        setError('Buyurtmalarni yuklab olishda xatolik');
-        setLoading(false);
-      }
-    };
+  return (
+    <div className={styles.statsCard}>
+      <div className={styles.statsContent}>
+        <h2 className={styles.statsTitle}>Buyurtma Statistikasi</h2>
+        <div className={styles.statsGrid}>
+          <div className={styles.statItem}>
+            <MdShoppingCart className={styles.statIcon} />
+            <div className={`${styles.statNumber} ${styles.statNumberPrimary}`}>
+              {stats.total}
+            </div>
+            <div className={styles.statLabel}>Jami Buyurtma</div>
+          </div>
+          <div className={styles.statItem}>
+            <MdCheckCircle className={styles.statIcon} />
+            <div className={`${styles.statNumber} ${styles.statNumberSuccess}`}>
+              {stats.delivered}
+            </div>
+            <div className={styles.statLabel}>Yetkazilgan</div>
+          </div>
+          <div className={styles.statItem}>
+            <MdAccessTime className={styles.statIcon} />
+            <div className={`${styles.statNumber} ${styles.statNumberWarning}`}>
+              {stats.new}
+            </div>
+            <div className={styles.statLabel}>Yangi</div>
+          </div>
+          <div className={styles.statItem}>
+            <MdCancel className={styles.statIcon} />
+            <div className={`${styles.statNumber} ${styles.statNumberCancelled}`}>
+              {stats.cancelled}
+            </div>
+            <div className={styles.statLabel}>Ko'rib chiqilgan</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
-    fetchOrders();
-  }, []);
-
+// OrderCard komponenti
+const OrderCard = ({ order, onEdit }) => {
   const getStatusConfig = (status) => {
     const configs = {
       new: { 
         icon: <MdAccessTime />, 
         text: 'Yangi', 
-        color: 'warning',
-        bgColor: 'rgba(255, 152, 0, 0.1)',
-        borderColor: 'rgba(255, 152, 0, 0.3)'
+        bgColor: 'statusNew'
       },
       delivered: { 
         icon: <MdCheckCircle />, 
         text: 'Yetkazilgan', 
-        color: 'success',
-        bgColor: 'rgba(76, 175, 80, 0.1)',
-        borderColor: 'rgba(76, 175, 80, 0.3)'
+        bgColor: 'statusDelivered'
       },
       cancelled: { 
         icon: <MdCancel />, 
-        text: 'Bekor qilingan', 
-        color: 'error',
-        bgColor: 'rgba(244, 67, 54, 0.1)',
-        borderColor: 'rgba(244, 67, 54, 0.3)'
+        text: "Ko'rib chiqilgan", 
+        bgColor: 'statusCancelled'
       }
     };
     return configs[status] || configs.new;
@@ -156,6 +141,266 @@ function MyOrders() {
   const getTotalItems = (products) => {
     return products.reduce((total, product) => total + product.quantity, 0);
   };
+
+  const statusConfig = getStatusConfig(order.status);
+
+  return (
+    <div className={styles.orderCard}>
+      <div className={styles.cardContent}>
+        <div className={styles.orderHeader}>
+          <div className={styles.orderInfo}>
+            <h3 className={styles.orderNumber}>
+              Buyurtma #{order._id.slice(-6).toUpperCase()}
+            </h3>
+            <p className={styles.orderDate}>
+              {formatDate(order.createdAt)}
+            </p>
+          </div>
+          <div className={styles.orderActions}>
+            <div className={`${styles.statusChip} ${styles[statusConfig.bgColor]}`}>
+              {statusConfig.icon}
+              <span>{statusConfig.text}</span>
+            </div>
+            {order.status === 'new' && (
+              <Button 
+                variant="outlined" 
+                size="small"
+                startIcon={<MdEdit />}
+                onClick={() => onEdit(order)}
+                className={styles.editButton}
+              >
+                Tahrirlash
+              </Button>
+            )}
+          </div>
+        </div>
+
+        <div className={styles.tableContainer}>
+          <table className={styles.table}>
+            <thead>
+              <tr>
+                <th className={styles.tableHeader}>Mahsulot</th>
+                <th className={styles.tableHeader} style={{textAlign: 'right'}}>Miqdor</th>
+                <th className={styles.tableHeader} style={{textAlign: 'right'}}>Birlik</th>
+              </tr>
+            </thead>
+            <tbody>
+              {order.products.map((product) => (
+                <tr key={product._id} className={styles.tableRow}>
+                  <td className={styles.tableCell}>
+                    <span className={styles.productName}>
+                      {product.productName}
+                    </span>
+                  </td>
+                  <td className={styles.tableCell} style={{textAlign: 'right'}}>
+                    <span className={styles.productQuantity}>
+                      {product.quantity}
+                    </span>
+                  </td>
+                  <td className={styles.tableCell} style={{textAlign: 'right'}}>
+                    <span className={styles.productUnit}>
+                      {product.unit}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className={styles.orderFooter}>
+          <p className={styles.totalItems}>
+            Jami {getTotalItems(order.products)} ta mahsulot
+          </p>
+          <div className={`${styles.statusBadge} ${styles[statusConfig.bgColor]}`}>
+            {statusConfig.icon}
+            <span>{statusConfig.text}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// EditOrderModal komponenti
+const EditOrderModal = ({ 
+  open, 
+  onClose, 
+  currentOrder, 
+  editingProduct, 
+  setEditingProduct,
+  onUpdateProduct,
+  onDeleteProduct,
+  onAddProduct,
+  onProductChange,
+  onSaveOrder,
+  mockProducts 
+}) => {
+  if (!currentOrder) return null;
+
+  return (
+    <Dialog 
+      open={open} 
+      onClose={onClose}
+      maxWidth="md"
+      fullWidth
+      PaperProps={{ className: styles.dialogPaper }}
+    >
+      <div className={styles.dialogTitle}>
+        Buyurtmani Tahrirlash
+      </div>
+      
+      <div className={styles.dialogContent}>
+        <div className={styles.editContainer}>
+          <h3 className={styles.editTitle}>
+            Mahsulotlar
+          </h3>
+          
+          {currentOrder.products.map((product) => (
+            <div key={product._id} className={styles.editProductItem}>
+              {editingProduct && editingProduct._id === product._id ? (
+                <div className={styles.editForm}>
+                  <TextField
+                    select
+                    label="Mahsulot"
+                    value={editingProduct.productId}
+                    onChange={(e) => onProductChange('productId', e.target.value)}
+                    fullWidth
+                    size="small"
+                    className={styles.selectField}
+                  >
+                    {mockProducts.map((product) => (
+                      <MenuItem key={product._id} value={product._id}>
+                        {product.name} ({product.unit})
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                  <TextField
+                    type="number"
+                    label="Miqdor"
+                    value={editingProduct.quantity}
+                    onChange={(e) => onProductChange('quantity', parseInt(e.target.value) || 1)}
+                    fullWidth
+                    size="small"
+                    inputProps={{ min: 1 }}
+                    className={styles.quantityField}
+                  />
+                </div>
+              ) : (
+                <div className={styles.productInfo}>
+                  <div className={styles.productNameEdit}>
+                    {product.productName}
+                  </div>
+                  <div className={styles.productDetails}>
+                    {product.quantity} {product.unit}
+                  </div>
+                </div>
+              )}
+              
+              <div className={styles.productActions}>
+                {editingProduct && editingProduct._id === product._id ? (
+                  <>
+                    <Button 
+                      size="small" 
+                      onClick={onUpdateProduct}
+                      className={styles.saveButton}
+                    >
+                      Saqlash
+                    </Button>
+                    <Button 
+                      size="small" 
+                      onClick={() => setEditingProduct(null)}
+                      className={styles.cancelButton}
+                    >
+                      Bekor
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <button 
+                      onClick={() => setEditingProduct({ ...product })}
+                      className={styles.editIcon}
+                    >
+                      <MdEdit />
+                    </button>
+                    <button 
+                      onClick={() => onDeleteProduct(product._id)}
+                      className={styles.deleteIcon}
+                    >
+                      <MdDelete />
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          ))}
+          
+          <Button 
+            variant="outlined" 
+            onClick={onAddProduct}
+            fullWidth
+            startIcon={<MdAdd />}
+            className={styles.addProductButton}
+          >
+            Yangi mahsulot qo'shish
+          </Button>
+        </div>
+      </div>
+      
+      <div className={styles.dialogActions}>
+        <Button 
+          onClick={onClose}
+          className={styles.dialogCancel}
+        >
+          Bekor qilish
+        </Button>
+        <Button 
+          onClick={onSaveOrder}
+          variant="contained"
+          className={styles.dialogSave}
+        >
+          Saqlash
+        </Button>
+      </div>
+    </Dialog>
+  );
+};
+
+// Asosiy MyOrders komponenti
+function MyOrders() {
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [currentOrder, setCurrentOrder] = useState(null);
+  const [editingProduct, setEditingProduct] = useState(null);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try {
+        setTimeout(() => {
+          const ordersWithProducts = mockOrders.map(order => ({
+            ...order,
+            products: order.products.map(product => {
+              const productInfo = mockProducts.find(p => p._id === product.productId);
+              return {
+                ...product,
+                productName: productInfo?.name || "Noma'lum mahsulot",
+                unit: productInfo?.unit || "dona"
+              };
+            })
+          }));
+          setOrders(ordersWithProducts);
+          setLoading(false);
+        }, 1000);
+      } catch (err) {
+        setError('Buyurtmalarni yuklab olishda xatolik');
+        setLoading(false);
+      }
+    };
+
+    fetchOrders();
+  }, []);
 
   const handleEditOrder = (order) => {
     setCurrentOrder(order);
@@ -238,326 +483,77 @@ function MyOrders() {
 
   if (loading) {
     return (
-      <Box className={styles.loadingContainer}>
-        <div className={styles.loadingSpinner}>
-          <CircularProgress className={styles.spinner} />
-          <Typography variant="h6" className={styles.loadingText}>
-            Buyurtmalar yuklanmoqda...
-          </Typography>
+      <div className={styles.loadingContainer}>
+        <CircularProgress className={styles.spinner} />
+        <div className={styles.loadingText}>
+          Buyurtmalar yuklanmoqda...
         </div>
-      </Box>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <Alert severity="error" className={styles.errorAlert}>
+      <div className={styles.errorAlert}>
         {error}
-      </Alert>
+      </div>
     );
   }
 
   return (
-    <div className={styles.myOrders}>
-      <div className={styles.ordersHeader}>
-        <Typography variant="h4" className={styles.title}>
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <h1 className={styles.title}>
           Mening Buyurtmalarim
-        </Typography>
-        <Typography variant="body1" className={styles.subtitle}>
+        </h1>
+        <p className={styles.subtitle}>
           Barcha buyurtmalaringiz ro'yxati
-        </Typography>
+        </p>
       </div>
 
-      <div className={styles.ordersGrid}>
+      {/* Statistika - Eng tepada */}
+      <OrderStats orders={orders} />
+
+      <div className={styles.content}>
         {orders.length === 0 ? (
-          <Card className={styles.emptyCard}>
-            <CardContent className={styles.emptyContent}>
+          <div className={styles.emptyCard}>
+            <div className={styles.emptyContent}>
               <MdShoppingCart className={styles.emptyIcon} />
-              <Typography variant="h6" className={styles.emptyTitle}>
+              <h3 className={styles.emptyTitle}>
                 Hali buyurtma yo'q
-              </Typography>
-              <Typography variant="body2" className={styles.emptyDescription}>
+              </h3>
+              <p className={styles.emptyDescription}>
                 Birinchi buyurtma qilish uchun "Buyurtma Berish" bo'limiga o'ting
-              </Typography>
-              <Button 
-                variant="contained" 
-                href="/"
-                className={styles.emptyButton}
-              >
-                Buyurtma Berish
-              </Button>
-            </CardContent>
-          </Card>
+              </p>
+            </div>
+          </div>
         ) : (
-          <Grid container spacing={3}>
-            {orders.map((order) => {
-              const statusConfig = getStatusConfig(order.status);
-              return (
-                <Grid item xs={12} key={order._id}>
-                  <Card className={styles.orderCard}>
-                    <CardContent>
-                      <div className={styles.orderHeader}>
-                        <div className={styles.orderInfo}>
-                          <Typography variant="h6" className={styles.orderNumber}>
-                            Buyurtma #{order._id.slice(-6).toUpperCase()}
-                          </Typography>
-                          <Typography variant="body2" className={styles.orderDate}>
-                            {formatDate(order.createdAt)}
-                          </Typography>
-                        </div>
-                        <div className={styles.orderActions}>
-                          <Chip
-                            icon={statusConfig.icon}
-                            label={statusConfig.text}
-                            className={styles.statusChip}
-                            style={{
-                              backgroundColor: statusConfig.bgColor,
-                              borderColor: statusConfig.borderColor
-                            }}
-                          />
-                          {order.status === 'new' && (
-                            <Button 
-                              variant="outlined" 
-                              size="small"
-                              startIcon={<MdEdit />}
-                              onClick={() => handleEditOrder(order)}
-                              className={styles.editButton}
-                            >
-                              Tahrirlash
-                            </Button>
-                          )}
-                        </div>
-                      </div>
-
-                      <TableContainer className={styles.productsTable}>
-                        <Table size="small">
-                          <TableHead>
-                            <TableRow>
-                              <TableCell className={styles.tableHeader}>Mahsulot</TableCell>
-                              <TableCell align="right" className={styles.tableHeader}>Miqdor</TableCell>
-                              <TableCell align="right" className={styles.tableHeader}>Birlik</TableCell>
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
-                            {order.products.map((product) => (
-                              <TableRow key={product._id} className={styles.tableRow}>
-                                <TableCell>
-                                  <Typography variant="body2" className={styles.productName}>
-                                    {product.productName}
-                                  </Typography>
-                                </TableCell>
-                                <TableCell align="right">
-                                  <Typography variant="body2" className={styles.productQuantity}>
-                                    {product.quantity}
-                                  </Typography>
-                                </TableCell>
-                                <TableCell align="right">
-                                  <Typography variant="body2" className={styles.productUnit}>
-                                    {product.unit}
-                                  </Typography>
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
-                      </TableContainer>
-
-                      <div className={styles.orderFooter}>
-                        <Typography variant="body2" className={styles.totalItems}>
-                          Jami {getTotalItems(order.products)} ta mahsulot
-                        </Typography>
-                        <Chip
-                          icon={statusConfig.icon}
-                          label={statusConfig.text}
-                          size="small"
-                          className={styles.statusBadge}
-                          style={{
-                            backgroundColor: statusConfig.bgColor,
-                            borderColor: statusConfig.borderColor
-                          }}
-                        />
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              );
-            })}
-          </Grid>
+          <div className={styles.ordersGrid}>
+            {orders.map((order) => (
+              <OrderCard 
+                key={order._id}
+                order={order} 
+                onEdit={handleEditOrder}
+              />
+            ))}
+          </div>
         )}
       </div>
 
-      <Dialog 
-        open={editDialogOpen} 
+      {/* Edit Modal */}
+      <EditOrderModal
+        open={editDialogOpen}
         onClose={() => setEditDialogOpen(false)}
-        maxWidth="md"
-        fullWidth
-        PaperProps={{ className: styles.editDialog }}
-      >
-        <DialogTitle className={styles.dialogTitle}>
-          Buyurtmani Tahrirlash
-        </DialogTitle>
-        <DialogContent className={styles.dialogContent}>
-          {currentOrder && (
-            <div className={styles.editContainer}>
-              <Typography variant="h6" className={styles.editTitle}>
-                Mahsulotlar
-              </Typography>
-              
-              {currentOrder.products.map((product) => (
-                <div key={product._id} className={styles.editProductItem}>
-                  {editingProduct && editingProduct._id === product._id ? (
-                    <div className={styles.editForm}>
-                      <TextField
-                        select
-                        label="Mahsulot"
-                        value={editingProduct.productId}
-                        onChange={(e) => handleProductChange('productId', e.target.value)}
-                        fullWidth
-                        size="small"
-                        className={styles.selectField}
-                      >
-                        {mockProducts.map((product) => (
-                          <MenuItem key={product._id} value={product._id}>
-                            {product.name} ({product.unit})
-                          </MenuItem>
-                        ))}
-                      </TextField>
-                      <TextField
-                        type="number"
-                        label="Miqdor"
-                        value={editingProduct.quantity}
-                        onChange={(e) => handleProductChange('quantity', parseInt(e.target.value) || 1)}
-                        fullWidth
-                        size="small"
-                        inputProps={{ min: 1 }}
-                        className={styles.quantityField}
-                      />
-                    </div>
-                  ) : (
-                    <div className={styles.productInfo}>
-                      <Typography variant="body1" className={styles.productNameEdit}>
-                        {product.productName}
-                      </Typography>
-                      <Typography variant="body2" className={styles.productDetails}>
-                        {product.quantity} {product.unit}
-                      </Typography>
-                    </div>
-                  )}
-                  
-                  <div className={styles.productActions}>
-                    {editingProduct && editingProduct._id === product._id ? (
-                      <>
-                        <Button 
-                          size="small" 
-                          onClick={handleUpdateProduct}
-                          className={styles.saveButton}
-                        >
-                          Saqlash
-                        </Button>
-                        <Button 
-                          size="small" 
-                          onClick={() => setEditingProduct(null)}
-                          className={styles.cancelButton}
-                        >
-                          Bekor
-                        </Button>
-                      </>
-                    ) : (
-                      <>
-                        <IconButton 
-                          size="small" 
-                          onClick={() => handleEditProduct(product)}
-                          className={styles.editIcon}
-                        >
-                          <MdEdit />
-                        </IconButton>
-                        <IconButton 
-                          size="small" 
-                          onClick={() => handleDeleteProduct(product._id)}
-                          className={styles.deleteIcon}
-                        >
-                          <MdDelete />
-                        </IconButton>
-                      </>
-                    )}
-                  </div>
-                </div>
-              ))}
-              
-              <Button 
-                variant="outlined" 
-                onClick={handleAddProduct}
-                fullWidth
-                startIcon={<MdAdd />}
-                className={styles.addProductButton}
-              >
-                Yangi mahsulot qo'shish
-              </Button>
-            </div>
-          )}
-        </DialogContent>
-        <DialogActions className={styles.dialogActions}>
-          <Button 
-            onClick={() => setEditDialogOpen(false)}
-            className={styles.dialogCancel}
-          >
-            Bekor qilish
-          </Button>
-          <Button 
-            onClick={handleSaveOrder}
-            variant="contained"
-            className={styles.dialogSave}
-          >
-            Saqlash
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      {orders.length > 0 && (
-        <div className={styles.statsSection}>
-          <Card className={styles.statsCard}>
-            <CardContent>
-              <Typography variant="h6" className={styles.statsTitle}>
-                Buyurtma Statistikasi
-              </Typography>
-              <div className={styles.statsGrid}>
-                <div className={styles.statItem}>
-                  <Typography variant="h4" className={`${styles.statNumber} ${styles.primary}`}>
-                    {orders.length}
-                  </Typography>
-                  <Typography variant="body2" className={styles.statLabel}>
-                    Jami Buyurtma
-                  </Typography>
-                </div>
-                <div className={styles.statItem}>
-                  <Typography variant="h4" className={`${styles.statNumber} ${styles.success}`}>
-                    {orders.filter(o => o.status === 'delivered').length}
-                  </Typography>
-                  <Typography variant="body2" className={styles.statLabel}>
-                    Yetkazilgan
-                  </Typography>
-                </div>
-                <div className={styles.statItem}>
-                  <Typography variant="h4" className={`${styles.statNumber} ${styles.warning}`}>
-                    {orders.filter(o => o.status === 'new').length}
-                  </Typography>
-                  <Typography variant="body2" className={styles.statLabel}>
-                    Jarayonda
-                  </Typography>
-                </div>
-                <div className={styles.statItem}>
-                  <Typography variant="h4" className={`${styles.statNumber} ${styles.error}`}>
-                    {orders.filter(o => o.status === 'cancelled').length}
-                  </Typography>
-                  <Typography variant="body2" className={styles.statLabel}>
-                    Bekor qilingan
-                  </Typography>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      )}
+        currentOrder={currentOrder}
+        editingProduct={editingProduct}
+        setEditingProduct={setEditingProduct}
+        onUpdateProduct={handleUpdateProduct}
+        onDeleteProduct={handleDeleteProduct}
+        onAddProduct={handleAddProduct}
+        onProductChange={handleProductChange}
+        onSaveOrder={handleSaveOrder}
+        mockProducts={mockProducts}
+      />
     </div>
   );
 }
