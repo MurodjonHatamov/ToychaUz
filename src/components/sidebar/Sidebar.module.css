@@ -1,0 +1,234 @@
+/* Sidebar.module.css */
+
+/* Asosiy sidebar konteyneri */
+.sidebar {
+  width: 280px;
+  background: var(--surface);
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+/* Yashiringan sidebar */
+.sidebarHidden {
+  width: 280px;
+  background: var(--surface);
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: -280px;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+/* Header qismi */
+.headerMenu {
+  padding: 24px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.darkMode {
+  background-color: var(--background);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.darkMode:hover {
+  transform: scale(1.1);
+}
+
+.darkMode svg {
+  color: var(--primary);
+  font-size: 1.5rem;
+}
+
+/* Logo qismi */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 700;
+}
+
+.logo svg {
+  font-size: 2rem;
+  color: #ffffff;
+}
+
+.logo h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+}
+
+/* Menu items */
+.menuList {
+  flex: 1;
+  padding: 16px 0;
+  overflow-y: auto;
+}
+
+.menuItem {
+  margin: 4px 12px;
+  border-radius: var(--radius);
+  color: var(--text);
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.selectedMenuItem {
+  background-color: var(--primary) !important;
+  color: white !important;
+  font-weight: 600;
+  border-left: 4px solid var(--primary-dark);
+}
+
+.menuIcon {
+  color: var(--text) !important;
+  transition: color 0.2s ease;
+}
+
+.selectedMenuIcon {
+  color: white !important;
+}
+
+.menuText {
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.selectedMenuText {
+  font-weight: 600;
+  color: white !important;
+}
+
+/* Footer qismi */
+.footer {
+  padding: 20px;
+  border-top: 1px solid var(--border);
+  margin-top: auto;
+}
+
+.exit {
+  width: 100%;
+}
+
+.exitButton {
+  width: 100%;
+  padding: 10px 16px;
+  border: 2px solid var(--error) !important;
+  color: white !important;
+  border-radius: var(--radius) !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  transition: all 0.2s ease !important;
+  background-color: var(--error) !important; 
+}
+
+.exitButton:hover {
+  border-color: var(--error) !important;
+  background-color: transparent !important;
+  color: var(--error) !important;
+  transform: translateY(-1px);
+}
+
+/* Scrollbar styling */
+.menuList::-webkit-scrollbar {
+  width: 4px;
+}
+
+.menuList::-webkit-scrollbar-track {
+  background: var(--background);
+  border-radius: 2px;
+}
+
+.menuList::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 2px;
+}
+
+.menuList::-webkit-scrollbar-thumb:hover {
+  background: var(--text-light);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    width: 280px;
+  }
+
+  .sidebarOpen {
+    transform: translateX(0);
+  }
+}
+
+/* Animation for menu items */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.menuItem {
+  animation: slideIn 0.3s ease forwards;
+}
+
+.menuItem:nth-child(1) { animation-delay: 0.1s; }
+.menuItem:nth-child(2) { animation-delay: 0.15s; }
+.menuItem:nth-child(3) { animation-delay: 0.2s; }
+.menuItem:nth-child(4) { animation-delay: 0.25s; }
+
+/* Active state indicator */
+.selectedMenuItem::after {
+  content: "";
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 6px;
+  height: 6px;
+  background-color: white;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(255, 255, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+  }
+}

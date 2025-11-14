@@ -1,0 +1,163 @@
+.cartSection {
+    position: sticky;
+
+  }
+  
+  .cartCard {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+    border: 1px solid var(--border);
+  }
+  
+  .cartTitle {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0 0 1rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .emptyCart {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    color: var(--text-light);
+  }
+  
+  .emptyCart p {
+    margin: 0.5rem 0 0 0;
+    font-weight: 600;
+    color: var(--text);
+  }
+  
+  .cartItems {
+    max-height: 250px;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+  }
+  
+  .cartItem {
+    background: var(--item);
+    border-radius: var(--radius);
+    margin-bottom: 0.5rem;
+    border: 1px solid var(--border);
+  }
+  
+  .cartItemIcon {
+    color: var(--primary) !important;
+    min-width: 40px !important;
+  }
+  
+  .cartItemText .MuiListItemText-primary {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text);
+  }
+  
+  .cartItemText .MuiListItemText-secondary {
+    font-size: 0.75rem;
+    color: var(--text) !;
+  }
+  
+  .cartQuantityControls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-right: 1rem;
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 0.25rem;
+    border: 1px solid var(--border);
+  }
+  
+  .cartQuantityBtn {
+    width: 24px !important;
+    height: 24px !important;
+    background-color: var(--primary) !important;
+    color: white !important;
+  }
+  
+  .cartQuantityBtn:hover {
+    background-color: var(--primary-dark) !important;
+  }
+  
+  .quantityText {
+    min-width: 30px;
+    text-align: center;
+    font-weight: 600;
+    color: var(--text);
+    font-size: 0.8rem;
+  }
+  
+  .deleteBtn {
+    color: #f44336 !important;
+  }
+  
+  .deleteBtn:hover {
+    background-color: rgba(244, 67, 54, 0.1) !important;
+  }
+  
+  .cartSummary {
+    border-top: 1px solid var(--border);
+    padding-top: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  
+  .summaryRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+    font-size: 0.9rem;
+  }
+  
+  .summaryRow:last-child {
+    margin-bottom: 0;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  
+  .orderButton {
+    border-radius: var(--radius) !important;
+    font-weight: 600 !important;
+    text-transform: none !important;
+    padding: 0.75rem 1.5rem !important;
+    background-color: var(--primary) !important;
+    color: white !important;
+  }
+  
+  .orderButton:hover {
+    background-color: var(--primary-dark) !important;
+  }
+  
+  .cartItems::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  .cartItems::-webkit-scrollbar-track {
+    background: var(--background);
+  }
+  
+  .cartItems::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 2px;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .cartSection {
+      position: static;
+      order: -1;
+      margin-bottom: 1rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .cartCard {
+      padding: 1rem;
+    }
+  }

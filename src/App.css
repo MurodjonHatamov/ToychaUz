@@ -1,0 +1,45 @@
+/* App.css */
+
+.app {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--background);
+}
+
+.main-content {
+  flex: 1;
+  margin-left: 280px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content {
+  flex: 1;
+  padding: 24px;
+  padding-top: 80px; /* TopNavbar balandligi uchun joy */
+  background-color: var(--background);
+  overflow-y: auto;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .main-content {
+    margin-left: 0;
+    padding-bottom: 80px; /* Mobile navigation uchun joy */
+  }
+}
+
+@media (max-width: 768px) {
+  .content {
+    padding: 16px;
+    padding-top: 70px; /* Kichroq padding mobile da */
+  }
+}
+
+@media (max-width: 480px) {
+  .content {
+    padding: 12px;
+    padding-top: 70px;
+  }
+}

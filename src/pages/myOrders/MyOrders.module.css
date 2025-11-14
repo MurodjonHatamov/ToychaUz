@@ -1,0 +1,512 @@
+/* MyOrders.module.css */
+.myOrders {
+  padding: 24px;
+  background-color: var(--background);
+  min-height: 100vh;
+}
+
+.ordersHeader {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.title {
+  color: var(--text) !important;
+  font-weight: 700 !important;
+  margin-bottom: 8px !important;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  color: var(--text-light) !important;
+  opacity: 0.8;
+}
+
+.ordersGrid {
+  margin-bottom: 32px;
+}
+
+.loadingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+}
+
+.loadingSpinner {
+  text-align: center;
+}
+
+.spinner {
+  color: var(--primary) !important;
+}
+
+.loadingText {
+  color: var(--text) !important;
+  margin-top: 16px !important;
+}
+
+.errorAlert {
+  margin: 24px;
+}
+
+.emptyCard {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 16px !important;
+  box-shadow: var(--shadow) !important;
+  text-align: center;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.emptyContent {
+  padding: 48px 32px !important;
+}
+
+.emptyIcon {
+  font-size: 80px !important;
+  color: var(--text-light);
+  margin-bottom: 24px;
+  opacity: 0.5;
+}
+
+.emptyTitle {
+  color: var(--text) !important;
+  margin-bottom: 12px !important;
+  font-weight: 600 !important;
+}
+
+.emptyDescription {
+  color: var(--text-light) !important;
+  margin-bottom: 24px !important;
+  opacity: 0.8;
+}
+
+.emptyButton {
+  background: var(--primary) !important;
+  border-radius: 12px !important;
+  padding: 12px 32px !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+}
+
+.emptyButton:hover {
+  background: var(--primary-dark) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(184, 80, 66, 0.3);
+}
+
+.orderCard {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 16px !important;
+  box-shadow: var(--shadow) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  overflow: hidden;
+}
+
+.orderCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  border-color: var(--primary);
+}
+
+.orderHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  gap: 16px;
+}
+
+.orderInfo {
+  flex: 1;
+}
+
+.orderNumber {
+  color: var(--text) !important;
+  font-weight: 700 !important;
+  margin-bottom: 4px !important;
+}
+
+.orderDate {
+  color: var(--text-light) !important;
+  opacity: 0.8;
+}
+
+.orderActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.statusChip {
+  font-weight: 600 !important;
+  border: 2px solid !important;
+  border-radius: 20px !important;
+  padding: 4px 12px !important;
+}
+
+.editButton {
+  border: 2px solid var(--primary) !important;
+  color: var(--primary) !important;
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  padding: 6px 16px !important;
+  transition: all 0.3s ease !important;
+}
+
+.editButton:hover {
+  background: var(--primary) !important;
+  color: white !important;
+  transform: translateY(-1px);
+}
+
+.productsTable {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.tableHeader {
+  background: var(--item) !important;
+  color: var(--text) !important;
+  font-weight: 700 !important;
+  border-bottom: 2px solid var(--border) !important;
+  padding: 16px !important;
+}
+
+.tableRow {
+  border-bottom: 1px solid var(--border) !important;
+  transition: background-color 0.2s ease;
+}
+
+.tableRow:hover {
+  background: var(--item) !important;
+}
+
+.tableRow:last-child {
+  border-bottom: none !important;
+}
+
+.productName {
+  color: var(--text) !important;
+  font-weight: 600 !important;
+}
+
+.productQuantity {
+  color: var(--text) !important;
+  font-weight: 700 !important;
+}
+
+.productUnit {
+  color: var(--text-light) !important;
+  opacity: 0.8;
+}
+
+.orderFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.totalItems {
+  color: var(--text-light) !important;
+  opacity: 0.8;
+}
+
+.statusBadge {
+  font-weight: 600 !important;
+  border: 1px solid !important;
+  border-radius: 16px !important;
+}
+
+.statsSection {
+  margin-top: 32px;
+}
+
+.statsCard {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 16px !important;
+  box-shadow: var(--shadow) !important;
+}
+
+.statsTitle {
+  color: var(--text) !important;
+  font-weight: 700 !important;
+  margin-bottom: 20px !important;
+  text-align: center;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+.statItem {
+  text-align: center;
+  padding: 20px 16px;
+  background: var(--item);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.statItem:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.statNumber {
+  font-weight: 800 !important;
+  margin-bottom: 8px !important;
+}
+
+.primary { color: var(--primary) !important; }
+.success { color: var(--success) !important; }
+.warning { color: var(--warning) !important; }
+.error { color: var(--error) !important; }
+
+.statLabel {
+  color: var(--text-light) !important;
+  opacity: 0.8;
+  font-weight: 500 !important;
+}
+
+.editDialog {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2) !important;
+}
+
+.dialogTitle {
+  color: var(--text) !important;
+  font-weight: 700 !important;
+  padding: 24px 24px 16px !important;
+  border-bottom: 1px solid var(--border) !important;
+  text-align: center;
+}
+
+.dialogContent {
+  padding: 24px !important;
+}
+
+.editContainer {
+  padding: 8px 0;
+}
+
+.editTitle {
+  color: var(--text) !important;
+  font-weight: 600 !important;
+  margin-bottom: 20px !important;
+}
+
+.editProductItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  margin-bottom: 12px;
+  background: var(--item);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.editProductItem:hover {
+  border-color: var(--primary);
+  transform: translateX(4px);
+}
+
+.productInfo {
+  flex: 1;
+}
+
+.productNameEdit {
+  color: var(--text) !important;
+  font-weight: 600 !important;
+  margin-bottom: 4px !important;
+}
+
+.productDetails {
+  color: var(--text-light) !important;
+  opacity: 0.8;
+}
+
+.editForm {
+  flex: 1;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.selectField, .quantityField {
+  background: var(--surface) !important;
+}
+
+.selectField fieldset, .quantityField fieldset {
+  border: 2px solid var(--border) !important;
+  border-radius: 10px !important;
+}
+
+.selectField:hover fieldset, .quantityField:hover fieldset {
+  border-color: var(--primary) !important;
+}
+
+.productActions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.saveButton {
+  color: var(--success) !important;
+  font-weight: 600 !important;
+  border: 2px solid var(--success) !important;
+  border-radius: 8px !important;
+  padding: 6px 16px !important;
+}
+
+.cancelButton {
+  color: var(--text-light) !important;
+  font-weight: 600 !important;
+  border: 2px solid var(--border) !important;
+  border-radius: 8px !important;
+  padding: 6px 16px !important;
+}
+
+.editIcon {
+  color: var(--primary) !important;
+  background: rgba(184, 80, 66, 0.1) !important;
+  border-radius: 8px !important;
+}
+
+.deleteIcon {
+  color: var(--error) !important;
+  background: rgba(244, 67, 54, 0.1) !important;
+  border-radius: 8px !important;
+}
+
+.addProductButton {
+  border: 2px dashed var(--primary) !important;
+  color: var(--primary) !important;
+  border-radius: 12px !important;
+  padding: 12px !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  margin-top: 16px !important;
+  transition: all 0.3s ease !important;
+}
+
+.addProductButton:hover {
+  background: var(--primary) !important;
+  color: white !important;
+  border-style: solid !important;
+  transform: translateY(-2px);
+}
+
+.dialogActions {
+  padding: 16px 24px !important;
+  border-top: 1px solid var(--border) !important;
+  gap: 12px;
+}
+
+.dialogCancel {
+  color: var(--text-light) !important;
+  font-weight: 600 !important;
+  border: 2px solid var(--border) !important;
+  border-radius: 10px !important;
+  padding: 10px 24px !important;
+  text-transform: none !important;
+}
+
+.dialogSave {
+  background: var(--primary) !important;
+  border-radius: 10px !important;
+  padding: 10px 32px !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+}
+
+.dialogSave:hover {
+  background: var(--primary-dark) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(184, 80, 66, 0.3);
+}
+
+@media (max-width: 768px) {
+  .myOrders {
+    padding: 16px;
+  }
+
+  .orderHeader {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .orderActions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .orderFooter {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .editProductItem {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .productActions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .editForm {
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.75rem !important;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .orderActions {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .productActions {
+    justify-content: space-between;
+  }
+}

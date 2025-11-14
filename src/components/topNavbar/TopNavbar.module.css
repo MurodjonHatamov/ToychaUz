@@ -1,0 +1,113 @@
+/* TopNavbar.module.css */
+
+.navbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: var(--shadow);
+    position: fixed;
+    top: 0;
+    left: 280px;
+    right: 0;
+    z-index: 999;
+    height: 70px;
+}
+
+.leftSection {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+
+.menuButtonIcon {
+    display: none !important;
+    color: var(--text-light) !important;
+}
+
+.menuButtonIcon:hover {
+    background-color: var(--background) !important;
+    color: var(--text) !important;
+}
+
+.title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text);
+    margin: 0;
+}
+
+.rightSection {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.iconButton {
+    color: var(--text-light) !important;
+    padding: 8px !important;
+}
+
+.iconButton:hover {
+    background-color: var(--background) !important;
+    color: var(--text) !important;
+}
+
+/* Material-UI Badge customization */
+.MuiBadge-badge {
+    background-color: var(--primary) !important;
+    color: white !important;
+    font-size: 0.7rem !important;
+    font-weight: 600 !important;
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+    .navbar {
+        left: 0;
+    }
+    .menuButtonIcon{
+        display: block !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        padding: 12px 16px;
+        height: 65px;
+        left: 0;
+    }
+    .menuButtonIcon{
+        display: block !important;
+    }
+  
+
+
+    .title {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .actions {
+        gap: 4px;
+    }
+
+    .iconButton {
+        padding: 6px !important;
+    }
+
+    .menuButtonIcon {
+        display: none !important;
+        padding: 6px !important;
+    }
+}
