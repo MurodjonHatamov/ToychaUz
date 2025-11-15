@@ -1,0 +1,309 @@
+/* OrderCard.module.css */
+
+.orderCard {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    width: 100%;
+    margin-bottom: 16px;
+  }
+  
+  .cardContent {
+    padding: 20px;
+  }
+  
+  .orderHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+    gap: 16px;
+  }
+  
+  .orderInfo {
+    flex: 1;
+  }
+  
+  .orderNumber {
+    color: var(--text);
+    font-weight: 600;
+    margin-bottom: 4px;
+    font-size: 1.1rem;
+    margin: 0;
+  }
+  
+  .orderDate {
+    color: var(--text-light);
+    font-size: 0.85rem;
+    margin: 0;
+  }
+  
+  .orderActions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .editActions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  
+  /* Status Chips */
+  .statusChip {
+    font-weight: 600;
+    border: 1px solid;
+    border-radius: 14px;
+    padding: 4px 10px;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  
+  .statusNew {
+    background-color: rgba(255, 152, 0, 0.1);
+    border-color: rgba(255, 152, 0, 0.3);
+    color: var(--warning);
+  }
+  
+  .statusDelivered {
+    background-color: rgba(76, 175, 80, 0.1);
+    border-color: rgba(76, 175, 80, 0.3);
+    color: var(--success);
+  }
+  
+  .statusCancelled {
+    background-color: rgba(244, 67, 54, 0.1);
+    border-color: rgba(244, 67, 54, 0.3);
+    color: var(--error);
+  }
+  
+  /* Button Styles */
+  .editButton {
+    border: 1px solid var(--primary);
+    color: var(--primary);
+    border-radius: 5px;
+    font-weight: 500;
+    text-transform: none;
+    padding: 5px 10px;
+    font-size: 0.8rem;
+  }
+  
+  .editButton:hover {
+    background: var(--primary);
+    color: white;
+  }
+  
+  .saveButton {
+    background: var(--success);
+    color: white;
+    border-radius: 5px;
+    font-weight: 500;
+    text-transform: none;
+    padding: 5px 10px;
+    font-size: 0.8rem;
+  }
+  
+  .saveButton:hover {
+    background: var(--success-dark);
+  }
+  
+  .cancelOrderButton {
+    color: var(--error);
+    border: 1px solid var(--error);
+    border-radius: 5px;
+    font-weight: 500;
+    text-transform: none;
+    padding: 5px 10px;
+    font-size: 0.8rem;
+  }
+  
+  .cancelOrderButton:hover {
+    background: var(--error);
+    color: white;
+  }
+  
+  /* Table Styles */
+  .tableContainer {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .tableHeader {
+    background: var(--item);
+    color: var(--text);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    text-align: left;
+  }
+  
+  .tableRow, .newProductRow {
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .tableRow:last-child, .newProductRow:last-child {
+    border-bottom: none;
+  }
+  
+  .tableCell {
+    border: none;
+    padding: 10px 14px;
+    background: var(--surface);
+  }
+  
+  .productName {
+    color: var(--text);
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+  
+  .productQuantity {
+    color: var(--text);
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  
+  .productUnit {
+    color: var(--text-light);
+    font-size: 0.9rem;
+  }
+  
+  /* Product Actions */
+  .productActions {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+  
+  .saveBtn {
+    color: var(--success);
+    min-width: auto;
+    padding: 4px;
+  }
+  
+  .cancelBtn {
+    color: var(--text-light);
+    min-width: auto;
+    padding: 4px;
+  }
+  
+  .editIcon, .deleteIcon {
+    background: none;
+    border: none;
+    padding: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .editIcon {
+    color: var(--primary);
+  }
+  
+  .editIcon:hover {
+    background: rgba(184, 80, 66, 0.1);
+  }
+  
+  .deleteIcon {
+    color: var(--error);
+  }
+  
+  .deleteIcon:hover {
+    background: rgba(244, 67, 54, 0.1);
+  }
+  
+  /* Add Product Section */
+  .addProductSection {
+    padding: 12px;
+    border-top: 1px dashed var(--border);
+  }
+  
+  .addProductButton {
+    border: 1px dashed var(--primary);
+    color: var(--primary);
+    border-radius: 6px;
+    padding: 8px;
+    font-weight: 500;
+    text-transform: none;
+    font-size: 0.85rem;
+  }
+  
+  .addProductButton:hover {
+    background: var(--primary);
+    color: white;
+    border-style: solid;
+  }
+  
+  /* Order Footer */
+  .orderFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+  
+  .totalItems {
+    color: var(--text-light);
+    font-weight: 500;
+    font-size: 0.85rem;
+    margin: 0;
+  }
+  
+  .statusBadge {
+    font-weight: 600;
+    border: 1px solid;
+    border-radius: 10px;
+    padding: 3px 6px;
+    font-size: 0.7rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .cardContent {
+      padding: 16px;
+    }
+  
+    .orderHeader {
+      flex-direction: column;
+      gap: 10px;
+    }
+  
+    .orderActions {
+      width: 100%;
+      justify-content: space-between;
+    }
+  
+    .editActions {
+      flex-direction: column;
+      gap: 6px;
+      width: 100%;
+    }
+  
+    .tableCell {
+      padding: 8px 10px;
+    }
+  
+    .tableHeader {
+      padding: 8px 10px;
+    }
+  }

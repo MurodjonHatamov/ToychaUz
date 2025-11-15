@@ -98,6 +98,10 @@ z-index: 1000;
   }
   
   @media (max-width: 768px) {
+    .arrovTop{
+      bottom: 100px !important;
+      right: 20px !important;
+    }
     .container {
       grid-template-columns: 1fr;
       gap: 1rem;
