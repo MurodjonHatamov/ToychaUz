@@ -1,5 +1,5 @@
 // components/orderCard/OrderCard.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, TextField, MenuItem } from '@mui/material';
 import styles from './OrderCard.module.css';
 import { 
@@ -25,6 +25,43 @@ const OrderCard = ({
   const [isEditing, setIsEditing] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [newProduct, setNewProduct] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // 📱 Mobile aniqlash
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
+  }, []);
+
+  // 📱 Mobile uchun button textlari
+  const getButtonText = (type) => {
+    if (isMobile) {
+      const texts = {
+        edit: 'Tahrir',
+        save: 'Saqlash',
+        cancel: 'Bekor',
+        add: 'Qo\'shish',
+        ready: 'Tayyor'
+      };
+      return texts[type] || type;
+    }
+    
+    return {
+      edit: 'Tahrirlash',
+      save: 'Saqlash', 
+      cancel: 'Bekor Qilish',
+      add: 'Yangi mahsulot qo\'shish',
+      ready: 'Tayyor'
+    }[type];
+  };
 
   // 🎯 Status konfiguratsiyasi
   const getStatusConfig = (status) => {
@@ -163,10 +200,38 @@ const OrderCard = ({
     }
   };
 
+  // 📱 Mobile uchun TextField sozlamalari - MUHIM: Kenglik chegaralari
+  const getTextFieldProps = () => ({
+    size: "small",
+    ...(isMobile && {
+      sx: {
+        '& .MuiInputBase-root': {
+          fontSize: '0.75rem',
+          padding: '4px',
+          maxWidth: '100px'
+        }
+      }
+    })
+  });
+
+  // 📱 Mobile uchun Select sozlamalari - MUHIM: Menyu chegaralari
+  const getSelectProps = () => ({
+    ...(isMobile && {
+      MenuProps: {
+        PaperProps: {
+          sx: {
+            maxHeight: 200,
+            maxWidth: '280px'
+          }
+        }
+      }
+    })
+  });
+
   const statusConfig = getStatusConfig(order.status);
 
   return (
-    <div className={styles.orderCard}>
+    <div className={`${styles.orderCard} ${isEditing ? styles.editingMode : ''}`}>
       <div className={styles.cardContent}>
         {/* 📝 Sarlavha qismi */}
         <div className={styles.orderHeader}>
@@ -195,7 +260,7 @@ const OrderCard = ({
                     onClick={handleStartEdit}
                     className={styles.editButton}
                   >
-                    Tahrirlash
+                    {getButtonText('edit')}
                   </Button>
                 ) : (
                   <Button 
@@ -205,7 +270,7 @@ const OrderCard = ({
                     onClick={handleFinishEdit}
                     className={styles.saveButton}
                   >
-                    Tayyor
+                    {getButtonText('ready')}
                   </Button>
                 )}
                 
@@ -217,7 +282,7 @@ const OrderCard = ({
                     onClick={handleCancelOrder}
                     className={styles.cancelOrderButton}
                   >
-                    Bekor Qilish
+                    {getButtonText('cancel')}
                   </Button>
                 )}
               </div>
@@ -225,7 +290,7 @@ const OrderCard = ({
           </div>
         </div>
 
-        {/* 📊 Mahsulotlar jadvali */}
+        {/* 📊 Mahsulotlar jadvali - MUHIM: Kenglik chegaralari */}
         <div className={styles.tableContainer}>
           <table className={styles.table}>
             <thead>
@@ -243,15 +308,41 @@ const OrderCard = ({
                   <td className={styles.tableCell}>
                     {isEditing && editingProduct?._id === product._id ? (
                       <TextField
+                        className={styles.productSelect}
                         select
                         value={editingProduct.productId}
                         onChange={(e) => handleProductChange('productId', e.target.value, 'edit')}
                         size="small"
-                        fullWidth
+                        // MUHIM: fullWidth o'rniga aniq kenglik
+                        sx={{ 
+                          width: '100%',
+                          maxWidth: '120px',
+                          minWidth: '80px',
+                          '& .MuiInputBase-root': {
+                            fontSize: '0.8rem',
+                            maxWidth: '100%'
+                          }
+                        }}
+                        SelectProps={{
+                          sx: {
+                            color: 'var(--text)', 
+                            fontSize: '0.8rem',
+                            maxWidth: '100%'
+                          },
+                        }}
                       >
                         <MenuItem value="">Tanlang</MenuItem>
                         {mockProducts.map((prod) => (
-                          <MenuItem key={prod._id} value={prod._id}>
+                          <MenuItem 
+                            key={prod._id} 
+                            value={prod._id}
+                            sx={{
+                              fontSize: '0.8rem',
+                              maxWidth: '100%',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis'
+                            }}
+                          >
                             {prod.name}
                           </MenuItem>
                         ))}
@@ -266,11 +357,26 @@ const OrderCard = ({
                   <td className={styles.tableCell} style={{textAlign: 'right'}}>
                     {isEditing && editingProduct?._id === product._id ? (
                       <TextField
+                        className={styles.quantityInput}
                         type="number"
                         value={editingProduct.quantity}
                         onChange={(e) => handleProductChange('quantity', parseInt(e.target.value) || 1, 'edit')}
                         size="small"
-                        inputProps={{ min: 1 }}
+                        // MUHIM: Aniq kenglik berish
+                        sx={{ 
+                          width: '80px',
+                          maxWidth: '80px',
+                          '& .MuiInputBase-root': {
+                            fontSize: '0.8rem'
+                          }
+                        }}
+                        inputProps={{ 
+                          min: 1,
+                          style: { 
+                            textAlign: 'right',
+                            padding: '6px 8px'
+                          }
+                        }}
                       />
                     ) : (
                       <span className={styles.productQuantity}>
@@ -336,16 +442,37 @@ const OrderCard = ({
                 <tr className={styles.newProductRow}>
                   <td className={styles.tableCell}>
                     <TextField
+                      className={styles.productSelect}
                       select
                       value={newProduct.productId}
                       onChange={(e) => handleProductChange('productId', e.target.value, 'new')}
                       size="small"
-                      fullWidth
+                      sx={{ 
+                        width: '100%',
+                        maxWidth: '120px',
+                        minWidth: '80px',
+                        '& .MuiInputBase-root': {
+                          fontSize: '0.8rem'
+                        }
+                      }}
+                        SelectProps={{
+                          sx: {
+                            color: 'var(--text)', 
+                            fontSize: '0.8rem',
+                            maxWidth: '100%',
+                            backgroundColor:'var(--background)'
+                          },
+                        }}
+                      
                       placeholder="Mahsulot tanlang"
                     >
                       <MenuItem value="">Tanlang</MenuItem>
                       {mockProducts.map((prod) => (
-                        <MenuItem key={prod._id} value={prod._id}>
+                        <MenuItem 
+                          key={prod._id} 
+                          value={prod._id}
+                          sx={{ fontSize: '0.8rem' }}
+                        >
                           {prod.name}
                         </MenuItem>
                       ))}
@@ -354,11 +481,22 @@ const OrderCard = ({
                   
                   <td className={styles.tableCell} style={{textAlign: 'right'}}>
                     <TextField
+                      className={styles.quantityInput}
                       type="number"
                       value={newProduct.quantity}
                       onChange={(e) => handleProductChange('quantity', parseInt(e.target.value) || 1, 'new')}
                       size="small"
-                      inputProps={{ min: 1 }}
+                      sx={{ 
+                        width: '80px',
+                        maxWidth: '80px',
+                        '& .MuiInputBase-root': {
+                          fontSize: '0.8rem'
+                        }
+                      }}
+                      inputProps={{ 
+                        min: 1,
+                        style: { textAlign: 'right' }
+                      }}
                     />
                   </td>
                   
@@ -400,7 +538,7 @@ const OrderCard = ({
                 startIcon={<MdAdd />}
                 className={styles.addProductButton}
               >
-                Yangi mahsulot qo'shish
+                {getButtonText('add')}
               </Button>
             </div>
           )}

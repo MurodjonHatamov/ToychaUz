@@ -56,6 +56,7 @@ const mockOrders = [
 ];
 
 // OrderStats komponenti - Buyurtma statistikasini ko'rsatadi
+// OrderStats komponenti - Yangi mobile optimallashtirilgan versiya
 const OrderStats = ({ orders }) => {
   const stats = {
     total: orders.length,
@@ -70,6 +71,7 @@ const OrderStats = ({ orders }) => {
         <h2 className={styles.statsTitle}>Buyurtma Statistikasi</h2>
         <div className={styles.statsGrid}>
           <div className={styles.statItem}>
+            {/* Desktop uchun icon, mobile da CSS orqali yashiriladi */}
             <MdShoppingCart className={styles.statIcon} />
             <div className={`${styles.statNumber} ${styles.statNumberPrimary}`}>
               {stats.total}
