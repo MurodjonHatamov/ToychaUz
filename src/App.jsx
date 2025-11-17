@@ -6,6 +6,7 @@ import MobileBottomNav from './components/mobileBottomNav/MobileBottomNav'
 import TopNavbar from './components/topNavbar/TopNavbar'
 import { useState } from 'react'
 import MyOrders from './pages/myOrders/MyOrders'
+import Help from './pages/help/Help'
 
 function App() {
 const [openSidebar,setOpenSidebar]=useState(true)
@@ -21,6 +22,7 @@ const [openSidebar,setOpenSidebar]=useState(true)
           <div className="content">
             <Routes>
               <Route path="/" element={<Dashboard/>} />
+              <Route path="/help" element={<Help/>} />
               <Route path="/myorders" element={<MyOrders/>} />
             </Routes>
           </div>
