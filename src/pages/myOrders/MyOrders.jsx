@@ -1,68 +1,22 @@
-// MyOrders.js
 import React, { useState, useEffect } from 'react';
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, Button, Snackbar, Alert } from '@mui/material';
 import {
   MdShoppingCart,
   MdCheckCircle,
   MdAccessTime,
-  MdCancel
+  MdCancel,
+  MdRefresh
 } from 'react-icons/md';
 import styles from './MyOrders.module.css';
 import OrderCard from '../../components/orderCard/OrderCard';
 
-// Mock ma'lumotlar
-const mockProducts = [
-  { "_id": "1", "name": "Coca-Cola 1,5", "unit": "dona" },
-  { "_id": "2", "name": "Sariyog' 500g", "unit": "dona" },
-  { "_id": "3", "name": "Olma", "unit": "kg" },
-  { "_id": "4", "name": "Sut", "unit": "litr" },
-  { "_id": "5", "name": "Tuxum", "unit": "dona" },
-  { "_id": "6", "name": "Tvorog 300gr", "unit": "dona" },
-  { "_id": "7", "name": "Tovuq go'shti", "unit": "kg" },
-  { "_id": "8", "name": "Mayiz", "unit": "kg" },
-  { "_id": "9", "name": "Non", "unit": "dona" },
-  { "_id": "10", "name": "Choy", "unit": "dona" },
-];
-
-const mockOrders = [
-  {
-    "_id": "69064ad11d2854575b18ffdf",
-    "products": [
-      { "productId": "1", "quantity": 20, "_id": "69064ad11d2854575b18ffe0" },
-      { "productId": "2", "quantity": 25, "_id": "69064ad11d2854575b18ffe1" },
-      { "productId": "3", "quantity": 2, "_id": "69064ad11d2854575b18ffe2" }
-    ],
-    "status": "new",
-    "createdAt": "2025-11-01T18:00:49.577Z",
-  },
-  {
-    "_id": "69078be8156fae69f2254ff3",
-    "products": [
-      { "productId": "4", "quantity": 12, "_id": "69078be8156fae69f2254ff4" },
-      { "productId": "5", "quantity": 30, "_id": "69078be8156fae69f2254ff5" }
-    ],
-    "status": "delivered",
-    "createdAt": "2025-11-02T16:50:48.178Z",
-  },
-  {
-    "_id": "691493cf8a17859b85e95f5f",
-    "products": [
-      { "productId": "6", "quantity": 5, "_id": "691493cf8a17859b85e95f60" },
-      { "productId": "7", "quantity": 3, "_id": "691493cf8a17859b85e95f61" }
-    ],
-    "status": "cancelled",
-    "createdAt": "2025-11-12T14:03:59.805Z",
-  }
-];
-
 // OrderStats komponenti - Buyurtma statistikasini ko'rsatadi
-// OrderStats komponenti - Yangi mobile optimallashtirilgan versiya
 const OrderStats = ({ orders }) => {
   const stats = {
     total: orders.length,
     delivered: orders.filter(order => order.status === 'delivered').length,
     new: orders.filter(order => order.status === 'new').length,
-    cancelled: orders.filter(order => order.status === 'cancelled').length
+    accepted: orders.filter(order => order.status === 'accepted').length
   };
 
   return (
@@ -71,7 +25,6 @@ const OrderStats = ({ orders }) => {
         <h2 className={styles.statsTitle}>Buyurtma Statistikasi</h2>
         <div className={styles.statsGrid}>
           <div className={styles.statItem}>
-            {/* Desktop uchun icon, mobile da CSS orqali yashiriladi */}
             <MdShoppingCart className={styles.statIcon} />
             <div className={`${styles.statNumber} ${styles.statNumberPrimary}`}>
               {stats.total}
@@ -95,9 +48,9 @@ const OrderStats = ({ orders }) => {
           <div className={styles.statItem}>
             <MdCancel className={styles.statIcon} />
             <div className={`${styles.statNumber} ${styles.statNumberCancelled}`}>
-              {stats.cancelled}
+              {stats.accepted}
             </div>
-            <div className={styles.statLabel}>Ko'rib chiqilgan</div>
+            <div className={styles.statLabel}>Qabul qilingan</div>
           </div>
         </div>
       </div>
@@ -105,91 +58,225 @@ const OrderStats = ({ orders }) => {
   );
 };
 
-// Asosiy MyOrders komponenti (SAHIFA)
+// Asosiy MyOrders komponenti
 function MyOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [updatingOrderId, setUpdatingOrderId] = useState(null); // 🎯 Yangi: Yangilanish jarayonidagi buyurtma ID si
+  const [snackbar, setSnackbar] = useState({ // 🎯 Yangi: Toast notification state
+    open: false,
+    message: '',
+    severity: 'success' // 'success', 'error', 'warning', 'info'
+  });
 
-  // ✅ Buyurtmalarni yuklash (useEffect)
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        setTimeout(() => {
-          const ordersWithProducts = mockOrders.map(order => ({
-            ...order,
-            products: order.products.map(product => {
-              const productInfo = mockProducts.find(p => p._id === product.productId);
-              return {
-                ...product,
-                productName: productInfo?.name || "Noma'lum mahsulot",
-                unit: productInfo?.unit || "dona"
-              };
-            })
-          }));
-          setOrders(ordersWithProducts);
-          setLoading(false);
-        }, 1000);
-      } catch (err) {
-        setError('Buyurtmalarni yuklab olishda xatolik');
-        setLoading(false);
+  // 🎯 Toast notification ni yopish
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
+  // 🎯 Mahsulot ma'lumotlarini ID bo'yicha olish
+  const fetchProductDetails = async (productId) => {
+    try {
+      const response = await fetch(`http://localhost:2277/orders/products/${productId}`, {
+        method: "GET",
+        credentials: "include"
+      });
+
+      if (!response.ok) {
+        throw new Error(`Mahsulot ma'lumotlarini olishda xatolik: ${response.status}`);
       }
-    };
 
+      return await response.json();
+    } catch (error) {
+      console.error(`Mahsulot ${productId} uchun xato:`, error);
+      return {
+        _id: productId,
+        name: "Noma'lum mahsulot",
+        unit: "dona"
+      };
+    }
+  };
+
+  // 🎯 Buyurtmalarni backenddan yuklash
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const ordersResponse = await fetch("http://localhost:2277/orders", {
+        method: "GET",
+        credentials: "include"
+      });
+
+      if (!ordersResponse.ok) {
+        throw new Error(`Buyurtmalarni yuklab olishda xatolik: ${ordersResponse.status}`);
+      }
+
+      const ordersData = await ordersResponse.json();
+
+      // Mahsulot ma'lumotlarini to'ldirish
+      const ordersWithProductDetails = await Promise.all(
+        ordersData.map(async (order) => {
+          const productsWithDetails = await Promise.all(
+            order.products.map(async (product) => {
+              try {
+                const productDetails = await fetchProductDetails(product.productId);
+                return {
+                  ...product,
+                  productName: productDetails.name,
+                  unit: productDetails.unit
+                };
+              } catch (error) {
+                console.error(`Mahsulot ${product.productId} uchun xato:`, error);
+                return {
+                  ...product,
+                  productName: "Noma'lum mahsulot",
+                  unit: "dona"
+                };
+              }
+            })
+          );
+
+          return {
+            ...order,
+            products: productsWithDetails
+          };
+        })
+      );
+
+      setOrders(ordersWithProductDetails);
+      setLoading(false);
+
+    } catch (err) {
+      console.error('Buyurtmalarni yuklashda xatolik:', err);
+      setError('Buyurtmalarni yuklab olishda xatolik. Iltimos, keyinroq urinib ko\'ring.');
+      setLoading(false);
+    }
+  };
+
+  // 🎯 Komponent yuklanganda buyurtmalarni olish
+  useEffect(() => {
     fetchOrders();
   }, []);
 
-  // ✅ Mahsulotni yangilash funksiyasi
-  const handleUpdateProduct = (orderId, updatedProduct) => {
-    const updatedOrders = orders.map(order => {
-      if (order._id === orderId) {
-        const updatedProducts = order.products.map(product =>
-          product._id === updatedProduct._id ? updatedProduct : product
-        );
-        return { ...order, products: updatedProducts };
+  // 🎯 Buyurtmani yangilash funksiyasi - YANGILANDI (loader va toast qo'shildi)
+  const handleUpdateProduct = async (orderId, updatedData) => {
+    try {
+      setUpdatingOrderId(orderId); // 🎯 Loaderni yoqamiz
+      
+      console.log('Yangilanish so\'rovi:', { orderId, updatedData });
+      
+      // Backendga PATCH so'rovi yuborish
+      const response = await fetch(`http://localhost:2277/orders/${orderId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          products: updatedData.products
+        })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Buyurtmani yangilashda xatolik: ${response.status} - ${errorText}`);
       }
-      return order;
-    });
-    setOrders(updatedOrders);
+
+      const updatedOrder = await response.json();
+
+      // Mahsulot ma'lumotlarini to'ldirish
+      const productsWithDetails = await Promise.all(
+        updatedOrder.products.map(async (product) => {
+          try {
+            const productDetails = await fetchProductDetails(product.productId);
+            return {
+              ...product,
+              productName: productDetails.name,
+              unit: productDetails.unit
+            };
+          } catch (error) {
+            console.error(`Mahsulot ${product.productId} uchun xato:`, error);
+            return {
+              ...product,
+              productName: "Noma'lum mahsulot",
+              unit: "dona"
+            };
+          }
+        })
+      );
+
+      // Local state ni yangilash
+      const updatedOrders = orders.map(order =>
+        order._id === orderId
+          ? { ...updatedOrder, products: productsWithDetails }
+          : order
+      );
+      setOrders(updatedOrders);
+
+      // 🎯 Muvaffaqiyatli toast ko'rsatamiz
+      setSnackbar({
+        open: true,
+        message: 'Buyurtma muvaffaqiyatli yangilandi!',
+        severity: 'success'
+      });
+
+    } catch (error) {
+      console.error('Buyurtmani yangilashda xatolik:', error);
+      
+      // 🎯 Xatolik toast ko'rsatamiz
+      setSnackbar({
+        open: true,
+        message: 'Buyurtmani yangilashda xatolik yuz berdi',
+        severity: 'error'
+      });
+    } finally {
+      setUpdatingOrderId(null); // 🎯 Loaderni o'chiramiz
+    }
   };
 
-  // ✅ Mahsulotni o'chirish funksiyasi
-  const handleDeleteProduct = (orderId, productId) => {
-    const updatedOrders = orders.map(order => {
-      if (order._id === orderId) {
-        const updatedProducts = order.products.filter(product => product._id !== productId);
-        return { ...order, products: updatedProducts };
+  // 🎯 Buyurtmani bekor qilish funksiyasi - YANGILANDI (loader va toast qo'shildi)
+  const handleCancelOrder = async (orderId) => {
+    try {
+      setUpdatingOrderId(orderId); // 🎯 Loaderni yoqamiz
+      
+      // Backendga DELETE so'rovi yuborish
+      const response = await fetch(`http://localhost:2277/orders/${orderId}`, {
+        method: "DELETE",
+        credentials: "include"  
+      });
+
+      if (!response.ok) {
+        throw new Error('Buyurtmani bekor qilishda xatolik');
       }
-      return order;
-    });
-    setOrders(updatedOrders);
+
+      // Local state dan o'chirish
+      const updatedOrders = orders.filter(order => order._id !== orderId);
+      setOrders(updatedOrders);
+
+      // 🎯 Muvaffaqiyatli toast ko'rsatamiz
+      setSnackbar({
+        open: true,
+        message: 'Buyurtma muvaffaqiyatli bekor qilindi!',
+        severity: 'success'
+      });
+
+    } catch (error) {
+      console.error('Buyurtmani bekor qilishda xatolik:', error);
+      
+      // 🎯 Xatolik toast ko'rsatamiz
+      setSnackbar({
+        open: true,
+        message: 'Buyurtmani bekor qilishda xatolik yuz berdi',
+        severity: 'error'
+      });
+    } finally {
+      setUpdatingOrderId(null); // 🎯 Loaderni o'chiramiz
+    }
   };
 
-  // ✅ Yangi mahsulot qo'shish funksiyasi
-  const handleAddProduct = (orderId, newProduct) => {
-    const updatedOrders = orders.map(order => {
-      if (order._id === orderId) {
-        return { 
-          ...order, 
-          products: [...order.products, newProduct] 
-        };
-      }
-      return order;
-    });
-    setOrders(updatedOrders);
-  };
-
-  // ✅ Buyurtmani bekor qilish funksiyasi
-  const handleCancelOrder = (orderId) => {
-    const updatedOrders = orders.map(order => 
-      order._id === orderId 
-        ? { ...order, status: 'cancelled' }
-        : order
-    );
-    setOrders(updatedOrders);
-  };
-
-  // ✅ Yuklanayotgan holat
+  // 🎯 Yuklanayotgan holat
   if (loading) {
     return (
       <div className={styles.loadingContainer}>
@@ -201,26 +288,46 @@ function MyOrders() {
     );
   }
 
-  // ✅ Xatolik holati
+  // 🎯 Xatolik holati
   if (error) {
     return (
-      <div className={styles.errorAlert}>
-        {error}
+      <div className={styles.container}>
+        <div className={styles.error}>
+          <h3>Xatolik yuz berdi</h3>
+          <p>{error}</p>
+          <Button 
+            variant="contained" 
+            onClick={fetchOrders}
+            startIcon={<MdRefresh />}
+            className={styles.retryButton}
+          >
+            Qayta Urinish
+          </Button>
+        </div>
       </div>
     );
   }
 
   return (
     <div className={styles.container}>
-    
-
       {/* 📊 Statistika - Eng tepada */}
       <OrderStats orders={orders} />
+
+      {/* 🔄 Yangilash tugmasi */}
+      <div className={styles.refreshSection}>
+        <Button 
+          variant="outlined" 
+          onClick={fetchOrders}
+          startIcon={<MdRefresh />}
+          className={styles.refreshButton}
+        >
+          Yangilash
+        </Button>
+      </div>
 
       {/* 📦 Asosiy kontent */}
       <div className={styles.content}>
         {orders.length === 0 ? (
-          // 🎯 Bo'sh holat
           <div className={styles.emptyCard}>
             <div className={styles.emptyContent}>
               <MdShoppingCart className={styles.emptyIcon} />
@@ -233,23 +340,36 @@ function MyOrders() {
             </div>
           </div>
         ) : (
-          // 📋 Buyurtmalar ro'yxati
           <div className={styles.ordersGrid}>
             {orders.map((order) => (
               <OrderCard 
                 key={order._id}
                 order={order} 
-                mockProducts={mockProducts}
-                // 🔧 Funksiyalar OrderCard ga yuboriladi
                 onUpdateProduct={handleUpdateProduct}
-                onDeleteProduct={handleDeleteProduct}
-                onAddProduct={handleAddProduct}
                 onCancelOrder={handleCancelOrder}
+                isUpdating={updatingOrderId === order._id} // 🎯 Yangi: Loader holatini uzatamiz
               />
             ))}
           </div>
         )}
       </div>
+
+      {/* 🎯 Toast Notification */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+      >
+        <Alert 
+          onClose={handleCloseSnackbar} 
+          severity={snackbar.severity}
+          variant="filled"
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

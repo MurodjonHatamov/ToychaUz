@@ -6,7 +6,8 @@ import {
   ListItem,
   ListItemText,
   ListItemIcon,
-  Collapse
+  Collapse,
+  CircularProgress
 } from '@mui/material';
 import { TransitionGroup } from 'react-transition-group';
 import { 
@@ -25,7 +26,8 @@ function Cart({
   onRemoveFromCart, 
   onUpdateCartQuantity, 
   onPlaceOrder,
-  getUnitText 
+  getUnitText ,
+  orderLoading
 }) {
   const getCartItemDetails = (productId) => {
     return products.find(p => p._id === productId);
@@ -115,16 +117,18 @@ function Cart({
               </div>
             </div>
 
-            <Button
-              fullWidth
-              variant="contained"
-              size="large"
-              startIcon={<MdLocalShipping />}
-              onClick={onPlaceOrder}
-              className={styles.orderButton}
-            >
-              Buyurtma berish
-            </Button>
+          
+<Button
+  fullWidth
+  variant="contained"
+  size="large"
+  startIcon={orderLoading ? <CircularProgress size={20} style={{ color: 'white' }} /> : <MdLocalShipping />}
+  onClick={onPlaceOrder}
+  disabled={orderLoading || cart.length === 0}
+  className={styles.orderButton}
+>
+  {orderLoading ? 'Joʻnatilmoqda...' : 'Buyurtma berish'}
+</Button>
           </>
         )}
       </div>

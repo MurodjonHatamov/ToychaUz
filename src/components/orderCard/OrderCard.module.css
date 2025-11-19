@@ -74,15 +74,16 @@
 }
 
 .statusNew {
-  background-color: rgba(255, 152, 0, 0.1);
-  border-color: rgba(255, 152, 0, 0.3);
-  color: var(--warning);
+  background-color: transparent;
+  border-color:  rgba(62, 150, 244, 0.973);
+  color: rgba(62, 150, 244, 0.973);
 }
 
 .statusDelivered {
   background-color: rgba(76, 175, 80, 0.1);
   border-color: rgba(76, 175, 80, 0.3);
   color: var(--success);
+  
 }
 
 .statusCancelled {

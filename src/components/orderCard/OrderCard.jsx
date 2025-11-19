@@ -1,288 +1,355 @@
 // components/orderCard/OrderCard.js
-import React, { useState, useEffect } from 'react';
-import { Button, TextField, MenuItem } from '@mui/material';
-import styles from './OrderCard.module.css';
-import { 
-  MdAccessTime, 
-  MdCancel, 
-  MdCheckCircle, 
-  MdEdit, 
-  MdDelete, 
+import React, { useState, useEffect } from "react";
+import { Button, TextField, MenuItem, CircularProgress } from "@mui/material";
+import styles from "./OrderCard.module.css";
+import {
+  MdAccessTime,
+  MdCancel,
+  MdCheckCircle,
+  MdEdit,
+  MdDelete,
   MdAdd,
   MdSave,
-  MdClose
-} from 'react-icons/md';
+  MdClose,
+} from "react-icons/md";
 
-const OrderCard = ({ 
-  order, 
-  mockProducts,
+const OrderCard = ({
+  order,
   onUpdateProduct,
-  onDeleteProduct,
-  onAddProduct,
-  onCancelOrder 
+  onCancelOrder,
+  isUpdating, // 🎯 Yangi: Update jarayonidagi loader
+  isCanceling, // 🎯 Yangi: Cancel jarayonidagi loader
 }) => {
-  // 🎯 State lar
+  // ========== STATE LAR ==========
   const [isEditing, setIsEditing] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [newProduct, setNewProduct] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [availableProducts, setAvailableProducts] = useState([]);
+  
+  // 🔄 Mahsulotlarning vaqtincha nusxasi (local o'zgarishlar uchun)
+  const [localProducts, setLocalProducts] = useState([...order.products]);
 
-  // 📱 Mobile aniqlash
+  // ========== USE EFFECT HOOKS ==========
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth <= 768);
     };
-    
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    
+    window.addEventListener("resize", checkMobile);
     return () => {
-      window.removeEventListener('resize', checkMobile);
+      window.removeEventListener("resize", checkMobile);
     };
   }, []);
 
-  // 📱 Mobile uchun button textlari
+  // 🎯 Tahrirlash rejimi yoqilganda mahsulotlarni yuklaymiz
+  useEffect(() => {
+    const fetchAvailableProducts = async () => {
+      try {
+        const response = await fetch("http://localhost:2277/orders/products", {
+          method: "GET",
+          credentials: "include",
+        });
+
+        if (response.ok) {
+          const products = await response.json();
+          setAvailableProducts(products);
+        }
+      } catch (error) {
+        console.error("Mahsulotlarni olishda xatolik:", error);
+      }
+    };
+
+    if (isEditing) {
+      fetchAvailableProducts();
+      // Tahrirlash boshlanganda localProducts ni yangilaymiz
+      setLocalProducts([...order.products]);
+    }
+  }, [isEditing, order.products]);
+
+  // ========== YORDAMCHI FUNKSIYALAR ==========
   const getButtonText = (type) => {
     if (isMobile) {
       const texts = {
-        edit: 'Tahrir',
-        save: 'Saqlash',
-        cancel: 'Bekor',
-        add: 'Qo\'shish',
-        ready: 'Tayyor'
+        edit: "Tahrir",
+        save: "Saqlash",
+        cancel: "Bekor",
+        add: "Qo'shish",
+        ready: "Tayyor",
       };
       return texts[type] || type;
     }
-    
+
     return {
-      edit: 'Tahrirlash',
-      save: 'Saqlash', 
-      cancel: 'Bekor Qilish',
-      add: 'Yangi mahsulot qo\'shish',
-      ready: 'Tayyor'
+      edit: "Tahrirlash",
+      save: "Saqlash",
+      cancel: "Bekor Qilish",
+      add: "Yangi mahsulot qo'shish",
+      ready: "Tayyor",
     }[type];
   };
 
-  // 🎯 Status konfiguratsiyasi
   const getStatusConfig = (status) => {
     const configs = {
-      new: { 
-        icon: <MdAccessTime />, 
-        text: 'Yangi', 
-        bgColor: 'statusNew'
+      new: {
+        icon: <MdAccessTime />,
+        text: "Yangi",
+        bgColor: "statusNew",
       },
-      delivered: { 
-        icon: <MdCheckCircle />, 
-        text: 'Yetkazilgan', 
-        bgColor: 'statusDelivered'
+      delivered: {
+        icon: <MdCheckCircle />,
+        text: "Yetkazilgan",
+        bgColor: "statusDelivered",
       },
-      cancelled: { 
-        icon: <MdCancel />, 
-        text: "Ko'rib chiqilgan", 
-        bgColor: 'statusCancelled'
-      }
+      accepted: {
+        icon: <MdCancel />,
+        text: "Qabul qilingan",
+        bgColor: "statusCancelled",
+      },
     };
     return configs[status] || configs.new;
   };
 
-  // 🎯 Sana formati
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('uz-UZ', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return new Date(dateString).toLocaleDateString("uz-UZ", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
-  // 🎯 Jami mahsulotlar soni
   const getTotalItems = (products) => {
     return products.reduce((total, product) => total + product.quantity, 0);
   };
 
-  // 🎯 Tahrirlashni boshlash
+  // ========== ASOSIY HANDLER FUNKSIYALARI ==========
+
+  /**
+   * ✏️ Tahrirlash rejimini yoqadi
+   */
   const handleStartEdit = () => {
     setIsEditing(true);
   };
 
-  // 🎯 Tahrirlashni yakunlash
-  const handleFinishEdit = () => {
+  /**
+   * ✅ Tahrirlash rejimini yopadi va barcha o'zgarishlarni bekor qiladi
+   */
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditingProduct(null);
+    setNewProduct(null);
+    // Mahsulotlarni asl holatiga qaytaramiz
+    setLocalProducts([...order.products]);
+  };
+
+  /**
+   * 💾 Barcha o'zgarishlarni saqlaydi va backendga yuboradi
+   */
+  const handleSaveAllChanges = () => {
+    // Backend formatiga moslashtiramiz
+    const productsForBackend = localProducts.map(product => ({
+      productId: product.productId,
+      quantity: product.quantity
+    }));
+
+    // Parent komponentga yangilangan mahsulotlar ro'yxatini yuboramiz
+    onUpdateProduct(order._id, { products: productsForBackend });
     setIsEditing(false);
     setEditingProduct(null);
     setNewProduct(null);
   };
 
-  // 🎯 Mahsulotni tahrirlashni boshlash
+  /**
+   * 🛠️ Mahsulotni tahrirlash uchun tanlaydi
+   */
   const handleEditProduct = (product) => {
     setEditingProduct({ ...product });
     setNewProduct(null);
   };
 
-  // 🎯 Mahsulotni yangilash
+  /**
+   * 💾 Bitta mahsulotni yangilaydi (faqat local state da)
+   */
   const handleUpdateProduct = () => {
     if (editingProduct) {
-      onUpdateProduct(order._id, editingProduct);
+      // Local statedagi mahsulotni yangilaymiz
+      const updatedProducts = localProducts.map(product =>
+        product._id === editingProduct._id ? editingProduct : product
+      );
+      
+      setLocalProducts(updatedProducts);
       setEditingProduct(null);
     }
   };
 
-  // 🎯 Mahsulotni o'chirish
+  /**
+   * 🗑️ Mahsulotni o'chiradi (faqat local state dan)
+   */
   const handleDeleteProduct = (productId) => {
-    onDeleteProduct(order._id, productId);
+    // Local statedan mahsulotni o'chiramiz
+    const updatedProducts = localProducts.filter(product => product._id !== productId);
+    setLocalProducts(updatedProducts);
   };
 
-  // 🎯 Yangi mahsulot qo'shish
+  /**
+   * ➕ Yangi mahsulot qo'shish rejimini yoqadi
+   */
   const handleAddProduct = () => {
     const product = {
-      _id: Date.now().toString(),
+      _id: `temp-${Date.now()}`, // Vaqtincha ID
       productId: "",
       quantity: 1,
       productName: "",
-      unit: ""
+      unit: "",
     };
     setNewProduct(product);
     setEditingProduct(null);
   };
 
-  // 🎯 Yangi mahsulotni saqlash
+  /**
+   * 💾 Yangi mahsulotni qo'shadi (faqat local state ga)
+   */
   const handleSaveNewProduct = () => {
     if (newProduct && newProduct.productId) {
-      const selectedProduct = mockProducts.find(p => p._id === newProduct.productId);
+      const selectedProduct = availableProducts.find(
+        (p) => p._id === newProduct.productId
+      );
+      
+      // To'liq ma'lumotli yangi mahsulot yaratamiz
       const productToSave = {
         ...newProduct,
-        productName: selectedProduct.name,
-        unit: selectedProduct.unit
+        productName: selectedProduct?.name || "Noma'lum mahsulot",
+        unit: selectedProduct?.unit || "dona",
       };
-      onAddProduct(order._id, productToSave);
+      
+      // Local state ga yangi mahsulotni qo'shamiz
+      const updatedProducts = [...localProducts, productToSave];
+      setLocalProducts(updatedProducts);
       setNewProduct(null);
     }
   };
 
-  // 🎯 Mahsulot o'zgarishi
-  const handleProductChange = (field, value, product) => {
-    if (field === 'productId') {
-      const selectedProduct = mockProducts.find(p => p._id === value);
-      if (product === 'new') {
+  /**
+   * 🔄 Mahsulot maydonlarining o'zgarishini boshqaradi
+   */
+  const handleProductChange = (field, value, productType) => {
+    if (field === "productId") {
+      const selectedProduct = availableProducts.find((p) => p._id === value);
+
+      if (productType === "new") {
         setNewProduct({
           ...newProduct,
           productId: value,
           productName: selectedProduct?.name || "",
-          unit: selectedProduct?.unit || ""
+          unit: selectedProduct?.unit || "",
         });
       } else {
         setEditingProduct({
           ...editingProduct,
           productId: value,
           productName: selectedProduct?.name || "",
-          unit: selectedProduct?.unit || ""
+          unit: selectedProduct?.unit || "",
         });
       }
     } else {
-      if (product === 'new') {
+      if (productType === "new") {
         setNewProduct({
           ...newProduct,
-          [field]: value
+          [field]: value,
         });
       } else {
         setEditingProduct({
           ...editingProduct,
-          [field]: value
+          [field]: value,
         });
       }
     }
   };
 
-  // 🎯 Buyurtmani bekor qilish
+  /**
+   * ❌ Butun buyurtmani bekor qilish
+   */
   const handleCancelOrder = () => {
     if (window.confirm("Haqiqatan ham bu buyurtmani bekor qilmoqchimisiz?")) {
       onCancelOrder(order._id);
     }
   };
 
-  // 📱 Mobile uchun TextField sozlamalari - MUHIM: Kenglik chegaralari
-  const getTextFieldProps = () => ({
-    size: "small",
-    ...(isMobile && {
-      sx: {
-        '& .MuiInputBase-root': {
-          fontSize: '0.75rem',
-          padding: '4px',
-          maxWidth: '100px'
-        }
-      }
-    })
-  });
-
-  // 📱 Mobile uchun Select sozlamalari - MUHIM: Menyu chegaralari
-  const getSelectProps = () => ({
-    ...(isMobile && {
-      MenuProps: {
-        PaperProps: {
-          sx: {
-            maxHeight: 200,
-            maxWidth: '280px'
-          }
-        }
-      }
-    })
-  });
-
+  // ========== RENDER QISMI ==========
   const statusConfig = getStatusConfig(order.status);
 
   return (
-    <div className={`${styles.orderCard} ${isEditing ? styles.editingMode : ''}`}>
+    <div className={`${styles.orderCard} ${isEditing ? styles.editingMode : ""}`}>
       <div className={styles.cardContent}>
+        
         {/* 📝 Sarlavha qismi */}
         <div className={styles.orderHeader}>
           <div className={styles.orderInfo}>
             <h3 className={styles.orderNumber}>
               Buyurtma #{order._id.slice(-6).toUpperCase()}
             </h3>
-            <p className={styles.orderDate}>
-              {formatDate(order.createdAt)}
-            </p>
+            <p className={styles.orderDate}>{formatDate(order.createdAt)}</p>
           </div>
           <div className={styles.orderActions}>
             <div className={`${styles.statusChip} ${styles[statusConfig.bgColor]}`}>
               {statusConfig.icon}
               <span>{statusConfig.text}</span>
             </div>
-            
+
             {/* 🔧 Tahrirlash tugmalari */}
-            {order.status === 'new' && (
+            {order.status === "new" && (
               <div className={styles.editActions}>
                 {!isEditing ? (
-                  <Button 
-                    variant="outlined" 
+                  // Tahrirlashni boshlash tugmasi
+                  <Button
+                    variant="outlined"
                     size="small"
                     startIcon={<MdEdit />}
                     onClick={handleStartEdit}
                     className={styles.editButton}
+                    disabled={isUpdating || isCanceling} // 🎯 Yangi: Faqat update/cancel jarayonida disable
                   >
-                    {getButtonText('edit')}
+                    {getButtonText("edit")}
                   </Button>
                 ) : (
-                  <Button 
-                    variant="contained" 
-                    size="small"
-                    startIcon={<MdSave />}
-                    onClick={handleFinishEdit}
-                    className={styles.saveButton}
-                  >
-                    {getButtonText('ready')}
-                  </Button>
+                  // Saqlash va bekor qilish tugmalari
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <Button
+                      variant="contained"
+                      size="small"
+                      startIcon={isUpdating ? <CircularProgress size={16} /> : <MdSave />}
+                      onClick={handleSaveAllChanges}
+                      className={styles.saveButton}
+                      disabled={isUpdating || isCanceling} // 🎯 Yangi: Faqat update/cancel jarayonida disable
+                    >
+                      {isUpdating ? "Saqlanmoqda..." : getButtonText("save")}
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      startIcon={<MdClose />}
+                      onClick={handleCancelEdit}
+                      className={styles.cancelButton}
+                      disabled={isUpdating || isCanceling} // 🎯 Yangi: Faqat update/cancel jarayonida disable
+                    >
+                      {getButtonText("cancel")}
+                    </Button>
+                  </div>
                 )}
-                
-                {isEditing && (
-                  <Button 
-                    variant="outlined" 
+
+                {/* Buyurtmani butunlay bekor qilish tugmasi */}
+                {!isEditing && (
+                  <Button
+                    variant="outlined"
                     size="small"
-                    startIcon={<MdDelete />}
+                    startIcon={isCanceling ? <CircularProgress size={16} /> : <MdDelete />}
                     onClick={handleCancelOrder}
                     className={styles.cancelOrderButton}
+                    disabled={isUpdating || isCanceling} // 🎯 Yangi: Faqat update/cancel jarayonida disable
                   >
-                    {getButtonText('cancel')}
+                    {isCanceling ? "Bekor qilinmoqda..." : getButtonText("cancel")}
                   </Button>
                 )}
               </div>
@@ -290,142 +357,123 @@ const OrderCard = ({
           </div>
         </div>
 
-        {/* 📊 Mahsulotlar jadvali - MUHIM: Kenglik chegaralari */}
+        {/* 📊 Mahsulotlar jadvali */}
         <div className={styles.tableContainer}>
           <table className={styles.table}>
             <thead>
               <tr>
                 <th className={styles.tableHeader}>Mahsulot</th>
-                <th className={styles.tableHeader} style={{textAlign: 'right'}}>Miqdor</th>
-                <th className={styles.tableHeader} style={{textAlign: 'right'}}>Birlik</th>
+                <th className={styles.tableHeader} style={{ textAlign: "right" }}>
+                  Miqdor
+                </th>
+                <th className={styles.tableHeader} style={{ textAlign: "right" }}>
+                  Birlik
+                </th>
                 {isEditing && <th className={styles.tableHeader}>Harakatlar</th>}
               </tr>
             </thead>
             <tbody>
-              {/* 📋 Mavjud mahsulotlar */}
-              {order.products.map((product) => (
+              {/* 📋 Mavjud mahsulotlar (local statedan o'qiymiz) */}
+              {localProducts.map((product) => (
                 <tr key={product._id} className={styles.tableRow}>
                   <td className={styles.tableCell}>
                     {isEditing && editingProduct?._id === product._id ? (
+                      // Tahrirlash rejimi: mahsulot tanlash
                       <TextField
-                        className={styles.productSelect}
                         select
                         value={editingProduct.productId}
-                        onChange={(e) => handleProductChange('productId', e.target.value, 'edit')}
+                        onChange={(e) =>
+                          handleProductChange("productId", e.target.value, "edit")
+                        }
                         size="small"
-                        // MUHIM: fullWidth o'rniga aniq kenglik
-                        sx={{ 
-                          width: '100%',
-                          maxWidth: '120px',
-                          minWidth: '80px',
-                          '& .MuiInputBase-root': {
-                            fontSize: '0.8rem',
-                            maxWidth: '100%'
-                          }
+                        sx={{
+                          width: "100%",
+                          maxWidth: "120px",
+                          minWidth: "80px",
                         }}
-                        SelectProps={{
-                          sx: {
-                            color: 'var(--text)', 
-                            fontSize: '0.8rem',
-                            maxWidth: '100%'
-                          },
-                        }}
+                        disabled={isUpdating || isCanceling} // 🎯 Yangi: Faqat update/cancel jarayonida disable
                       >
                         <MenuItem value="">Tanlang</MenuItem>
-                        {mockProducts.map((prod) => (
-                          <MenuItem 
-                            key={prod._id} 
-                            value={prod._id}
-                            sx={{
-                              fontSize: '0.8rem',
-                              maxWidth: '100%',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis'
-                            }}
-                          >
+                        {availableProducts.map((prod) => (
+                          <MenuItem key={prod._id} value={prod._id}>
                             {prod.name}
                           </MenuItem>
                         ))}
                       </TextField>
                     ) : (
+                      // Oddiy ko'rinish
                       <span className={styles.productName}>
                         {product.productName}
                       </span>
                     )}
                   </td>
-                  
-                  <td className={styles.tableCell} style={{textAlign: 'right'}}>
+
+                  <td className={styles.tableCell} style={{ textAlign: "right" }}>
                     {isEditing && editingProduct?._id === product._id ? (
+                      // Tahrirlash rejimi: miqdor
                       <TextField
-                        className={styles.quantityInput}
                         type="number"
                         value={editingProduct.quantity}
-                        onChange={(e) => handleProductChange('quantity', parseInt(e.target.value) || 1, 'edit')}
+                        onChange={(e) =>
+                          handleProductChange("quantity", parseInt(e.target.value) || 1, "edit")
+                        }
                         size="small"
-                        // MUHIM: Aniq kenglik berish
-                        sx={{ 
-                          width: '80px',
-                          maxWidth: '80px',
-                          '& .MuiInputBase-root': {
-                            fontSize: '0.8rem'
-                          }
-                        }}
-                        inputProps={{ 
-                          min: 1,
-                          style: { 
-                            textAlign: 'right',
-                            padding: '6px 8px'
-                          }
-                        }}
+                        sx={{ width: "80px", maxWidth: "80px" }}
+                        inputProps={{ min: 1 }}
+                        disabled={isUpdating || isCanceling} // 🎯 Yangi: Faqat update/cancel jarayonida disable
                       />
                     ) : (
+                      // Oddiy ko'rinish
                       <span className={styles.productQuantity}>
                         {product.quantity}
                       </span>
                     )}
                   </td>
-                  
-                  <td className={styles.tableCell} style={{textAlign: 'right'}}>
-                    <span className={styles.productUnit}>
-                      {product.unit}
-                    </span>
+
+                  <td className={styles.tableCell} style={{ textAlign: "right" }}>
+                    <span className={styles.productUnit}>{product.unit}</span>
                   </td>
-                  
-                  {/* 🔧 Harakatlar ustuni */}
+
+                  {/* 🔧 Harakatlar ustuni (faqat tahrirlash rejimida) */}
                   {isEditing && (
                     <td className={styles.tableCell}>
                       <div className={styles.productActions}>
                         {editingProduct?._id === product._id ? (
+                          // Tahrirlash rejimi: saqlash va bekor qilish
                           <>
-                            <Button 
-                              size="small" 
+                            <Button
+                              size="small"
                               onClick={handleUpdateProduct}
                               className={styles.saveBtn}
-                              disabled={!editingProduct.productId}
+                              disabled={!editingProduct.productId || isUpdating || isCanceling}
                             >
-                              <MdSave />
+                              {isUpdating ? <CircularProgress size={16} /> : <MdSave />}
                             </Button>
-                            <Button 
-                              size="small" 
+                            <Button
+                              size="small"
                               onClick={() => setEditingProduct(null)}
                               className={styles.cancelBtn}
+                              disabled={isUpdating || isCanceling}
                             >
                               <MdClose />
                             </Button>
                           </>
                         ) : (
+                          // Oddiy rejim: tahrirlash va o'chirish
                           <>
-                            <button 
+                            <button
                               onClick={() => handleEditProduct(product)}
                               className={styles.editIcon}
                               title="Tahrirlash"
+                              disabled={isUpdating || isCanceling}
                             >
                               <MdEdit />
                             </button>
-                            <button 
+                            <button
                               onClick={() => handleDeleteProduct(product._id)}
                               className={styles.deleteIcon}
                               title="O'chirish"
+                              disabled={isUpdating || isCanceling}
                             >
                               <MdDelete />
                             </button>
@@ -436,88 +484,67 @@ const OrderCard = ({
                   )}
                 </tr>
               ))}
-              
+
               {/* ➕ Yangi mahsulot qo'shish qatori */}
               {isEditing && newProduct && (
                 <tr className={styles.newProductRow}>
                   <td className={styles.tableCell}>
                     <TextField
-                      className={styles.productSelect}
                       select
                       value={newProduct.productId}
-                      onChange={(e) => handleProductChange('productId', e.target.value, 'new')}
+                      onChange={(e) =>
+                        handleProductChange("productId", e.target.value, "new")
+                      }
                       size="small"
-                      sx={{ 
-                        width: '100%',
-                        maxWidth: '120px',
-                        minWidth: '80px',
-                        '& .MuiInputBase-root': {
-                          fontSize: '0.8rem'
-                        }
+                      sx={{
+                        width: "100%",
+                        maxWidth: "120px",
+                        minWidth: "80px",
                       }}
-                        SelectProps={{
-                          sx: {
-                            color: 'var(--text)', 
-                            fontSize: '0.8rem',
-                            maxWidth: '100%',
-                            backgroundColor:'var(--background)'
-                          },
-                        }}
-                      
-                      placeholder="Mahsulot tanlang"
+                      disabled={isUpdating || isCanceling}
                     >
                       <MenuItem value="">Tanlang</MenuItem>
-                      {mockProducts.map((prod) => (
-                        <MenuItem 
-                          key={prod._id} 
-                          value={prod._id}
-                          sx={{ fontSize: '0.8rem' }}
-                        >
+                      {availableProducts.map((prod) => (
+                        <MenuItem key={prod._id} value={prod._id}>
                           {prod.name}
                         </MenuItem>
                       ))}
                     </TextField>
                   </td>
-                  
-                  <td className={styles.tableCell} style={{textAlign: 'right'}}>
+
+                  <td className={styles.tableCell} style={{ textAlign: "right" }}>
                     <TextField
-                      className={styles.quantityInput}
                       type="number"
                       value={newProduct.quantity}
-                      onChange={(e) => handleProductChange('quantity', parseInt(e.target.value) || 1, 'new')}
+                      onChange={(e) =>
+                        handleProductChange("quantity", parseInt(e.target.value) || 1, "new")
+                      }
                       size="small"
-                      sx={{ 
-                        width: '80px',
-                        maxWidth: '80px',
-                        '& .MuiInputBase-root': {
-                          fontSize: '0.8rem'
-                        }
-                      }}
-                      inputProps={{ 
-                        min: 1,
-                        style: { textAlign: 'right' }
-                      }}
+                      sx={{ width: "80px", maxWidth: "80px" }}
+                      inputProps={{ min: 1 }}
+                      disabled={isUpdating || isCanceling}
                     />
                   </td>
-                  
-                  <td className={styles.tableCell} style={{textAlign: 'right'}}>
+
+                  <td className={styles.tableCell} style={{ textAlign: "right" }}>
                     <span>{newProduct.unit || "-"}</span>
                   </td>
-                  
+
                   <td className={styles.tableCell}>
                     <div className={styles.productActions}>
-                      <Button 
-                        size="small" 
+                      <Button
+                        size="small"
                         onClick={handleSaveNewProduct}
                         className={styles.saveBtn}
-                        disabled={!newProduct.productId}
+                        disabled={!newProduct.productId || isUpdating || isCanceling}
                       >
-                        <MdSave />
+                        {isUpdating ? <CircularProgress size={16} /> : <MdSave />}
                       </Button>
-                      <Button 
-                        size="small" 
+                      <Button
+                        size="small"
                         onClick={() => setNewProduct(null)}
                         className={styles.cancelBtn}
+                        disabled={isUpdating || isCanceling}
                       >
                         <MdClose />
                       </Button>
@@ -527,18 +554,19 @@ const OrderCard = ({
               )}
             </tbody>
           </table>
-          
+
           {/* ➕ Yangi mahsulot qo'shish tugmasi */}
           {isEditing && !newProduct && (
             <div className={styles.addProductSection}>
-              <Button 
-                variant="outlined" 
+              <Button
+                variant="outlined"
                 onClick={handleAddProduct}
                 fullWidth
                 startIcon={<MdAdd />}
                 className={styles.addProductButton}
+                disabled={isUpdating || isCanceling}
               >
-                {getButtonText('add')}
+                {getButtonText("add")}
               </Button>
             </div>
           )}
@@ -547,7 +575,7 @@ const OrderCard = ({
         {/* 📊 Pastki qism */}
         <div className={styles.orderFooter}>
           <p className={styles.totalItems}>
-            Jami {getTotalItems(order.products)} ta mahsulot
+            Jami {getTotalItems(localProducts)} ta mahsulot
           </p>
           <div className={`${styles.statusBadge} ${styles[statusConfig.bgColor]}`}>
             {statusConfig.icon}

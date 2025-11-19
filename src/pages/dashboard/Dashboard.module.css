@@ -12,6 +12,25 @@ background-color: var(--secondary) !important;
 z-index: 1000;
 
 }
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 50vh;
+  text-align: center;
+  color: var(--text-light);
+}
+
+.error h3 {
+  color: var(--error);
+  margin-bottom: 1rem;
+}
+
+.retryButton {
+  margin-top: 1rem;
+  background: var(--primary) !important;
+}
   
   .header {
     margin-bottom: 1.5rem;
@@ -119,3 +138,77 @@ z-index: 1000;
       padding: 0 0.5rem;
     }
   }
+
+  /* Dashboard.module.css da qo'shimcha stylelar */
+
+/* ✅ Buyurtma muvaffaqiyatli xabari */
+.successMessage {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--success);
+  color: white;
+  padding: 16px 20px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  z-index: 1000;
+  animation: slideDown 0.3s ease-out;
+  max-width: 400px;
+  width: 90%;
+}
+
+.successContent {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.successIcon {
+  font-size: 1.5rem;
+  margin-top: 2px;
+}
+
+.successContent h4 {
+  margin: 0 0 4px 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.successContent p {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateX(-50%) translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .successMessage {
+    top: 10px;
+    width: 95%;
+    padding: 12px 16px;
+  }
+  
+  .successContent {
+    gap: 8px;
+  }
+  
+  .successContent h4 {
+    font-size: 0.9rem;
+  }
+  
+  .successContent p {
+    font-size: 0.8rem;
+  }
+}
