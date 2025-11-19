@@ -160,121 +160,108 @@ function MyOrders() {
     fetchOrders();
   }, []);
 
-  // 🎯 Buyurtmani yangilash funksiyasi - YANGILANDI (loader va toast qo'shildi)
-  const handleUpdateProduct = async (orderId, updatedData) => {
-    try {
-      setUpdatingOrderId(orderId); // 🎯 Loaderni yoqamiz
-      
-      console.log('Yangilanish so\'rovi:', { orderId, updatedData });
-      
-      // Backendga PATCH so'rovi yuborish
-      const response = await fetch(`http://localhost:2277/orders/${orderId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          products: updatedData.products
-        })
-      });
+  // 🎯 Buyurtmani yangilash funksiyasi - YANGILANDI 
+// 🎯 Buyurtmani yangilash funksiyasi
+const handleUpdateProduct = async (orderId, updatedData) => {
+  try {
+    console.log('Yangilanish so\'rovi:', { orderId, updatedData });
+    
+    const response = await fetch(`http://localhost:2277/orders/${orderId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        products: updatedData.products
+      })
+    });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Buyurtmani yangilashda xatolik: ${response.status} - ${errorText}`);
-      }
-
-      const updatedOrder = await response.json();
-
-      // Mahsulot ma'lumotlarini to'ldirish
-      const productsWithDetails = await Promise.all(
-        updatedOrder.products.map(async (product) => {
-          try {
-            const productDetails = await fetchProductDetails(product.productId);
-            return {
-              ...product,
-              productName: productDetails.name,
-              unit: productDetails.unit
-            };
-          } catch (error) {
-            console.error(`Mahsulot ${product.productId} uchun xato:`, error);
-            return {
-              ...product,
-              productName: "Noma'lum mahsulot",
-              unit: "dona"
-            };
-          }
-        })
-      );
-
-      // Local state ni yangilash
-      const updatedOrders = orders.map(order =>
-        order._id === orderId
-          ? { ...updatedOrder, products: productsWithDetails }
-          : order
-      );
-      setOrders(updatedOrders);
-
-      // 🎯 Muvaffaqiyatli toast ko'rsatamiz
-      setSnackbar({
-        open: true,
-        message: 'Buyurtma muvaffaqiyatli yangilandi!',
-        severity: 'success'
-      });
-
-    } catch (error) {
-      console.error('Buyurtmani yangilashda xatolik:', error);
-      
-      // 🎯 Xatolik toast ko'rsatamiz
-      setSnackbar({
-        open: true,
-        message: 'Buyurtmani yangilashda xatolik yuz berdi',
-        severity: 'error'
-      });
-    } finally {
-      setUpdatingOrderId(null); // 🎯 Loaderni o'chiramiz
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Buyurtmani yangilashda xatolik: ${response.status} - ${errorText}`);
     }
-  };
 
-  // 🎯 Buyurtmani bekor qilish funksiyasi - YANGILANDI (loader va toast qo'shildi)
-  const handleCancelOrder = async (orderId) => {
-    try {
-      setUpdatingOrderId(orderId); // 🎯 Loaderni yoqamiz
-      
-      // Backendga DELETE so'rovi yuborish
-      const response = await fetch(`http://localhost:2277/orders/${orderId}`, {
-        method: "DELETE",
-        credentials: "include"  
-      });
+    const updatedOrder = await response.json();
 
-      if (!response.ok) {
-        throw new Error('Buyurtmani bekor qilishda xatolik');
-      }
+    // Mahsulot ma'lumotlarini to'ldirish
+    const productsWithDetails = await Promise.all(
+      updatedOrder.products.map(async (product) => {
+        try {
+          const productDetails = await fetchProductDetails(product.productId);
+          return {
+            ...product,
+            productName: productDetails.name,
+            unit: productDetails.unit
+          };
+        } catch (error) {
+          console.error(`Mahsulot ${product.productId} uchun xato:`, error);
+          return {
+            ...product,
+            productName: "Noma'lum mahsulot",
+            unit: "dona"
+          };
+        }
+      })
+    );
 
-      // Local state dan o'chirish
-      const updatedOrders = orders.filter(order => order._id !== orderId);
-      setOrders(updatedOrders);
+    // Local state ni yangilash
+    const updatedOrders = orders.map(order =>
+      order._id === orderId
+        ? { ...updatedOrder, products: productsWithDetails }
+        : order
+    );
+    setOrders(updatedOrders);
 
-      // 🎯 Muvaffaqiyatli toast ko'rsatamiz
-      setSnackbar({
-        open: true,
-        message: 'Buyurtma muvaffaqiyatli bekor qilindi!',
-        severity: 'success'
-      });
+    setSnackbar({
+      open: true,
+      message: 'Buyurtma muvaffaqiyatli yangilandi!',
+      severity: 'success'
+    });
 
-    } catch (error) {
-      console.error('Buyurtmani bekor qilishda xatolik:', error);
-      
-      // 🎯 Xatolik toast ko'rsatamiz
-      setSnackbar({
-        open: true,
-        message: 'Buyurtmani bekor qilishda xatolik yuz berdi',
-        severity: 'error'
-      });
-    } finally {
-      setUpdatingOrderId(null); // 🎯 Loaderni o'chiramiz
+  } catch (error) {
+    console.error('Buyurtmani yangilashda xatolik:', error);
+    setSnackbar({
+      open: true,
+      message: 'Buyurtmani yangilashda xatolik yuz berdi',
+      severity: 'error'
+    });
+    throw error; // 🎯 OrderCard ga xatolikni uzatish uchun
+  }
+};
+
+// 🎯 Buyurtmani bekor qilish funksiyasi
+const handleCancelOrder = async (orderId) => {
+  try {
+    const response = await fetch(`http://localhost:2277/orders/${orderId}`, {
+      method: "DELETE",
+      credentials: "include"  
+    });
+
+    if (!response.ok) {
+      throw new Error('Buyurtmani bekor qilishda xatolik');
     }
-  };
+
+    const updatedOrders = orders.filter(order => order._id !== orderId);
+    setOrders(updatedOrders);
+
+    setSnackbar({
+      open: true,
+      message: 'Buyurtma muvaffaqiyatli bekor qilindi!',
+      severity: 'success'
+    });
+
+  } catch (error) {
+    console.error('Buyurtmani bekor qilishda xatolik:', error);
+    setSnackbar({
+      open: true,
+      message: 'Buyurtmani bekor qilishda xatolik yuz berdi',
+      severity: 'error'
+    });
+    throw error; // 🎯 OrderCard ga xatolikni uzatish uchun
+  }
+};
+
 
   // 🎯 Yuklanayotgan holat
   if (loading) {
@@ -343,11 +330,10 @@ function MyOrders() {
           <div className={styles.ordersGrid}>
             {orders.map((order) => (
               <OrderCard 
-                key={order._id}
-                order={order} 
-                onUpdateProduct={handleUpdateProduct}
-                onCancelOrder={handleCancelOrder}
-                isUpdating={updatingOrderId === order._id} // 🎯 Yangi: Loader holatini uzatamiz
+              key={order._id}
+  order={order} 
+  onUpdateProduct={handleUpdateProduct}
+  onCancelOrder={handleCancelOrder}
               />
             ))}
           </div>

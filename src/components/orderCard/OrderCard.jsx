@@ -17,8 +17,6 @@ const OrderCard = ({
   order,
   onUpdateProduct,
   onCancelOrder,
-  isUpdating, // 🎯 Yangi: Update jarayonidagi loader
-  isCanceling, // 🎯 Yangi: Cancel jarayonidagi loader
 }) => {
   // ========== STATE LAR ==========
   const [isEditing, setIsEditing] = useState(false);
@@ -26,9 +24,11 @@ const OrderCard = ({
   const [newProduct, setNewProduct] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
   const [availableProducts, setAvailableProducts] = useState([]);
-  
-  // 🔄 Mahsulotlarning vaqtincha nusxasi (local o'zgarishlar uchun)
   const [localProducts, setLocalProducts] = useState([...order.products]);
+  
+  // 🎯 YANGI: Faqat shu OrderCard uchun loader statelari
+  const [isSaving, setIsSaving] = useState(false); // Saqlash jarayoni
+  const [isCanceling, setIsCanceling] = useState(false); // Bekor qilish jarayoni
 
   // ========== USE EFFECT HOOKS ==========
   useEffect(() => {
@@ -62,7 +62,6 @@ const OrderCard = ({
 
     if (isEditing) {
       fetchAvailableProducts();
-      // Tahrirlash boshlanganda localProducts ni yangilaymiz
       setLocalProducts([...order.products]);
     }
   }, [isEditing, order.products]);
@@ -140,25 +139,34 @@ const OrderCard = ({
     setIsEditing(false);
     setEditingProduct(null);
     setNewProduct(null);
-    // Mahsulotlarni asl holatiga qaytaramiz
     setLocalProducts([...order.products]);
   };
 
   /**
    * 💾 Barcha o'zgarishlarni saqlaydi va backendga yuboradi
    */
-  const handleSaveAllChanges = () => {
-    // Backend formatiga moslashtiramiz
-    const productsForBackend = localProducts.map(product => ({
-      productId: product.productId,
-      quantity: product.quantity
-    }));
+  const handleSaveAllChanges = async () => {
+    try {
+      setIsSaving(true); // 🎯 Faqat Saqlash tugmasi uchun loader
+      
+      // Backend formatiga moslashtiramiz
+      const productsForBackend = localProducts.map(product => ({
+        productId: product.productId,
+        quantity: product.quantity
+      }));
 
-    // Parent komponentga yangilangan mahsulotlar ro'yxatini yuboramiz
-    onUpdateProduct(order._id, { products: productsForBackend });
-    setIsEditing(false);
-    setEditingProduct(null);
-    setNewProduct(null);
+      // Parent komponentga yangilangan mahsulotlar ro'yxatini yuboramiz
+      await onUpdateProduct(order._id, { products: productsForBackend });
+      
+      setIsEditing(false);
+      setEditingProduct(null);
+      setNewProduct(null);
+      
+    } catch (error) {
+      console.error('Saqlashda xatolik:', error);
+    } finally {
+      setIsSaving(false); // 🎯 Loaderni o'chiramiz
+    }
   };
 
   /**
@@ -174,11 +182,9 @@ const OrderCard = ({
    */
   const handleUpdateProduct = () => {
     if (editingProduct) {
-      // Local statedagi mahsulotni yangilaymiz
       const updatedProducts = localProducts.map(product =>
         product._id === editingProduct._id ? editingProduct : product
       );
-      
       setLocalProducts(updatedProducts);
       setEditingProduct(null);
     }
@@ -188,7 +194,6 @@ const OrderCard = ({
    * 🗑️ Mahsulotni o'chiradi (faqat local state dan)
    */
   const handleDeleteProduct = (productId) => {
-    // Local statedan mahsulotni o'chiramiz
     const updatedProducts = localProducts.filter(product => product._id !== productId);
     setLocalProducts(updatedProducts);
   };
@@ -198,7 +203,7 @@ const OrderCard = ({
    */
   const handleAddProduct = () => {
     const product = {
-      _id: `temp-${Date.now()}`, // Vaqtincha ID
+      _id: `temp-${Date.now()}`,
       productId: "",
       quantity: 1,
       productName: "",
@@ -217,14 +222,12 @@ const OrderCard = ({
         (p) => p._id === newProduct.productId
       );
       
-      // To'liq ma'lumotli yangi mahsulot yaratamiz
       const productToSave = {
         ...newProduct,
         productName: selectedProduct?.name || "Noma'lum mahsulot",
         unit: selectedProduct?.unit || "dona",
       };
       
-      // Local state ga yangi mahsulotni qo'shamiz
       const updatedProducts = [...localProducts, productToSave];
       setLocalProducts(updatedProducts);
       setNewProduct(null);
@@ -271,9 +274,18 @@ const OrderCard = ({
   /**
    * ❌ Butun buyurtmani bekor qilish
    */
-  const handleCancelOrder = () => {
+  const handleCancelOrder = async () => {
     if (window.confirm("Haqiqatan ham bu buyurtmani bekor qilmoqchimisiz?")) {
-      onCancelOrder(order._id);
+      try {
+        setIsCanceling(true); // 🎯 Faqat Bekor qilish tugmasi uchun loader
+        
+        await onCancelOrder(order._id);
+        
+      } catch (error) {
+        console.error('Bekor qilishda xatolik:', error);
+      } finally {
+        setIsCanceling(false); // 🎯 Loaderni o'chiramiz
+      }
     }
   };
 
@@ -309,7 +321,7 @@ const OrderCard = ({
                     startIcon={<MdEdit />}
                     onClick={handleStartEdit}
                     className={styles.editButton}
-                    disabled={isUpdating || isCanceling} // 🎯 Yangi: Faqat update/cancel jarayonida disable
+                    disabled={isSaving || isCanceling} // 🎯 Faqat loader paytida disable
                   >
                     {getButtonText("edit")}
                   </Button>
@@ -319,12 +331,12 @@ const OrderCard = ({
                     <Button
                       variant="contained"
                       size="small"
-                      startIcon={isUpdating ? <CircularProgress size={16} /> : <MdSave />}
+                      startIcon={isSaving ? <CircularProgress size={16} /> : <MdSave />}
                       onClick={handleSaveAllChanges}
                       className={styles.saveButton}
-                      disabled={isUpdating || isCanceling} // 🎯 Yangi: Faqat update/cancel jarayonida disable
+                      disabled={isSaving || isCanceling} // 🎯 Faqat loader paytida disable
                     >
-                      {isUpdating ? "Saqlanmoqda..." : getButtonText("save")}
+                      {isSaving ? "Saqlanmoqda..." : getButtonText("save")}
                     </Button>
                     <Button
                       variant="outlined"
@@ -332,7 +344,7 @@ const OrderCard = ({
                       startIcon={<MdClose />}
                       onClick={handleCancelEdit}
                       className={styles.cancelButton}
-                      disabled={isUpdating || isCanceling} // 🎯 Yangi: Faqat update/cancel jarayonida disable
+                      disabled={isSaving || isCanceling} // 🎯 Faqat loader paytida disable
                     >
                       {getButtonText("cancel")}
                     </Button>
@@ -347,7 +359,7 @@ const OrderCard = ({
                     startIcon={isCanceling ? <CircularProgress size={16} /> : <MdDelete />}
                     onClick={handleCancelOrder}
                     className={styles.cancelOrderButton}
-                    disabled={isUpdating || isCanceling} // 🎯 Yangi: Faqat update/cancel jarayonida disable
+                    disabled={isSaving || isCanceling} // 🎯 Faqat loader paytida disable
                   >
                     {isCanceling ? "Bekor qilinmoqda..." : getButtonText("cancel")}
                   </Button>
@@ -378,7 +390,6 @@ const OrderCard = ({
                 <tr key={product._id} className={styles.tableRow}>
                   <td className={styles.tableCell}>
                     {isEditing && editingProduct?._id === product._id ? (
-                      // Tahrirlash rejimi: mahsulot tanlash
                       <TextField
                         select
                         value={editingProduct.productId}
@@ -391,7 +402,7 @@ const OrderCard = ({
                           maxWidth: "120px",
                           minWidth: "80px",
                         }}
-                        disabled={isUpdating || isCanceling} // 🎯 Yangi: Faqat update/cancel jarayonida disable
+                        disabled={isSaving || isCanceling} // 🎯 Faqat loader paytida disable
                       >
                         <MenuItem value="">Tanlang</MenuItem>
                         {availableProducts.map((prod) => (
@@ -401,7 +412,6 @@ const OrderCard = ({
                         ))}
                       </TextField>
                     ) : (
-                      // Oddiy ko'rinish
                       <span className={styles.productName}>
                         {product.productName}
                       </span>
@@ -410,7 +420,6 @@ const OrderCard = ({
 
                   <td className={styles.tableCell} style={{ textAlign: "right" }}>
                     {isEditing && editingProduct?._id === product._id ? (
-                      // Tahrirlash rejimi: miqdor
                       <TextField
                         type="number"
                         value={editingProduct.quantity}
@@ -420,10 +429,9 @@ const OrderCard = ({
                         size="small"
                         sx={{ width: "80px", maxWidth: "80px" }}
                         inputProps={{ min: 1 }}
-                        disabled={isUpdating || isCanceling} // 🎯 Yangi: Faqat update/cancel jarayonida disable
+                        disabled={isSaving || isCanceling} // 🎯 Faqat loader paytida disable
                       />
                     ) : (
-                      // Oddiy ko'rinish
                       <span className={styles.productQuantity}>
                         {product.quantity}
                       </span>
@@ -439,33 +447,31 @@ const OrderCard = ({
                     <td className={styles.tableCell}>
                       <div className={styles.productActions}>
                         {editingProduct?._id === product._id ? (
-                          // Tahrirlash rejimi: saqlash va bekor qilish
                           <>
                             <Button
                               size="small"
                               onClick={handleUpdateProduct}
                               className={styles.saveBtn}
-                              disabled={!editingProduct.productId || isUpdating || isCanceling}
+                              disabled={!editingProduct.productId || isSaving || isCanceling}
                             >
-                              {isUpdating ? <CircularProgress size={16} /> : <MdSave />}
+                              {isSaving ? <CircularProgress size={16} /> : <MdSave />}
                             </Button>
                             <Button
                               size="small"
                               onClick={() => setEditingProduct(null)}
                               className={styles.cancelBtn}
-                              disabled={isUpdating || isCanceling}
+                              disabled={isSaving || isCanceling}
                             >
                               <MdClose />
                             </Button>
                           </>
                         ) : (
-                          // Oddiy rejim: tahrirlash va o'chirish
                           <>
                             <button
                               onClick={() => handleEditProduct(product)}
                               className={styles.editIcon}
                               title="Tahrirlash"
-                              disabled={isUpdating || isCanceling}
+                              disabled={isSaving || isCanceling}
                             >
                               <MdEdit />
                             </button>
@@ -473,7 +479,7 @@ const OrderCard = ({
                               onClick={() => handleDeleteProduct(product._id)}
                               className={styles.deleteIcon}
                               title="O'chirish"
-                              disabled={isUpdating || isCanceling}
+                              disabled={isSaving || isCanceling}
                             >
                               <MdDelete />
                             </button>
@@ -501,7 +507,7 @@ const OrderCard = ({
                         maxWidth: "120px",
                         minWidth: "80px",
                       }}
-                      disabled={isUpdating || isCanceling}
+                      disabled={isSaving || isCanceling}
                     >
                       <MenuItem value="">Tanlang</MenuItem>
                       {availableProducts.map((prod) => (
@@ -522,7 +528,7 @@ const OrderCard = ({
                       size="small"
                       sx={{ width: "80px", maxWidth: "80px" }}
                       inputProps={{ min: 1 }}
-                      disabled={isUpdating || isCanceling}
+                      disabled={isSaving || isCanceling}
                     />
                   </td>
 
@@ -536,15 +542,15 @@ const OrderCard = ({
                         size="small"
                         onClick={handleSaveNewProduct}
                         className={styles.saveBtn}
-                        disabled={!newProduct.productId || isUpdating || isCanceling}
+                        disabled={!newProduct.productId || isSaving || isCanceling}
                       >
-                        {isUpdating ? <CircularProgress size={16} /> : <MdSave />}
+                        {isSaving ? <CircularProgress size={16} /> : <MdSave />}
                       </Button>
                       <Button
                         size="small"
                         onClick={() => setNewProduct(null)}
                         className={styles.cancelBtn}
-                        disabled={isUpdating || isCanceling}
+                        disabled={isSaving || isCanceling}
                       >
                         <MdClose />
                       </Button>
@@ -564,7 +570,7 @@ const OrderCard = ({
                 fullWidth
                 startIcon={<MdAdd />}
                 className={styles.addProductButton}
-                disabled={isUpdating || isCanceling}
+                disabled={isSaving || isCanceling}
               >
                 {getButtonText("add")}
               </Button>
