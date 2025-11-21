@@ -1,451 +1,448 @@
-/* Help.module.css */
-
 .helpContainer {
-    padding: 20px;
-    background-color: var(--background);
-    min-height: 100vh;
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: var(--surface);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow);
+}
+
+.chatHeader {
+  background-color: var(--primary);
+  color: white;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.chatInfo {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.avatar {
+  width: 50px;
+  height: 50px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.chatDetails h2 {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.chatDetails p {
+  margin: 0;
+  opacity: 0.8;
+  font-size: 0.9rem;
+}
+
+.refreshBtn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background-color 0.3s ease;
+}
+
+.refreshBtn:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.refreshBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.errorMessage {
+  background-color: var(--error);
+  color: white;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.loginButton {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid white;
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background-color 0.3s ease;
+}
+
+.loginButton:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.chatContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--background);
+}
+
+.messagesContainer {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--text-light);
+}
+
+.spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid var(--border);
+  border-top: 3px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.emptyChat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  text-align: center;
+  color: var(--text-light);
+}
+
+.emptyIcon {
+  font-size: 4rem;
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+.emptyChat h3 {
+  margin: 0 0 10px 0;
+  color: var(--text);
+}
+
+.emptyChat p {
+  margin: 0;
+  max-width: 300px;
+  line-height: 1.5;
+}
+
+.dateGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dateSeparator {
+  text-align: center;
+  margin: 20px 0;
+  position: relative;
+}
+
+.dateSeparator::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: var(--border);
+  z-index: 1;
+}
+
+.dateSeparator span {
+  background-color: var(--background);
+  padding: 0 15px;
+  color: var(--text-light);
+  font-size: 0.8rem;
+  position: relative;
+  z-index: 2;
+}
+
+.message {
+  display: flex;
+  margin-bottom: 5px;
+}
+
+.message.sent {
+  justify-content: flex-end;
+}
+
+.message.received {
+  justify-content: flex-start;
+}
+
+.messageContent {
+  max-width: 70%;
+  padding: 12px 16px;
+  border-radius: 18px;
+  position: relative;
+  animation: messageAppear 0.3s ease;
+}
+
+@keyframes messageAppear {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message.sent .messageContent {
+  background-color: var(--primary);
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.message.received .messageContent {
+  background-color: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-bottom-left-radius: 4px;
+}
+
+.messageText {
+  margin: 0;
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+
+.messageTime {
+  font-size: 0.7rem;
+  opacity: 0.7;
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.status {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.6rem;
+}
+
+.statusViewed {
+  color: #4fc3f7;
+  font-size: 0.6rem;
+}
+
+.templateSection {
+  padding: 20px;
+  border-top: 1px solid var(--border);
+  background-color: var(--surface);
+}
+
+.templateSection h4 {
+  margin: 0 0 15px 0;
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.templateGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.templateBtn {
+  background-color: var(--item);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 15px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.templateBtn:hover {
+  background-color: var(--secondary);
+  color: var(--surface);
+  transform: translateY(-1px);
+}
+
+.inputContainer {
+  padding: 20px;
+  background-color: var(--surface);
+  border-top: 1px solid var(--border);
+}
+
+.inputWrapper {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.textarea {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background-color: var(--item);
+  color: var(--text);
+  font-family: inherit;
+  font-size: 1rem;
+  resize: none;
+  max-height: 120px;
+  min-height: 20px;
+  line-height: 1.4;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(184, 80, 66, 0.1);
+}
+
+.textarea:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.sendButton {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.sendButton:hover:not(:disabled) {
+  background-color: var(--primary-dark);
+  transform: scale(1.05);
+}
+
+.sendButton:disabled {
+  background-color: var(--text-light);
+  cursor: not-allowed;
+  transform: none;
+}
+
+.sendingSpinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.inputHint {
+  font-size: 0.7rem;
+  color: var(--text-light);
+  text-align: center;
+  margin-top: 8px;
+}
+
+/* Scrollbar styling */
+.messagesContainer::-webkit-scrollbar {
+  width: 6px;
+}
+
+.messagesContainer::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.messagesContainer::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+.messagesContainer::-webkit-scrollbar-thumb:hover {
+  background: var(--text-light);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .helpContainer {
+    height: 100vh;
   }
   
-  .helpContent {
-    max-width: 1000px;
-    margin: 0 auto;
+  .chatHeader {
+    padding: 15px;
   }
   
-  /* 📝 Sarlavha Bo'limi */
-  .helpHeader {
-    text-align: center;
-    margin-bottom: 40px;
-    padding: 20px 0;
-  }
-  
-  .helpTitle {
-    color: var(--text);
-    font-weight: 700;
-    font-size: 2.5rem;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-  }
-  
-  .titleIcon {
-    font-size: 2.8rem;
-    color: var(--primary);
-  }
-  
-  .helpSubtitle {
-    color: var(--text-light);
+  .avatar {
+    width: 40px;
+    height: 40px;
     font-size: 1.2rem;
-    margin: 0;
-    max-width: 600px;
-    margin: 0 auto;
-    line-height: 1.6;
   }
   
-  /* 🔍 Qidiruv Bo'limi */
-  .searchSection {
-    margin-bottom: 40px;
+  .chatDetails h2 {
+    font-size: 1.1rem;
   }
   
-  .searchContainer {
-    position: relative;
-    margin-bottom: 12px;
+  .messagesContainer {
+    padding: 15px;
   }
   
-  .searchIcon {
-    position: absolute;
-    left: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 1.5rem;
-    color: var(--text-light);
-    z-index: 1;
+  .messageContent {
+    max-width: 85%;
   }
   
-  .searchInput :global(.MuiOutlinedInput-root) {
-    padding-left: 50px;
-    background: var(--surface);
-    border-radius: var(--radius);
+  .inputContainer {
+    padding: 15px;
   }
   
-  .searchInput :global(.MuiOutlinedInput-input) {
-    padding: 14px 0;
-    font-size: 1rem;
-  }
-  
-  .searchHint {
-    color: var(--text-light);
-    font-size: 0.9rem;
-    text-align: center;
-    margin: 0;
-    font-style: italic;
-  }
-  
-  /* 📑 Kategoriyalar */
-  .categoriesSection {
-    margin-bottom: 40px;
-  }
-  
-  .sectionTitle {
-    color: var(--text);
-    font-weight: 600;
-    font-size: 1.5rem;
-    margin-bottom: 20px;
-    text-align: center;
-  }
-  
-  .categoriesGrid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    justify-content: center;
-  }
-  
-  .categoryChip {
-    border-radius: 20px !important;
-    font-weight: 500 !important;
-    transition: all 0.3s ease !important;
-    border-color: var(--border) !important;
-    color: var(--text) !important;
-  }
-  
-  .categoryChipActive {
-    background: var(--primary) !important;
-    color: white !important;
-    border-color: var(--primary) !important;
-  }
-  
-  .categoryChip:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow);
-  }
-  
-  /* ❓ FAQ Bo'limi */
-  .faqSection {
-    margin-bottom: 50px;
-  }
-  
-  .accordionContainer {
-    display: flex;
+  .errorMessage {
     flex-direction: column;
-    gap: 8px;
-  }
-  
-  .categoryGroup {
-    margin-bottom: 30px;
-  }
-  
-  .categoryTitle {
-    color: var(--text);
-    font-weight: 600;
-    font-size: 1.3rem;
-    margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding-bottom: 8px;
-    border-bottom: 2px solid var(--primary);
-  }
-  
-  .accordion {
-    background: var(--surface) !important;
-    border: 1px solid var(--border) !important;
-    border-radius: var(--radius) !important;
-    margin-bottom: 8px !important;
-    box-shadow: var(--shadow) !important;
-    overflow: hidden;
-  }
-  
-  .accordion:before {
-    display: none;
-  }
-  
-  .accordionSummary {
-    padding: 16px 20px !important;
-    min-height: 60px !important;
-  }
-  
-  .accordionSummary :global(.MuiAccordionSummary-content) {
-    margin: 0 !important;
-  }
-  
-  .accordionSummary :global(.MuiAccordionSummary-expandIconWrapper) {
-    color: var(--primary);
-  }
-  
-  .accordionSummary:hover {
-    background: var(--item);
-  }
-  
-  .questionText {
-    color: var(--text);
-    font-weight: 500;
-    font-size: 1rem;
-    line-height: 1.4;
-  }
-  
-  .accordionDetails {
-    padding: 20px !important;
-    background: var(--item);
-    border-top: 1px solid var(--border);
-  }
-  
-  .answerText {
-    color: var(--text-light);
-    font-size: 0.95rem;
-    line-height: 1.6;
-    white-space: pre-line;
-  }
-  
-  /* 📞 Bog'lanish Bo'limi */
-  .contactSection {
-    margin-bottom: 50px;
-  }
-  
-  .contactSubtitle {
-    color: var(--text-light);
+    gap: 10px;
     text-align: center;
-    margin-bottom: 30px;
-    font-size: 1.1rem;
   }
-  
-  .contactGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 24px;
-  }
-  
-  .contactCard {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 30px 24px;
-    text-align: center;
-    box-shadow: var(--shadow);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  .contactCard:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-  }
-  
-  .contactIcon {
-    font-size: 3rem;
-    color: var(--primary);
-    margin-bottom: 16px;
-  }
-  
-  .contactTitle {
-    color: var(--text);
-    font-weight: 600;
-    font-size: 1.2rem;
-    margin-bottom: 16px;
-  }
-  
-  .contactDetails {
-    margin-bottom: 12px;
-  }
-  
-  .contactDetail {
-    color: var(--text);
-    font-weight: 500;
-    font-size: 1rem;
-    margin-bottom: 4px;
-  }
-  
-  .contactDescription {
-    color: var(--text-light);
-    font-size: 0.9rem;
-    margin: 0;
-    line-height: 1.4;
-  }
-  
-  /* 💬 Tezkor Yordam */
-  .quickHelpSection {
-    margin-bottom: 30px;
-  }
-  
-  .quickHelpCard {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-    border-radius: var(--radius);
-    padding: 40px;
-    text-align: center;
-    color: white;
-  }
-  
-  .quickHelpContent {
-    max-width: 600px;
-    margin: 0 auto;
-  }
-  
-  .quickHelpTitle {
-    font-weight: 600;
-    font-size: 1.8rem;
-    margin-bottom: 16px;
-  }
-  
-  .quickHelpText {
-    font-size: 1.1rem;
-    margin-bottom: 30px;
-    line-height: 1.6;
-    opacity: 0.9;
-  }
-  
-  .quickHelpActions {
-    display: flex;
-    gap: 16px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-  
-  .chatButton {
-    background: white !important;
-    color: var(--primary) !important;
-    text-transform: none !important;
-    font-weight: 600 !important;
-    padding: 12px 24px !important;
-    border-radius: 25px !important;
-  }
-  
-  .chatButton:hover {
-    background: var(--secondary) !important;
-    transform: translateY(-2px);
-  }
-  
-  .callButton {
-    border-color: white !important;
-    color: white !important;
-    text-transform: none !important;
-    font-weight: 600 !important;
-    padding: 12px 24px !important;
-    border-radius: 25px !important;
-  }
-  
-  .callButton:hover {
-    background: rgba(255,255,255,0.1) !important;
-  }
-  
-  /* 🔍 Natija Topilmadi */
-  .noResults {
-    text-align: center;
-    padding: 60px 20px;
-    background: var(--surface);
-    border-radius: var(--radius);
-    border: 2px dashed var(--border);
-  }
-  
-  .noResultsIcon {
-    font-size: 4rem;
-    color: var(--text-light);
-    margin-bottom: 20px;
-    opacity: 0.5;
-  }
-  
-  .noResults h3 {
-    color: var(--text);
-    font-weight: 600;
-    margin-bottom: 12px;
-  }
-  
-  .noResults p {
-    color: var(--text-light);
-    margin: 0;
-    font-size: 1rem;
-  }
-  
-  /* 📱 MOBILE RESPONSIVE */
-  @media (max-width: 768px) {
-    .helpContainer {
-      padding: 16px;
-    }
-  
-    .helpTitle {
-      font-size: 2rem;
-      flex-direction: column;
-      gap: 8px;
-    }
-  
-    .titleIcon {
-      font-size: 2.2rem;
-    }
-  
-    .helpSubtitle {
-      font-size: 1rem;
-    }
-  
-    .sectionTitle {
-      font-size: 1.3rem;
-    }
-  
-    .categoriesGrid {
-      justify-content: flex-start;
-    }
-  
-    .contactGrid {
-      grid-template-columns: 1fr;
-      gap: 16px;
-    }
-  
-    .quickHelpCard {
-      padding: 30px 20px;
-    }
-  
-    .quickHelpTitle {
-      font-size: 1.5rem;
-    }
-  
-    .quickHelpText {
-      font-size: 1rem;
-    }
-  
-    .quickHelpActions {
-      flex-direction: column;
-      align-items: center;
-    }
-  
-    .chatButton,
-    .callButton {
-      width: 200px;
-    }
-  
-    .accordionSummary {
-      padding: 12px 16px !important;
-      min-height: 50px !important;
-    }
-  
-    .questionText {
-      font-size: 0.9rem;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .helpContainer {
-      padding: 12px;
-    }
-  
-    .helpTitle {
-      font-size: 1.7rem;
-    }
-  
-    .searchInput :global(.MuiOutlinedInput-input) {
-      font-size: 0.9rem;
-    }
-  
-    .categoriesGrid {
-      justify-content: center;
-    }
-  
-    .categoryChip {
-      font-size: 0.8rem !important;
-    }
-  
-    .contactCard {
-      padding: 20px 16px;
-    }
-  
-    .quickHelpCard {
-      padding: 24px 16px;
-    }
-  }
+}

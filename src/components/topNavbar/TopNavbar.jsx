@@ -1,41 +1,41 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MdMenu, MdNotifications, MdEmail } from 'react-icons/md';
-import { Badge, IconButton } from '@mui/material';
+import { Badge, IconButton, Stack } from '@mui/material';
 import styles from './TopNavbar.module.css';
+import { CiDark, CiSun } from 'react-icons/ci';
+import { TbTruckDelivery } from 'react-icons/tb';
 
 function TopNavbar({ onMenuToggle ,setOpenSidebar,openSidebar}) {
-  const [notificationCount, setNotificationCount] = useState(3);
-  const [messageCount, setMessageCount] = useState(5);
+  const [darkMode, setDarkMode] = useState(true);
 
-  const getNotificationText = (count) => {
-    if (count === 0) {
-      return 'no notifications';
+  useEffect(() => {
+    if (darkMode) {
+      document.body.classList.add("dark-mode");
+    } else {
+      document.body.classList.remove("dark-mode");
     }
-    if (count > 99) {
-      return '99+ notifications';
-    }
-    return `${count} notifications`;
-  };
+  }, [darkMode]);
 
   return (
     <div className={styles.navbar}>
       <div className={styles.leftSection}>
 
         
-        <h1 className={styles.title}>Dashboard</h1>
+      <div className={styles.logo}>
+          <TbTruckDelivery />
+          <h2>ToychaUz</h2>
+        </div>
       </div>
 
       <div className={styles.rightSection}>
         <div className={styles.actions}>
-          <IconButton 
-            aria-label={getNotificationText(notificationCount)}
-            className={styles.iconButton}
-          >
-            <Badge badgeContent={notificationCount} color="error">
-              <MdNotifications />
-            </Badge>
-          </IconButton>
-          
+        <div onClick={() => setDarkMode(!darkMode)} className={styles.darkMode}>
+          <Stack direction="row" spacing={1}>
+            <IconButton aria-label="theme-toggle">
+              {darkMode ? <CiSun /> : <CiDark />}
+            </IconButton>
+          </Stack>
+        </div>
       
           
           <IconButton  

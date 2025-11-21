@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CircularProgress, Button, Snackbar, Alert } from '@mui/material';
+import { CircularProgress, Button, Snackbar, Alert, Pagination, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import {
   MdShoppingCart,
   MdCheckCircle,
@@ -63,11 +63,23 @@ function MyOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [updatingOrderId, setUpdatingOrderId] = useState(null); // 🎯 Yangi: Yangilanish jarayonidagi buyurtma ID si
-  const [snackbar, setSnackbar] = useState({ // 🎯 Yangi: Toast notification state
+  const [snackbar, setSnackbar] = useState({
     open: false,
     message: '',
-    severity: 'success' // 'success', 'error', 'warning', 'info'
+    severity: 'success'
+  });
+
+  // 🎯 YANGI: Pagination state lari
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPages: 0
+  });
+
+  // 🎯 YANGI: Filter state lari
+  const [filters, setFilters] = useState({
+    status: 'all' // 'all', 'new', 'accepted', 'delivered'
   });
 
   // 🎯 Toast notification ni yopish
@@ -98,13 +110,27 @@ function MyOrders() {
     }
   };
 
-  // 🎯 Buyurtmalarni backenddan yuklash
-  const fetchOrders = async () => {
+  // 🎯 Buyurtmalarni backenddan yuklash - YANGILANDI
+  const fetchOrders = async (page = pagination.page, status = filters.status) => {
     try {
       setLoading(true);
       setError(null);
 
-      const ordersResponse = await fetch("http://localhost:2277/orders", {
+      // 🎯 Query parametrlarni yaratish
+      const queryParams = new URLSearchParams({
+        page: page.toString(),
+        limit: pagination.limit.toString()
+      });
+
+      // 🎯 Status filter qo'shish (agar 'all' bo'lmasa)
+      if (status !== 'all') {
+        queryParams.append('status', status);
+      }
+
+      const url = `http://localhost:2277/orders?${queryParams}`;
+      console.log('API so\'rovi:', url);
+
+      const ordersResponse = await fetch(url, {
         method: "GET",
         credentials: "include"
       });
@@ -113,35 +139,60 @@ function MyOrders() {
         throw new Error(`Buyurtmalarni yuklab olishda xatolik: ${ordersResponse.status}`);
       }
 
-      const ordersData = await ordersResponse.json();
+      const responseData = await ordersResponse.json();
+      console.log('Backenddan kelgan ma\'lumot:', responseData);
 
-      // Mahsulot ma'lumotlarini to'ldirish
+      // 🎯 PAGINATION MA'LUMOTLARINI SAQLASH
+      setPagination(prev => ({
+        ...prev,
+        page: responseData.page,
+        total: responseData.total,
+        totalPages: Math.ceil(responseData.total / prev.limit)
+      }));
+
+      // 🎯 MAHSULOT MA'LUMOTLARINI TO'LDIRISH
       const ordersWithProductDetails = await Promise.all(
-        ordersData.map(async (order) => {
-          const productsWithDetails = await Promise.all(
-            order.products.map(async (product) => {
-              try {
-                const productDetails = await fetchProductDetails(product.productId);
-                return {
-                  ...product,
-                  productName: productDetails.name,
-                  unit: productDetails.unit
-                };
-              } catch (error) {
-                console.error(`Mahsulot ${product.productId} uchun xato:`, error);
-                return {
-                  ...product,
-                  productName: "Noma'lum mahsulot",
-                  unit: "dona"
-                };
-              }
-            })
-          );
+        responseData.data.map(async (order) => {
+          try {
+            const productsWithDetails = await Promise.all(
+              order.products.map(async (product) => {
+                try {
+                  // 🎯 YANGI: productId object bo'lsa, undan name ni olish
+                  const productId = product.productId._id || product.productId;
+                  const productName = product.productId.name || "Noma'lum mahsulot";
+                  
+                  // 🎯 Birlik ma'lumotlarini olish
+                  const productDetails = await fetchProductDetails(productId);
+                  
+                  return {
+                    ...product,
+                    productId: productId, // Faqat ID ni saqlaymiz
+                    productName: productName,
+                    unit: productDetails.unit || "dona"
+                  };
+                } catch (error) {
+                  console.error(`Mahsulot ${product.productId} uchun xato:`, error);
+                  return {
+                    ...product,
+                    productId: product.productId._id || product.productId,
+                    productName: product.productId.name || "Noma'lum mahsulot",
+                    unit: "dona"
+                  };
+                }
+              })
+            );
 
-          return {
-            ...order,
-            products: productsWithDetails
-          };
+            return {
+              ...order,
+              products: productsWithDetails
+            };
+          } catch (error) {
+            console.error(`Buyurtma ${order._id} uchun xato:`, error);
+            return {
+              ...order,
+              products: []
+            };
+          }
         })
       );
 
@@ -157,111 +208,131 @@ function MyOrders() {
 
   // 🎯 Komponent yuklanganda buyurtmalarni olish
   useEffect(() => {
-    fetchOrders();
-  }, []);
+    fetchOrders(1, filters.status);
+  }, [filters.status]); // 🎯 Status o'zgarganda qayta yuklash
 
-  // 🎯 Buyurtmani yangilash funksiyasi - YANGILANDI 
-// 🎯 Buyurtmani yangilash funksiyasi
-const handleUpdateProduct = async (orderId, updatedData) => {
-  try {
-    console.log('Yangilanish so\'rovi:', { orderId, updatedData });
-    
-    const response = await fetch(`http://localhost:2277/orders/${orderId}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      credentials: "include",
-      body: JSON.stringify({
-        products: updatedData.products
-      })
-    });
+  // 🎯 Sahifa o'zgartirish
+  const handlePageChange = (event, value) => {
+    fetchOrders(value, filters.status);
+  };
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Buyurtmani yangilashda xatolik: ${response.status} - ${errorText}`);
+  // 🎯 Status filter o'zgartirish
+  const handleStatusChange = (event) => {
+    const newStatus = event.target.value;
+    setFilters(prev => ({ ...prev, status: newStatus }));
+    // Status o'zgarganda 1-sahifaga qaytamiz
+    setPagination(prev => ({ ...prev, page: 1 }));
+  };
+
+  // 🎯 Limit o'zgartirish
+  const handleLimitChange = (event) => {
+    const newLimit = parseInt(event.target.value);
+    setPagination(prev => ({ ...prev, limit: newLimit, page: 1 }));
+    // Limit o'zgarganda qayta yuklash
+    setTimeout(() => fetchOrders(1, filters.status), 100);
+  };
+
+
+  // 🎯 Buyurtmani yangilash funksiyasi
+  const handleUpdateProduct = async (orderId, updatedData) => {
+    try {
+      console.log('Yangilanish so\'rovi:', { orderId, updatedData });
+      
+      const response = await fetch(`http://localhost:2277/orders/${orderId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          products: updatedData.products
+        })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Buyurtmani yangilashda xatolik: ${response.status} - ${errorText}`);
+      }
+
+      const updatedOrder = await response.json();
+
+      // Mahsulot ma'lumotlarini to'ldirish
+      const productsWithDetails = await Promise.all(
+        updatedOrder.products.map(async (product) => {
+          try {
+            const productDetails = await fetchProductDetails(product.productId);
+            return {
+              ...product,
+              productName: productDetails.name,
+              unit: productDetails.unit
+            };
+          } catch (error) {
+            console.error(`Mahsulot ${product.productId} uchun xato:`, error);
+            return {
+              ...product,
+              productName: "Noma'lum mahsulot",
+              unit: "dona"
+            };
+          }
+        })
+      );
+
+      // Local state ni yangilash
+      const updatedOrders = orders.map(order =>
+        order._id === orderId
+          ? { ...updatedOrder, products: productsWithDetails }
+          : order
+      );
+      setOrders(updatedOrders);
+
+      setSnackbar({
+        open: true,
+        message: 'Buyurtma muvaffaqiyatli yangilandi!',
+        severity: 'success'
+      });
+
+    } catch (error) {
+      console.error('Buyurtmani yangilashda xatolik:', error);
+      setSnackbar({
+        open: true,
+        message: 'Buyurtmani yangilashda xatolik yuz berdi',
+        severity: 'error'
+      });
+      throw error;
     }
+  };
 
-    const updatedOrder = await response.json();
+  // 🎯 Buyurtmani bekor qilish funksiyasi
+  const handleCancelOrder = async (orderId) => {
+    try {
+      const response = await fetch(`http://localhost:2277/orders/${orderId}`, {
+        method: "DELETE",
+        credentials: "include"  
+      });
 
-    // Mahsulot ma'lumotlarini to'ldirish
-    const productsWithDetails = await Promise.all(
-      updatedOrder.products.map(async (product) => {
-        try {
-          const productDetails = await fetchProductDetails(product.productId);
-          return {
-            ...product,
-            productName: productDetails.name,
-            unit: productDetails.unit
-          };
-        } catch (error) {
-          console.error(`Mahsulot ${product.productId} uchun xato:`, error);
-          return {
-            ...product,
-            productName: "Noma'lum mahsulot",
-            unit: "dona"
-          };
-        }
-      })
-    );
+      if (!response.ok) {
+        throw new Error('Buyurtmani bekor qilishda xatolik');
+      }
 
-    // Local state ni yangilash
-    const updatedOrders = orders.map(order =>
-      order._id === orderId
-        ? { ...updatedOrder, products: productsWithDetails }
-        : order
-    );
-    setOrders(updatedOrders);
+      // 🎯 Buyurtma o'chirilgandan so'ng qayta yuklash
+      fetchOrders(pagination.page, filters.status);
 
-    setSnackbar({
-      open: true,
-      message: 'Buyurtma muvaffaqiyatli yangilandi!',
-      severity: 'success'
-    });
+      setSnackbar({
+        open: true,
+        message: 'Buyurtma muvaffaqiyatli bekor qilindi!',
+        severity: 'success'
+      });
 
-  } catch (error) {
-    console.error('Buyurtmani yangilashda xatolik:', error);
-    setSnackbar({
-      open: true,
-      message: 'Buyurtmani yangilashda xatolik yuz berdi',
-      severity: 'error'
-    });
-    throw error; // 🎯 OrderCard ga xatolikni uzatish uchun
-  }
-};
-
-// 🎯 Buyurtmani bekor qilish funksiyasi
-const handleCancelOrder = async (orderId) => {
-  try {
-    const response = await fetch(`http://localhost:2277/orders/${orderId}`, {
-      method: "DELETE",
-      credentials: "include"  
-    });
-
-    if (!response.ok) {
-      throw new Error('Buyurtmani bekor qilishda xatolik');
+    } catch (error) {
+      console.error('Buyurtmani bekor qilishda xatolik:', error);
+      setSnackbar({
+        open: true,
+        message: 'Buyurtmani bekor qilishda xatolik yuz berdi',
+        severity: 'error'
+      });
+      throw error;
     }
-
-    const updatedOrders = orders.filter(order => order._id !== orderId);
-    setOrders(updatedOrders);
-
-    setSnackbar({
-      open: true,
-      message: 'Buyurtma muvaffaqiyatli bekor qilindi!',
-      severity: 'success'
-    });
-
-  } catch (error) {
-    console.error('Buyurtmani bekor qilishda xatolik:', error);
-    setSnackbar({
-      open: true,
-      message: 'Buyurtmani bekor qilishda xatolik yuz berdi',
-      severity: 'error'
-    });
-    throw error; // 🎯 OrderCard ga xatolikni uzatish uchun
-  }
-};
-
+  };
 
   // 🎯 Yuklanayotgan holat
   if (loading) {
@@ -284,7 +355,7 @@ const handleCancelOrder = async (orderId) => {
           <p>{error}</p>
           <Button 
             variant="contained" 
-            onClick={fetchOrders}
+            onClick={() => fetchOrders(1, filters.status)}
             startIcon={<MdRefresh />}
             className={styles.retryButton}
           >
@@ -300,11 +371,83 @@ const handleCancelOrder = async (orderId) => {
       {/* 📊 Statistika - Eng tepada */}
       <OrderStats orders={orders} />
 
-      {/* 🔄 Yangilash tugmasi */}
-      <div className={styles.refreshSection}>
+      {/* 🎯 FILTER VA PAGINATION CONTROLS */}
+      <div className={styles.controlsSection}>
+        <div className={styles.filters}>
+        <FormControl size="small" sx={{ minWidth: 120 }}>
+        <InputLabel
+  sx={{
+    color: "var(--primary)",
+    "&.Mui-focused": {
+      color: "var(--primary)",  // fokus bo‘lganda ham shu rang
+    }
+  }}
+>
+  Status
+</InputLabel>
+
+
+  <Select
+    value={filters.status}
+    label="Status"
+    onChange={handleStatusChange}
+    sx={{
+      color: "var(--primary)",            // tanlangan text rangi
+      "& .MuiOutlinedInput-notchedOutline": {
+        borderColor: "var(--primary)",    // border rangi
+      },
+      "&:hover .MuiOutlinedInput-notchedOutline": {
+        borderColor: "var(--primary)",
+      },
+      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+        borderColor: "var(--primary)",
+      }
+    }}
+  >
+    <MenuItem value="all">Barchasi</MenuItem>
+    <MenuItem value="new">Yangi</MenuItem>
+    <MenuItem value="accepted">Qabul qilingan</MenuItem>
+    <MenuItem value="delivered">Yetkazilgan</MenuItem>
+  </Select>
+</FormControl>
+
+
+          <FormControl size="small" sx={{ minWidth: 100 }}>
+            <InputLabel    sx={{
+    color: "var(--primary)",
+    "&.Mui-focused": {
+      color: "var(--primary)",  // fokus bo‘lganda ham shu rang
+    }
+  }}>Limit</InputLabel>
+            <Select
+             sx={{
+              color: "var(--primary)",            // tanlangan text rangi
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: "var(--primary)",    // border rangi
+              },
+              "&:hover .MuiOutlinedInput-notchedOutline": {
+                borderColor: "var(--primary)",
+              },
+              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                borderColor: "var(--primary)",
+              }
+            }}
+              value={pagination.limit}
+              label="Limit"
+              onChange={handleLimitChange}
+            >
+              <MenuItem value={5}>5</MenuItem>
+              <MenuItem value={10}>10</MenuItem>
+              <MenuItem value={20}>20</MenuItem>
+              <MenuItem value={50}>50</MenuItem>
+            </Select>
+          </FormControl>
+        </div>
+
+        {/* 🔄 Yangilash tugmasi */}
         <Button 
           variant="outlined" 
-          onClick={fetchOrders}
+          onClick={() => fetchOrders(pagination.page, filters.status)}
           startIcon={<MdRefresh />}
           className={styles.refreshButton}
         >
@@ -319,24 +462,69 @@ const handleCancelOrder = async (orderId) => {
             <div className={styles.emptyContent}>
               <MdShoppingCart className={styles.emptyIcon} />
               <h3 className={styles.emptyTitle}>
-                Hali buyurtma yo'q
+                {filters.status === 'all' ? 'Hali buyurtma yo\'q' : `"${filters.status}" statusidagi buyurtmalar yo'q`}
               </h3>
               <p className={styles.emptyDescription}>
-                Birinchi buyurtma qilish uchun "Buyurtma Berish" bo'limiga o'ting
+                {filters.status === 'all' 
+                  ? 'Birinchi buyurtma qilish uchun "Buyurtma Berish" bo\'limiga o\'ting' 
+                  : 'Boshqa statusdagi buyurtmalarni ko\'rish uchun filterni o\'zgartiring'
+                }
               </p>
             </div>
           </div>
         ) : (
-          <div className={styles.ordersGrid}>
-            {orders.map((order) => (
-              <OrderCard 
-              key={order._id}
-  order={order} 
-  onUpdateProduct={handleUpdateProduct}
-  onCancelOrder={handleCancelOrder}
-              />
-            ))}
-          </div>
+          <>
+            <div className={styles.ordersGrid}>
+              {orders.map((order) => (
+                <OrderCard 
+                  key={order._id}
+                  order={order} 
+                  onUpdateProduct={handleUpdateProduct}
+                  onCancelOrder={handleCancelOrder}
+                />
+              ))}
+            </div>
+
+            {/* 🎯 PAGINATION */}
+            {pagination.totalPages > 1 && (
+              <div className={styles.pagination}>
+               <Pagination
+  count={pagination.totalPages}
+  page={pagination.page}
+  onChange={handlePageChange}
+  showFirstButton
+  showLastButton
+  sx={{
+    "& .MuiPaginationItem-root": {
+      color: "var(--text)",                  // oddiy text rangi
+      border: "1px solid var(--border)",     // border
+      borderRadius: "var(--radius)",         // sizning radius
+      backgroundColor: "var(--item)",        // eng yengil fon
+      boxShadow: "var(--shadow)",            // yumshoq soyalar
+      transition: "0.2s",
+    },
+
+    "& .MuiPaginationItem-root:hover": {
+      backgroundColor: "var(--secondary)",   // hover rangi
+      color: "var(--surface)",
+      borderColor: "var(--secondary-dark)",
+    },
+
+    "& .MuiPaginationItem-root.Mui-selected": {
+      backgroundColor: "var(--primary)",   
+      color: "var(--surface)",
+      borderColor: "var(--primary-dark)",
+      fontWeight: "600",
+    }
+  }}
+/>
+
+                <div className={styles.paginationInfo}>
+                  {pagination.total} ta buyurtmadan {((pagination.page - 1) * pagination.limit) + 1}-{Math.min(pagination.page * pagination.limit, pagination.total)} oraligʻi
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
 

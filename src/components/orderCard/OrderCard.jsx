@@ -390,27 +390,62 @@ const OrderCard = ({
                 <tr key={product._id} className={styles.tableRow}>
                   <td className={styles.tableCell}>
                     {isEditing && editingProduct?._id === product._id ? (
-                      <TextField
-                        select
-                        value={editingProduct.productId}
-                        onChange={(e) =>
-                          handleProductChange("productId", e.target.value, "edit")
-                        }
-                        size="small"
-                        sx={{
-                          width: "100%",
-                          maxWidth: "120px",
-                          minWidth: "80px",
-                        }}
-                        disabled={isSaving || isCanceling} // 🎯 Faqat loader paytida disable
-                      >
-                        <MenuItem value="">Tanlang</MenuItem>
-                        {availableProducts.map((prod) => (
-                          <MenuItem key={prod._id} value={prod._id}>
-                            {prod.name}
-                          </MenuItem>
-                        ))}
-                      </TextField>
+                    <TextField
+  select
+  value={editingProduct.productId}
+  onChange={(e) =>
+    handleProductChange("productId", e.target.value, "edit")
+  }
+  size="small"
+  sx={{
+    width: "100%",
+    maxWidth: "120px",
+    minWidth: "80px",
+
+    // 🔹 Select text rangi
+    "& .MuiSelect-select": {
+      color: "var(--text)",
+    },
+
+    // 🔹 Default & hover border
+    "& .MuiOutlinedInput-notchedOutline": {
+      borderColor: "var(--border)",
+      borderRadius: "var(--radius)",
+    },
+    "&:hover .MuiOutlinedInput-notchedOutline": {
+      borderColor: "var(--secondary-dark)",
+    },
+
+    // 🔹 Fokus bo‘lganda border
+    "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+      borderColor: "var(--primary)",
+      borderWidth: "2px",
+    },
+
+    // 🔹 Fokus bo‘lganda label rangi
+    "& .MuiInputLabel-root.Mui-focused": {
+      color: "var(--primary)",
+    },
+
+    // 🔹 Disabled style
+    "& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline": {
+      borderColor: "var(--border)",
+      opacity: 0.6,
+    },
+    "& .MuiSelect-select.Mui-disabled": {
+      color: "var(--text-light)",
+    },
+  }}
+  disabled={isSaving || isCanceling} // loader paytida disable
+>
+  <MenuItem value="">Tanlang</MenuItem>
+  {availableProducts.map((prod) => (
+    <MenuItem key={prod._id} value={prod._id}>
+      {prod.name}
+    </MenuItem>
+  ))}
+</TextField>
+
                     ) : (
                       <span className={styles.productName}>
                         {product.productName}
@@ -420,17 +455,60 @@ const OrderCard = ({
 
                   <td className={styles.tableCell} style={{ textAlign: "right" }}>
                     {isEditing && editingProduct?._id === product._id ? (
-                      <TextField
-                        type="number"
-                        value={editingProduct.quantity}
-                        onChange={(e) =>
-                          handleProductChange("quantity", parseInt(e.target.value) || 1, "edit")
-                        }
-                        size="small"
-                        sx={{ width: "80px", maxWidth: "80px" }}
-                        inputProps={{ min: 1 }}
-                        disabled={isSaving || isCanceling} // 🎯 Faqat loader paytida disable
-                      />
+                <TextField
+                type="number"
+                value={editingProduct.quantity}
+                onChange={(e) =>
+                  handleProductChange(
+                    "quantity",
+                    parseInt(e.target.value) || 1,
+                    "edit"
+                  )
+                }
+                size="small"
+                sx={{
+                  width: "80px",
+                  maxWidth: "80px",
+              
+                  // 🔹 INPUT (text) rangi
+                  "& .MuiInputBase-input": {
+                    color: "var(--text)",
+                    padding: "6px 8px",
+                  },
+              
+                  // 🔹 Default & hover border rangi
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "var(--border)",
+                    borderRadius: "var(--radius)",
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "var(--secondary-dark)",
+                  },
+              
+                  // 🔹 Fokus bo‘lganda border rang — ko‘kka o‘tmasin
+                  "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "var(--primary)",
+                    borderWidth: "2px",
+                  },
+              
+                  // 🔹 Fokus (aktiv) holatda ichki text rangi
+                  "& .MuiOutlinedInput-root.Mui-focused": {
+                    color: "var(--primary)",
+                  },
+              
+                  // 🔹 Disabled (bloklangan paytida)
+                  "& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "var(--border)",
+                    opacity: 0.6,
+                  },
+                  "& .MuiInputBase-input.Mui-disabled": {
+                    color: "var(--text-light)",
+                  },
+                }}
+                inputProps={{ min: 1 }}
+                disabled={isSaving || isCanceling}
+              />
+              
                     ) : (
                       <span className={styles.productQuantity}>
                         {product.quantity}
@@ -506,6 +584,40 @@ const OrderCard = ({
                         width: "100%",
                         maxWidth: "120px",
                         minWidth: "80px",
+                    
+                        // 🔹 Select text rangi
+                        "& .MuiSelect-select": {
+                          color: "var(--text)",
+                        },
+                    
+                        // 🔹 Default & hover border
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "var(--border)",
+                          borderRadius: "var(--radius)",
+                        },
+                        "&:hover .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "var(--secondary-dark)",
+                        },
+                    
+                        // 🔹 Fokus bo‘lganda border
+                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "var(--primary)",
+                          borderWidth: "2px",
+                        },
+                    
+                        // 🔹 Fokus bo‘lganda label rangi
+                        "& .MuiInputLabel-root.Mui-focused": {
+                          color: "var(--primary)",
+                        },
+                    
+                        // 🔹 Disabled style
+                        "& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "var(--border)",
+                          opacity: 0.6,
+                        },
+                        "& .MuiSelect-select.Mui-disabled": {
+                          color: "var(--text-light)",
+                        },
                       }}
                       disabled={isSaving || isCanceling}
                     >
@@ -526,7 +638,45 @@ const OrderCard = ({
                         handleProductChange("quantity", parseInt(e.target.value) || 1, "new")
                       }
                       size="small"
-                      sx={{ width: "80px", maxWidth: "80px" }}
+                      sx={{
+                        width: "80px",
+                        maxWidth: "80px",
+                    
+                        // 🔹 INPUT (text) rangi
+                        "& .MuiInputBase-input": {
+                          color: "var(--text)",
+                          padding: "6px 8px",
+                        },
+                    
+                        // 🔹 Default & hover border rangi
+                        "& .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "var(--border)",
+                          borderRadius: "var(--radius)",
+                        },
+                        "&:hover .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "var(--secondary-dark)",
+                        },
+                    
+                        // 🔹 Fokus bo‘lganda border rang — ko‘kka o‘tmasin
+                        "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "var(--primary)",
+                          borderWidth: "2px",
+                        },
+                    
+                        // 🔹 Fokus (aktiv) holatda ichki text rangi
+                        "& .MuiOutlinedInput-root.Mui-focused": {
+                          color: "var(--primary)",
+                        },
+                    
+                        // 🔹 Disabled (bloklangan paytida)
+                        "& .MuiOutlinedInput-root.Mui-disabled .MuiOutlinedInput-notchedOutline": {
+                          borderColor: "var(--border)",
+                          opacity: 0.6,
+                        },
+                        "& .MuiInputBase-input.Mui-disabled": {
+                          color: "var(--text-light)",
+                        },
+                      }}
                       inputProps={{ min: 1 }}
                       disabled={isSaving || isCanceling}
                     />

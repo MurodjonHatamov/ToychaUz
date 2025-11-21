@@ -57,9 +57,7 @@ export default function Sidebar({ openSidebar }) {
   return (
     <Box
       className={getSidebarClass()}
-      sx={{
-        display: { xs: "none", md: "flex" },
-      }}
+ 
     >
       {/* Header */}
       <div className={styles.headerMenu}>

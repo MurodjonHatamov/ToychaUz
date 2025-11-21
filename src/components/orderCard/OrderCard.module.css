@@ -94,18 +94,18 @@
 
 /* Button Styles */
 .editButton, .saveButton, .cancelOrderButton {
-  border-radius: 5px;
-  font-weight: 500;
+  border-radius: 5px !important;
+  font-weight: 500 !important;
   text-transform: none;
-  padding: 4px 8px;
+  padding: 4px 8px !important;
   font-size: 0.75rem;
-  min-width: auto;
+  min-width: auto !important;
   white-space: nowrap;
   flex-shrink: 0;
 }
 
 .editButton {
-  border: 1px solid var(--primary) !important;
+  border: 1px solid var(--primary) !important ;
   color: var(--primary) !important;
 }
 

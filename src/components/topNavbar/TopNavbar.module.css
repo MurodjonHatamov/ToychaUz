@@ -22,6 +22,49 @@
     gap: 16px;
 }
 
+.darkMode {
+    background-color: var(--background);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .darkMode:hover {
+    transform: scale(1.1);
+  }
+  
+  .darkMode svg {
+    color: var(--primary);
+    font-size: 1.5rem;
+  }
+
+/* logo uchun */
+.logo {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    font-weight: 700;
+  }
+  
+  .logo svg {
+    font-size: 2rem;
+    color: var(--primary);
+  }
+  
+  .logo h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: -0.5px;
+  }
+
+/* tugashi   */
 
 .menuButtonIcon {
     display: none !important;
@@ -89,14 +132,28 @@
     .menuButtonIcon{
         display: block !important;
     }
-  
-
+  .logo{
+    display: flex;
+  }
+.darkMode{
+    display: flex;
+}
 
     .title {
         font-size: 1.1rem;
     }
 }
 
+@media (max-width: 599px) {
+    .iconButton {
+        padding: 6px !important;
+    }
+
+    .menuButtonIcon {
+        display: none !important;
+        padding: 6px !important;
+    }
+  }
 @media (max-width: 480px) {
     .actions {
         gap: 4px;
