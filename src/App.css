@@ -1,23 +1,72 @@
 /* App.css */
 
+
+body {
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--background);
+  color: var(--text);
+  line-height: 1.5;
+}
+
 .app {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
   background-color: var(--background);
+  overflow: hidden;
 }
 
+/* Asosiy kontent - sidebar bilan birga */
 .main-content {
   flex: 1;
-  margin-left: 280px;
+  margin-left: 260px;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
+  transition: margin-left 0.3s ease;
+  overflow: hidden;
 }
 
+/* Sidebar yopilganda */
+.sidebar-closed .main-content {
+  margin-left: 0;
+}
+
+/* Login sahifasi uchun maxsus stil */
+.login-page {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.login-page .app {
+  display: block;
+  height: 100vh;
+}
+
+.login-page .main-content {
+  margin-left: 0 !important;
+  background-color: var(--background);
+  height: 100vh;
+}
+
+.login-page .top-navbar-container,
+.login-page .mobile-bottom-nav {
+  display: none !important;
+}
+
+.login-page .content {
+  padding: 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Oddiy content (login bo'lmagan) */
 .content {
   flex: 1;
   padding: 24px;
-  padding-top: 80px; /* TopNavbar balandligi uchun joy */
+  padding-top: 80px;
   background-color: var(--background);
   overflow-y: auto;
 }
@@ -25,21 +74,31 @@
 /* Responsive Design */
 @media (max-width: 1024px) {
   .main-content {
-    margin-left: 0;
-    padding-bottom: 80px; /* Mobile navigation uchun joy */
+      margin-left: 0;
+      padding-bottom: 80px;
   }
 }
 
 @media (max-width: 768px) {
   .content {
-    padding: 16px;
-    padding-top: 70px; /* Kichroq padding mobile da */
+      padding: 16px;
+      padding-top: 70px;
   }
 }
 
 @media (max-width: 480px) {
   .content {
-    padding: 12px;
-    padding-top: 70px;
+      padding: 12px;
+      padding-top: 70px;
   }
+}
+
+/* Loading spinner */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  color: var(--text);
+  font-size: 1.1rem;
 }

@@ -32,16 +32,35 @@
     justify-content: center;
     cursor: pointer;
     transition: all 0.3s ease;
-  }
+}
   
-  .darkMode:hover {
+.darkMode:hover {
     transform: scale(1.1);
-  }
+}
   
-  .darkMode svg {
+.darkMode svg {
     color: var(--primary);
     font-size: 1.5rem;
-  }
+}
+
+/* Notification uchun */
+.notification {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notification .iconButton {
+    color: var(--text-light);
+    padding: 8px;
+    transition: all 0.3s ease;
+}
+
+.notification .iconButton:hover {
+    background-color: var(--background);
+    color: var(--text);
+    transform: scale(1.05);
+}
 
 /* logo uchun */
 .logo {
@@ -49,22 +68,20 @@
     align-items: center;
     gap: 12px;
     font-weight: 700;
-  }
+}
   
-  .logo svg {
+.logo svg {
     font-size: 2rem;
     color: var(--primary);
-  }
+}
   
-  .logo h2 {
+.logo h2 {
     margin: 0;
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--primary);
     letter-spacing: -0.5px;
-  }
-
-/* tugashi   */
+}
 
 .menuButtonIcon {
     display: none !important;
@@ -105,12 +122,17 @@
     color: var(--text) !important;
 }
 
+.logaut {
+    display: none;
+}
+
 /* Material-UI Badge customization */
 .MuiBadge-badge {
     background-color: var(--primary) !important;
     color: white !important;
     font-size: 0.7rem !important;
     font-weight: 600 !important;
+    border: 2px solid var(--surface);
 }
 
 /* Responsive design */
@@ -118,7 +140,7 @@
     .navbar {
         left: 0;
     }
-    .menuButtonIcon{
+    .menuButtonIcon {
         display: block !important;
     }
 }
@@ -129,40 +151,43 @@
         height: 65px;
         left: 0;
     }
-    .menuButtonIcon{
+    .menuButtonIcon {
         display: block !important;
     }
-  .logo{
-    display: flex;
-  }
-.darkMode{
-    display: flex;
-}
-
+    .logo {
+        display: flex;
+    }
+    .darkMode {
+        display: flex;
+    }
+    .notification {
+        display: flex;
+    }
     .title {
         font-size: 1.1rem;
     }
 }
 
 @media (max-width: 599px) {
+    .logaut {
+        display: block;
+    }
     .iconButton {
         padding: 6px !important;
     }
-
     .menuButtonIcon {
         display: none !important;
         padding: 6px !important;
     }
-  }
+}
+
 @media (max-width: 480px) {
     .actions {
         gap: 4px;
     }
-
     .iconButton {
         padding: 6px !important;
     }
-
     .menuButtonIcon {
         display: none !important;
         padding: 6px !important;

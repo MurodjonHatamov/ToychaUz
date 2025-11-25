@@ -9,6 +9,7 @@ import {
 } from 'react-icons/md';
 import styles from './MyOrders.module.css';
 import OrderCard from '../../components/orderCard/OrderCard';
+import Error from '../../components/error/Error';
 
 // OrderStats komponenti - Buyurtma statistikasini ko'rsatadi
 const OrderStats = ({ orders }) => {
@@ -232,7 +233,6 @@ function MyOrders() {
     setTimeout(() => fetchOrders(1, filters.status), 100);
   };
 
-
   // 🎯 Buyurtmani yangilash funksiyasi
   const handleUpdateProduct = async (orderId, updatedData) => {
     try {
@@ -346,23 +346,14 @@ function MyOrders() {
     );
   }
 
-  // 🎯 Xatolik holati
+  // 🎯 Xatolik holati - YANGILANDI
   if (error) {
     return (
-      <div className={styles.container}>
-        <div className={styles.error}>
-          <h3>Xatolik yuz berdi</h3>
-          <p>{error}</p>
-          <Button 
-            variant="contained" 
-            onClick={() => fetchOrders(1, filters.status)}
-            startIcon={<MdRefresh />}
-            className={styles.retryButton}
-          >
-            Qayta Urinish
-          </Button>
-        </div>
-      </div>
+      <Error 
+        error={error} 
+        fetchOrders={fetchOrders}
+        filters={filters} // filters prop qo'shildi
+      />
     );
   }
 
@@ -374,64 +365,61 @@ function MyOrders() {
       {/* 🎯 FILTER VA PAGINATION CONTROLS */}
       <div className={styles.controlsSection}>
         <div className={styles.filters}>
-        <FormControl size="small" sx={{ minWidth: 120 }}>
-        <InputLabel
-  sx={{
-    color: "var(--primary)",
-    "&.Mui-focused": {
-      color: "var(--primary)",  // fokus bo‘lganda ham shu rang
-    }
-  }}
->
-  Status
-</InputLabel>
-
-
-  <Select
-    value={filters.status}
-    label="Status"
-    onChange={handleStatusChange}
-    sx={{
-      color: "var(--primary)",            // tanlangan text rangi
-      "& .MuiOutlinedInput-notchedOutline": {
-        borderColor: "var(--primary)",    // border rangi
-      },
-      "&:hover .MuiOutlinedInput-notchedOutline": {
-        borderColor: "var(--primary)",
-      },
-      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-        borderColor: "var(--primary)",
-      }
-    }}
-  >
-    <MenuItem value="all">Barchasi</MenuItem>
-    <MenuItem value="new">Yangi</MenuItem>
-    <MenuItem value="accepted">Qabul qilingan</MenuItem>
-    <MenuItem value="delivered">Yetkazilgan</MenuItem>
-  </Select>
-</FormControl>
-
+          <FormControl size="small" sx={{ minWidth: 120 }}>
+            <InputLabel
+              sx={{
+                color: "var(--primary)",
+                "&.Mui-focused": {
+                  color: "var(--primary)",
+                }
+              }}
+            >
+              Status
+            </InputLabel>
+            <Select
+              value={filters.status}
+              label="Status"
+              onChange={handleStatusChange}
+              sx={{
+                color: "var(--primary)",
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "var(--primary)",
+                },
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "var(--primary)",
+                },
+                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "var(--primary)",
+                }
+              }}
+            >
+              <MenuItem value="all">Barchasi</MenuItem>
+              <MenuItem value="new">Yangi</MenuItem>
+              <MenuItem value="accepted">Qabul qilingan</MenuItem>
+              <MenuItem value="delivered">Yetkazilgan</MenuItem>
+            </Select>
+          </FormControl>
 
           <FormControl size="small" sx={{ minWidth: 100 }}>
-            <InputLabel    sx={{
-    color: "var(--primary)",
-    "&.Mui-focused": {
-      color: "var(--primary)",  // fokus bo‘lganda ham shu rang
-    }
-  }}>Limit</InputLabel>
-            <Select
-             sx={{
-              color: "var(--primary)",            // tanlangan text rangi
-              "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: "var(--primary)",    // border rangi
-              },
-              "&:hover .MuiOutlinedInput-notchedOutline": {
-                borderColor: "var(--primary)",
-              },
-              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                borderColor: "var(--primary)",
+            <InputLabel sx={{
+              color: "var(--primary)",
+              "&.Mui-focused": {
+                color: "var(--primary)",
               }
-            }}
+            }}>Limit</InputLabel>
+            <Select
+              sx={{
+                color: "var(--primary)",
+                "& .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "var(--primary)",
+                },
+                "&:hover .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "var(--primary)",
+                },
+                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                  borderColor: "var(--primary)",
+                }
+              }}
               value={pagination.limit}
               label="Limit"
               onChange={handleLimitChange}
@@ -488,37 +476,34 @@ function MyOrders() {
             {/* 🎯 PAGINATION */}
             {pagination.totalPages > 1 && (
               <div className={styles.pagination}>
-               <Pagination
-  count={pagination.totalPages}
-  page={pagination.page}
-  onChange={handlePageChange}
-  showFirstButton
-  showLastButton
-  sx={{
-    "& .MuiPaginationItem-root": {
-      color: "var(--text)",                  // oddiy text rangi
-      border: "1px solid var(--border)",     // border
-      borderRadius: "var(--radius)",         // sizning radius
-      backgroundColor: "var(--item)",        // eng yengil fon
-      boxShadow: "var(--shadow)",            // yumshoq soyalar
-      transition: "0.2s",
-    },
-
-    "& .MuiPaginationItem-root:hover": {
-      backgroundColor: "var(--secondary)",   // hover rangi
-      color: "var(--surface)",
-      borderColor: "var(--secondary-dark)",
-    },
-
-    "& .MuiPaginationItem-root.Mui-selected": {
-      backgroundColor: "var(--primary)",   
-      color: "var(--surface)",
-      borderColor: "var(--primary-dark)",
-      fontWeight: "600",
-    }
-  }}
-/>
-
+                <Pagination
+                  count={pagination.totalPages}
+                  page={pagination.page}
+                  onChange={handlePageChange}
+                  showFirstButton
+                  showLastButton
+                  sx={{
+                    "& .MuiPaginationItem-root": {
+                      color: "var(--text)",
+                      border: "1px solid var(--border)",
+                      borderRadius: "var(--radius)",
+                      backgroundColor: "var(--item)",
+                      boxShadow: "var(--shadow)",
+                      transition: "0.2s",
+                    },
+                    "& .MuiPaginationItem-root:hover": {
+                      backgroundColor: "var(--secondary)",
+                      color: "var(--surface)",
+                      borderColor: "var(--secondary-dark)",
+                    },
+                    "& .MuiPaginationItem-root.Mui-selected": {
+                      backgroundColor: "var(--primary)",   
+                      color: "var(--surface)",
+                      borderColor: "var(--primary-dark)",
+                      fontWeight: "600",
+                    }
+                  }}
+                />
                 <div className={styles.paginationInfo}>
                   {pagination.total} ta buyurtmadan {((pagination.page - 1) * pagination.limit) + 1}-{Math.min(pagination.page * pagination.limit, pagination.total)} oraligʻi
                 </div>

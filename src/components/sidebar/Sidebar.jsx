@@ -7,22 +7,47 @@ import Box from "@mui/material/Box";
 import { IconButton, ListItemIcon } from "@mui/material";
 import styles from './Sidebar.module.css';
 import { TbTruckDelivery } from "react-icons/tb";
-import { MdShoppingCart, MdListAlt, MdHelp, MdPerson } from "react-icons/md";
+import { MdShoppingCart, MdListAlt, MdHelp, MdPerson, MdPayment, MdCheckCircle, MdLocalShipping, MdFileDownload, MdChat, MdStore, MdInventory } from "react-icons/md";
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import { IoExitOutline } from "react-icons/io5";
 import { CiDark, CiSun } from "react-icons/ci";
 
-const menuItems = [
-  { name: "Buyurtma Berish", path: "/", icon: <MdShoppingCart size={24} /> },
-  { name: "Mening Buyurtmalarim", path: "/myorders", icon: <MdListAlt size={24} /> },
-  { name: "Profil", path: "/profile", icon: <MdPerson size={24} /> },
-  { name: "Yordam", path: "/help", icon: <MdHelp size={24} /> },
-];
-
-export default function Sidebar({ openSidebar }) {
+export default function Sidebar({ openSidebar,   handleLogout,userType }) {
   const [darkMode, setDarkMode] = useState(true);
   const location = useLocation();
+console.log(userType);
+
+
+
+
+const getMenuItems = ()=>{
+  if (userType==="deliver") {
+    return [
+      { name: "Buyurtmalar", path: "/", icon: <MdListAlt size={24} /> },
+      // { name: "Yangi buyurtmalar", path: "/deliver/new-orders", icon: <MdPayment size={24} /> },
+      // { name: "Qabul qilinganlar", path: "/deliver/http://localhost:5173/deliver/acceptedaccepted", icon: <MdCheckCircle size={24} /> },
+      // { name: "Yetkazilganlar", path: "/deliver/delivered", icon: <MdLocalShipping size={24} /> },
+      // { name: "Excel Export", path: "/deliver/export", icon: <MdFileDownload size={24} /> },
+      { name: "Markets", path: "/markets", icon: <MdStore size={24} /> },
+      { name: "Products", path: "/products", icon: <MdInventory size={24} /> },
+      { name: "Chat", path: "/chat", icon: <MdChat size={24} /> },
+      { name: "Profil", path: "/deliver/profile", icon: <MdPerson size={24} /> },
+
+    ];
+    
+  }else{
+return [
+      { name: "Buyurtma Berish", path: "/", icon: <MdShoppingCart size={24} /> },
+      { name: "Mening Buyurtmalarim", path: "/myorders", icon: <MdListAlt size={24} /> },
+      { name: "Profil", path: "/profile", icon: <MdPerson size={24} /> },
+      { name: "Yordam", path: "/help", icon: <MdHelp size={24} /> },
+    ];
+  }
+  
+}
+const menuItems=getMenuItems();
+
 
   useEffect(() => {
     if (darkMode) {
@@ -105,7 +130,7 @@ export default function Sidebar({ openSidebar }) {
       {/* Footer */}
       <div className={styles.footer}>
         <div className={styles.exit}>
-          <Stack spacing={2} direction="row">
+          <Stack onClick={handleLogout} spacing={2} direction="row">
             <Button 
               startIcon={<IoExitOutline />} 
               variant="outlined"

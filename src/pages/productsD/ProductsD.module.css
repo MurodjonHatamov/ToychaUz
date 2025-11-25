@@ -1,0 +1,702 @@
+/* Asosiy o'zgaruvchilar */
+:root {
+    --primary: #B85042 !important;
+    --primary-dark: #9a4236 !important;
+    --secondary: #A7BEAE !important;
+    --secondary-dark: #8aa895 !important;
+    --background: #E7E8D1 !important;
+    --surface: #FFFFFF !important;
+    --text: #333333 !important;
+    --text-light: #666666 !important;
+    --border: #DDDDDD !important;
+    --error: #f44336 !important;
+    --success: #4caf50 !important;
+    --warning: #ff9800 !important;
+    --shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
+    --radius: 8px !important;
+    --item: #1a1a1a0f !important;
+  }
+  
+  .dark-mode {
+    --item: #1a1a1a !important;
+    --primary: #B85042 !important;
+    --primary-dark: #9a4236 !important;
+    --secondary: #7D9A89 !important;
+    --secondary-dark: #6a8574 !important;
+    --background: #1a1a1a !important;
+    --surface: #2d2d2d !important;
+    --text: #ffffff !important;
+    --text-light: #cccccc !important;
+    --border: #444444 !important;
+    --error: #f44336 !important;
+    --success: #4caf50 !important;
+    --warning: #ff9800 !important;
+  }
+  
+  /* Asosiy sahifa */
+  .productsPage {
+    min-height: 100vh !important;
+    background-color: var(--background) !important;
+    padding: 20px !important;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+  }
+  
+  /* Sarlavha bo'limi */
+  .headerSection {
+    background-color: var(--surface) !important;
+    border-radius: var(--radius) !important;
+    box-shadow: var(--shadow) !important;
+    padding: 20px !important;
+    margin-bottom: 20px !important;
+    border: 1px solid var(--border) !important;
+  }
+  
+  .header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin-bottom: 16px !important;
+  }
+  
+  .title {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+  }
+  
+  .title h1 {
+    margin: 0 !important;
+    color: var(--text) !important;
+    font-size: 1.5rem !important;
+    font-weight: 600 !important;
+  }
+  
+  .titleIcon {
+    color: var(--primary) !important;
+    font-size: 1.5rem !important;
+  }
+  
+  .addButton {
+    background-color: var(--success) !important;
+    color: white !important;
+    text-transform: none !important;
+    font-weight: 500 !important;
+    padding: 8px 16px !important;
+    border-radius: var(--radius) !important;
+    font-size: 0.9rem !important;
+  }
+  
+  .addButton:hover {
+    background-color: var(--success) !important;
+    opacity: 0.9 !important;
+  }
+  
+  /* Qidiruv bo'limi */
+  .searchSection {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 16px !important;
+  }
+  
+  .searchBox {
+    position: relative !important;
+    flex: 1 !important;
+    max-width: 400px !important;
+  }
+  
+  .searchIcon {
+    position: absolute !important;
+    left: 12px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    color: var(--text-light) !important;
+    font-size: 1rem !important;
+  }
+  
+  .searchInput {
+    width: 100% !important;
+    padding: 10px 12px 10px 40px !important;
+    border: 1px solid var(--border) !important;
+    border-radius: var(--radius) !important;
+    background-color: var(--surface) !important;
+    color: var(--text) !important;
+    font-size: 0.9rem !important;
+  }
+  
+  .searchInput:focus {
+    outline: none !important;
+    border-color: var(--primary) !important;
+  }
+  
+  .searchInput::placeholder {
+    color: var(--text-light) !important;
+  }
+  
+  .productCount {
+    color: var(--text-light) !important;
+    font-weight: 500 !important;
+    font-size: 0.9rem !important;
+    white-space: nowrap !important;
+  }
+  
+  /* Jadval bo'limi */
+  .tableSection {
+    background-color: var(--surface) !important;
+    border-radius: var(--radius) !important;
+    box-shadow: var(--shadow) !important;
+    border: 1px solid var(--border) !important;
+    overflow: hidden !important;
+  }
+  
+  .tableContainer {
+    border-radius: var(--radius) !important;
+    box-shadow: none !important;
+    background-color: var(--surface) !important;
+  }
+  
+  .table {
+    min-width: 600px !important;
+  }
+  
+  .tableHead {
+    background-color: var(--primary) !important;
+  }
+  
+  .tableHeaderCell {
+    color: white !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    padding: 16px !important;
+    border-bottom: none !important;
+  }
+  
+  .tableRow {
+    transition: background-color 0.2s ease !important;
+  }
+  
+  .tableRow:nth-of-type(even) {
+    background-color: var(--item) !important;
+  }
+  
+  .tableRow:hover {
+    background-color: rgba(184, 80, 66, 0.05) !important;
+  }
+  
+  .tableCell {
+    padding: 12px 16px !important;
+    border-bottom: 1px solid var(--border) !important;
+    font-size: 0.9rem !important;
+  }
+  
+  /* Jadval ichidagi elementlar */
+  .productNameCell {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+  
+  .productIcon {
+    color: var(--primary) !important;
+    font-size: 1rem !important;
+    flex-shrink: 0 !important;
+  }
+  
+  .productName {
+    color: var(--text) !important;
+    font-weight: 500 !important;
+  }
+  
+  .unitCell {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+  
+  .unitText {
+    color: var(--text) !important;
+    font-weight: 500 !important;
+    text-transform: capitalize !important;
+  }
+  
+  .dateText {
+    color: var(--text-light) !important;
+    font-size: 0.85rem !important;
+    font-family: 'Courier New', monospace !important;
+  }
+  
+  /* Harakatlar tugmalari */
+  .actionButtons {
+    display: flex !important;
+    gap: 4px !important;
+  }
+  
+  .editButton {
+    color: var(--primary) !important;
+    padding: 6px !important;
+  }
+  
+  .editButton:hover {
+    background-color: rgba(184, 80, 66, 0.1) !important;
+  }
+  
+  .deleteButton {
+    color: var(--error) !important;
+    padding: 6px !important;
+  }
+  
+  .deleteButton:hover {
+    background-color: rgba(244, 67, 54, 0.1) !important;
+  }
+  
+  /* Yuklanish va ma'lumot yo'q */
+  .loading {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 60px 20px !important;
+    color: var(--text-light) !important;
+    gap: 16px !important;
+    text-align: center !important;
+  }
+  
+  .spinner {
+    animation: spin 1s linear infinite !important;
+    font-size: 2rem !important;
+    color: var(--primary) !important;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg) !important; }
+    100% { transform: rotate(360deg) !important; }
+  }
+  
+  .noData {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 60px 20px !important;
+    color: var(--text-light) !important;
+    gap: 16px !important;
+    text-align: center !important;
+  }
+  
+  .noDataIcon {
+    font-size: 3rem !important;
+    opacity: 0.5 !important;
+  }
+  
+  .noDataText {
+    font-size: 1.1rem !important;
+    font-weight: 500 !important;
+  }
+  
+  .clearSearchButton {
+    text-transform: none !important;
+    border-radius: var(--radius) !important;
+    margin-top: 8px !important;
+  }
+  
+  /* Modal stillari */
+  .dialogTitle {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    color: var(--text) !important;
+    font-weight: 600 !important;
+    padding: 20px 24px 16px 24px !important;
+  }
+  
+  .dialogIcon {
+    color: var(--primary) !important;
+    font-size: 1.3rem !important;
+  }
+  
+  .dialogContent {
+    padding: 0 24px 8px 24px !important;
+  }
+  
+  .formGrid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    margin-top: 8px !important;
+  }
+  
+  /* MUI TextField custom styles */
+  .formField :global(.MuiInputLabel-root) {
+    color: var(--text-light) !important;
+    font-weight: 500 !important;
+  }
+  
+  .formField :global(.MuiOutlinedInput-root) {
+    color: var(--text) !important;
+    border-radius: var(--radius) !important;
+  }
+  
+  .formField :global(.MuiOutlinedInput-notchedOutline) {
+    border-color: var(--border) !important;
+    border-width: 1px !important;
+  }
+  
+  .formField :global(.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline) {
+    border-color: var(--primary) !important;
+  }
+  
+  .formField :global(.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline) {
+    border-color: var(--primary) !important;
+    border-width: 1px !important;
+  }
+  
+  .formField :global(.MuiInputLabel-root.Mui-focused) {
+    color: var(--primary) !important;
+  }
+  
+  /* Unit menu item */
+  .unitMenuItem {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+  
+  .dialogActions {
+    padding: 16px 24px 20px 24px !important;
+    gap: 12px !important;
+  }
+  
+  .cancelButton {
+    color: var(--text) !important;
+    border-color: var(--border) !important;
+    text-transform: none !important;
+    font-weight: 500 !important;
+    border-radius: var(--radius) !important;
+    padding: 8px 20px !important;
+  }
+  
+  .submitButton {
+    background-color: var(--success) !important;
+    color: white !important;
+    text-transform: none !important;
+    font-weight: 500 !important;
+    border-radius: var(--radius) !important;
+    padding: 8px 20px !important;
+    min-width: 100px !important;
+  }
+  
+  .submitButton:hover {
+    background-color: var(--success) !important;
+    opacity: 0.9 !important;
+  }
+  
+  .buttonSpinner {
+    animation: spin 1s linear infinite !important;
+    margin-right: 8px !important;
+  }
+  
+  /* O'chirish modali */
+  .deleteDialogTitle {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    color: var(--error) !important;
+    font-weight: 600 !important;
+    padding: 20px 24px 16px 24px !important;
+  }
+  
+  .deleteDialogIcon {
+    font-size: 1.3rem !important;
+  }
+  
+  .deleteDialogContent {
+    padding: 0 24px 8px 24px !important;
+  }
+  
+  .deleteWarning {
+    color: var(--text) !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+    margin-bottom: 16px !important;
+    text-align: center !important;
+  }
+  
+  .productToDelete {
+    background-color: var(--item) !important;
+    border-radius: var(--radius) !important;
+    padding: 16px !important;
+    margin-bottom: 16px !important;
+    border: 1px solid var(--border) !important;
+    text-align: center !important;
+  }
+  
+  .deleteProductName {
+    color: var(--text) !important;
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 4px !important;
+  }
+  
+  .deleteProductUnit {
+    color: var(--text-light) !important;
+    font-size: 0.9rem !important;
+  }
+  
+  .deleteNote {
+    color: var(--warning) !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+    text-align: center !important;
+    padding: 8px !important;
+    background-color: rgba(255, 152, 0, 0.1) !important;
+    border-radius: var(--radius) !important;
+  }
+  
+  .deleteDialogActions {
+    padding: 16px 24px 20px 24px !important;
+    gap: 12px !important;
+  }
+  
+  .cancelDeleteButton {
+    color: var(--text) !important;
+    border-color: var(--border) !important;
+    text-transform: none !important;
+    font-weight: 500 !important;
+    border-radius: var(--radius) !important;
+    padding: 8px 20px !important;
+  }
+  
+  .confirmDeleteButton {
+    background-color: var(--error) !important;
+    color: white !important;
+    text-transform: none !important;
+    font-weight: 500 !important;
+    border-radius: var(--radius) !important;
+    padding: 8px 20px !important;
+    min-width: 100px !important;
+  }
+  
+  .confirmDeleteButton:hover {
+    background-color: var(--error) !important;
+    opacity: 0.9 !important;
+  }
+  
+  /* MUI Paper component uchun */
+  :global(.MuiPaper-root) {
+    background-color: var(--surface) !important;
+    color: var(--text) !important;
+  }
+  
+  /* MUI Dialog uchun */
+  :global(.MuiDialog-paper) {
+    background-color: var(--surface) !important;
+    border-radius: var(--radius) !important;
+    border: 1px solid var(--border) !important;
+  }
+  
+  /* MUI Table uchun */
+  :global(.MuiTableContainer-root) {
+    border-radius: var(--radius) !important;
+  }
+  
+  :global(.MuiTableRow-root) {
+    background-color: var(--surface) !important;
+  }
+  
+  :global(.MuiTableCell-root) {
+    border-bottom: 1px solid var(--border) !important;
+    color: var(--text) !important;
+  }
+  
+  :global(.MuiTableHead-root .MuiTableCell-root) {
+    background-color: var(--primary) !important;
+    color: white !important;
+    font-weight: 600 !important;
+  }
+  
+  /* MUI Button uchun */
+  :global(.MuiButton-root) {
+    text-transform: none !important;
+    border-radius: var(--radius) !important;
+  }
+  
+  /* MUI TextField uchun */
+  :global(.MuiTextField-root) {
+    background-color: var(--surface) !important;
+  }
+  
+  :global(.MuiInputBase-input) {
+    color: var(--text) !important;
+  }
+  
+  :global(.MuiInputLabel-root) {
+    color: var(--text-light) !important;
+  }
+  
+  :global(.MuiOutlinedInput-notchedOutline) {
+    border-color: var(--border) !important;
+  }
+  
+  :global(.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline) {
+    border-color: var(--primary) !important;
+  }
+  
+  :global(.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline) {
+    border-color: var(--primary) !important;
+  }
+  
+  /* MUI MenuItem uchun */
+  :global(.MuiMenuItem-root) {
+    color: var(--text) !important;
+  }
+  
+  :global(.MuiMenuItem-root:hover) {
+    background-color: var(--item) !important;
+  }
+  
+  :global(.MuiMenuItem-root.Mui-selected) {
+    background-color: var(--primary) !important;
+    color: white !important;
+  }
+  
+  :global(.MuiMenuItem-root.Mui-selected:hover) {
+    background-color: var(--primary-dark) !important;
+  }
+  
+  /* Responsive dizayn */
+  @media (max-width: 768px) {
+    .productsPage {
+      padding: 16px !important;
+    }
+    
+    .header {
+      flex-direction: column !important;
+      gap: 12px !important;
+      align-items: flex-start !important;
+    }
+    
+    .title h1 {
+      font-size: 1.3rem !important;
+    }
+    
+    .searchSection {
+      flex-direction: column !important;
+      gap: 12px !important;
+      align-items: stretch !important;
+    }
+    
+    .searchBox {
+      max-width: none !important;
+    }
+    
+    .tableContainer {
+      overflow-x: auto !important;
+      border-radius: var(--radius) !important;
+    }
+    
+    .table {
+      min-width: 500px !important;
+    }
+    
+    .tableHeaderCell,
+    .tableCell {
+      padding: 12px 8px !important;
+      font-size: 0.85rem !important;
+    }
+    
+    .formGrid {
+      grid-template-columns: 1fr !important;
+    }
+    
+    .dialogActions,
+    .deleteDialogActions {
+      flex-direction: column !important;
+    }
+    
+    .cancelButton,
+    .submitButton,
+    .cancelDeleteButton,
+    .confirmDeleteButton {
+      width: 100% !important;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .productsPage {
+      padding: 12px !important;
+    }
+    
+    .headerSection {
+      padding: 16px !important;
+    }
+    
+    .title h1 {
+      font-size: 1.2rem !important;
+    }
+    
+    .addButton {
+      width: 100% !important;
+      justify-content: center !important;
+    }
+    
+    .productCount {
+      text-align: center !important;
+    }
+    
+    .tableHeaderCell,
+    .tableCell {
+      padding: 8px 6px !important;
+      font-size: 0.8rem !important;
+    }
+    
+    .actionButtons {
+      flex-direction: column !important;
+      gap: 2px !important;
+    }
+    
+    .editButton,
+    .deleteButton {
+      padding: 4px !important;
+    }
+  }
+  
+  /* Touch optimizatsiyasi */
+  @media (hover: none) {
+    .tableRow:hover {
+      background-color: inherit !important;
+    }
+    
+    .editButton:hover,
+    .deleteButton:hover {
+      background-color: transparent !important;
+    }
+    
+    .addButton:hover,
+    .submitButton:hover,
+    .confirmDeleteButton:hover {
+      opacity: 1 !important;
+    }
+  }
+  
+  /* High contrast mode */
+  @media (prefers-contrast: high) {
+    .tableRow:nth-of-type(even) {
+      background-color: var(--surface) !important;
+    }
+    
+    .tableRow {
+      border-bottom: 2px solid var(--text) !important;
+    }
+  }
+  
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .tableRow {
+      transition: none !important;
+    }
+    
+    .spinner,
+    .buttonSpinner {
+      animation: none !important;
+    }
+  }

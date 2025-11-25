@@ -1,0 +1,33 @@
+.container {
+    padding: 20px;
+    background-color: var(--background);
+    min-height: 100vh;
+  }
+
+  .error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 50vh;
+    text-align: center;
+    color: var(--text-light);
+    padding: 2rem;
+  }
+  
+  .error h3 {
+    color: var(--error);
+    margin-bottom: 1rem;
+  }
+  
+  .error p {
+    margin-bottom: 1.5rem;
+    max-width: 400px;
+    line-height: 1.5;
+  }
+  
+  .retryButton {
+    background: var(--primary) !important;
+    color: white !important;
+    text-transform: none !important;
+  }  

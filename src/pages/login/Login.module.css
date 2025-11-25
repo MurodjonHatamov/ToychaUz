@@ -1,0 +1,148 @@
+.loginContainer {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.loginCard {
+  padding: 30px;
+  max-width: 400px;
+  width: 100%;
+  border-radius: var(--radius);
+  background-color: var(--surface);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.loginHeader {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.iconContainer {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 15px;
+  background-color: var(--primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconContainer svg {
+  font-size: 1.8rem;
+  color: white;
+}
+
+.title {
+  color: var(--primary);
+  font-weight: 700 !important;
+  margin-bottom: 8px !important;
+  font-size: 1.5rem !important;
+}
+
+.subtitle {
+  color: var(--text-light) !important;
+  font-size: 0.9rem !important;
+}
+
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.alert {
+  margin-bottom: 10px;
+  border-radius: var(--radius) !important;
+}
+
+.selectField,
+.textField {
+  margin-bottom: 12px !important;
+}
+
+.selectField label,
+.textField label {
+  color: var(--text) !important;
+}
+
+.selectField .MuiOutlinedInput-root,
+.textField .MuiOutlinedInput-root {
+  border-radius: var(--radius) !important;
+}
+
+.selectField .MuiOutlinedInput-notchedOutline,
+.textField .MuiOutlinedInput-notchedOutline {
+  border-color: var(--border) !important;
+}
+
+.selectField:hover .MuiOutlinedInput-notchedOutline,
+.textField:hover .MuiOutlinedInput-notchedOutline {
+  border-color: var(--primary) !important;
+}
+
+.selectField.Mui-focused .MuiOutlinedInput-notchedOutline,
+.textField.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: var(--primary) !important;
+}
+
+.loginButton {
+  background-color: var(--primary) !important;
+  color: white !important;
+  padding: 12px !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  border-radius: var(--radius) !important;
+  margin-top: 8px !important;
+}
+
+.loginButton:hover {
+  background-color: var(--primary-dark) !important;
+}
+
+.loginButton:disabled {
+  background-color: var(--text-light) !important;
+}
+
+/* Demo section olib tashlandi */
+
+.loginFooter {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid var(--border);
+  text-align: center;
+}
+
+.loginFooter svg {
+  margin-right: 6px;
+  vertical-align: middle;
+  color: var(--primary);
+}
+
+/* Responsive design */
+@media (max-width: 480px) {
+  .loginContainer {
+      padding: 15px;
+  }
+  
+  .loginCard {
+      padding: 20px;
+  }
+  
+  .iconContainer {
+      width: 50px;
+      height: 50px;
+  }
+  
+  .iconContainer svg {
+      font-size: 1.5rem;
+  }
+  
+  .title {
+      font-size: 1.3rem !important;
+  }
+}

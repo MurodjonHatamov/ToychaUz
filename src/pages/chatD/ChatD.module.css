@@ -1,0 +1,650 @@
+/* Asosiy o'zgaruvchilar */
+:root {
+    --primary: #B85042 !important;
+    --primary-dark: #9a4236 !important;
+    --secondary: #A7BEAE !important;
+    --secondary-dark: #8aa895 !important;
+    --background: #E7E8D1 !important;
+    --surface: #FFFFFF !important;
+    --text: #333333 !important;
+    --text-light: #666666 !important;
+    --border: #DDDDDD !important;
+    --error: #f44336 !important;
+    --success: #4caf50 !important;
+    --warning: #ff9800 !important;
+    --shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
+    --radius: 8px !important;
+    --item: #1a1a1a0f !important;
+  }
+  
+  .dark-mode {
+    --item: #1a1a1a !important;
+    --primary: #B85042 !important;
+    --primary-dark: #9a4236 !important;
+    --secondary: #7D9A89 !important;
+    --secondary-dark: #6a8574 !important;
+    --background: #1a1a1a !important;
+    --surface: #2d2d2d !important;
+    --text: #ffffff !important;
+    --text-light: #cccccc !important;
+    --border: #444444 !important;
+    --error: #f44336 !important;
+    --success: #4caf50 !important;
+    --warning: #ff9800 !important;
+  }
+  
+  /* Asosiy sahifa */
+  .chatPage {
+    min-height: 100vh !important;
+    background-color: var(--background) !important;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+  }
+  
+  .chatContainer {
+    display: flex !important;
+    height: 100vh !important;
+  }
+  
+  /* CHAP PANEL - SIDEBAR */
+  .sidebar {
+    width: 350px !important;
+    background-color: var(--surface) !important;
+    border-right: 1px solid var(--border) !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
+  .sidebarHeader {
+    padding: 20px !important;
+    border-bottom: 1px solid var(--border) !important;
+  }
+  
+  .sidebarHeader h2 {
+    margin: 0 !important;
+    color: var(--text) !important;
+    font-size: 1.3rem !important;
+    font-weight: 600 !important;
+  }
+  
+  /* Qidiruv bo'limi */
+  .searchSection {
+    padding: 16px 20px !important;
+    border-bottom: 1px solid var(--border) !important;
+  }
+  
+  .searchBox {
+    position: relative !important;
+  }
+  
+  .searchIcon {
+    position: absolute !important;
+    left: 12px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    color: var(--text-light) !important;
+    font-size: 1rem !important;
+  }
+  
+  .searchInput {
+    width: 100% !important;
+    padding: 10px 12px 10px 40px !important;
+    border: 1px solid var(--border) !important;
+    border-radius: var(--radius) !important;
+    background-color: var(--surface) !important;
+    color: var(--text) !important;
+    font-size: 0.9rem !important;
+  }
+  
+  .searchInput:focus {
+    outline: none !important;
+    border-color: var(--primary) !important;
+  }
+  
+  .searchInput::placeholder {
+    color: var(--text-light) !important;
+  }
+  
+  /* Marketlar ro'yxati */
+  .marketsList {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    padding: 8px 0 !important;
+  }
+  
+  .marketItem {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 16px 20px !important;
+    cursor: pointer !important;
+    transition: background-color 0.2s ease !important;
+    border-bottom: 1px solid var(--border) !important;
+    position: relative !important;
+  }
+  
+  .marketItem:hover {
+    background-color: var(--item) !important;
+  }
+  
+  .marketItemActive {
+    background-color: var(--primary) !important;
+  }
+  
+  .marketItemActive .marketName,
+  .marketItemActive .lastMessage {
+    color: white !important;
+  }
+  
+  .marketAvatar {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important;
+    background-color: var(--secondary) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: white !important;
+    font-size: 1rem !important;
+    flex-shrink: 0 !important;
+  }
+  
+  .marketInfo {
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+  
+  .marketName {
+    color: var(--text) !important;
+    font-weight: 600 !important;
+    font-size: 0.95rem !important;
+    margin-bottom: 2px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+  
+  .lastMessage {
+    color: var(--text-light) !important;
+    font-size: 0.8rem !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+  
+  .unreadBadge {
+    background-color: var(--primary) !important;
+    color: white !important;
+    border-radius: 10px !important;
+    padding: 2px 8px !important;
+    font-size: 0.7rem !important;
+    font-weight: 600 !important;
+    min-width: 18px !important;
+    text-align: center !important;
+  }
+  
+  /* ASOSIY CHAT QISMI */
+  .chatMain {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    background-color: var(--surface) !important;
+  }
+  
+  /* Chat sarlavhasi */
+  .chatHeader {
+    padding: 16px 24px !important;
+    border-bottom: 1px solid var(--border) !important;
+    background-color: var(--surface) !important;
+  }
+  
+  .chatPartner {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+  }
+  
+  .partnerAvatar {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 50% !important;
+    background-color: var(--secondary) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: white !important;
+    font-size: 1.1rem !important;
+  }
+  
+  .partnerInfo {
+    flex: 1 !important;
+  }
+  
+  .partnerName {
+    color: var(--text) !important;
+    font-weight: 600 !important;
+    font-size: 1.1rem !important;
+    margin-bottom: 2px !important;
+  }
+  
+  .partnerPhone {
+    color: var(--text-light) !important;
+    font-size: 0.85rem !important;
+  }
+  
+  /* Xabarlar konteyneri */
+  .messagesContainer {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    padding: 20px !important;
+    background-color: var(--background) !important;
+  }
+  
+  .messagesList {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+  
+  /* Sana ko'rsatgich */
+  .dateDivider {
+    text-align: center !important;
+    margin: 16px 0 !important;
+    color: var(--text-light) !important;
+    font-size: 0.8rem !important;
+    font-weight: 500 !important;
+    position: relative !important;
+  }
+  
+  .dateDivider::before {
+    content: '' !important;
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: 50% !important;
+    height: 1px !important;
+    background-color: var(--border) !important;
+    z-index: 1 !important;
+  }
+  
+  .dateDivider span {
+    background-color: var(--background) !important;
+    padding: 4px 12px !important;
+    border-radius: 12px !important;
+    position: relative !important;
+    z-index: 2 !important;
+  }
+  
+  /* Xabar stillari */
+  .message {
+    display: flex !important;
+    margin-bottom: 8px !important;
+  }
+  
+  .messageIncoming {
+    justify-content: flex-start !important;
+  }
+  
+  .messageOutgoing {
+    justify-content: flex-end !important;
+  }
+  
+  .messageContent {
+    max-width: 70% !important;
+    padding: 12px 16px !important;
+    border-radius: 18px !important;
+    position: relative !important;
+  }
+  
+  .messageIncoming .messageContent {
+    background-color: var(--surface) !important;
+    border: 1px solid var(--border) !important;
+    border-bottom-left-radius: 4px !important;
+  }
+  
+  .messageOutgoing .messageContent {
+    background-color: var(--primary) !important;
+    color: white !important;
+    border-bottom-right-radius: 4px !important;
+  }
+  
+  .messageText {
+    font-size: 0.95rem !important;
+    line-height: 1.4 !important;
+    word-wrap: break-word !important;
+  }
+  
+  .messageTime {
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    font-size: 0.7rem !important;
+    margin-top: 4px !important;
+    opacity: 0.8 !important;
+  }
+  
+  .statusIcon {
+    font-size: 0.6rem !important;
+  }
+  
+  /* Xabar yuborish formasi */
+  .messageInputSection {
+    padding: 20px 24px !important;
+    border-top: 1px solid var(--border) !important;
+    background-color: var(--surface) !important;
+  }
+  
+  .inputContainer {
+    display: flex !important;
+    gap: 12px !important;
+    align-items: flex-end !important;
+  }
+  
+  .messageInput {
+    flex: 1 !important;
+  }
+  
+  .messageInput :global(.MuiOutlinedInput-root) {
+    border-radius: 24px !important;
+    background-color: var(--surface) !important;
+  }
+  
+  .messageInput :global(.MuiOutlinedInput-notchedOutline) {
+    border-color: var(--border) !important;
+  }
+  
+  .messageInput :global(.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline) {
+    border-color: var(--primary) !important;
+  }
+  
+  .messageInput :global(.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline) {
+    border-color: var(--primary) !important;
+  }
+  
+  .sendButton {
+    background-color: var(--primary) !important;
+    color: white !important;
+    padding: 12px !important;
+    border-radius: 50% !important;
+  }
+  
+  .sendButton:hover {
+    background-color: var(--primary-dark) !important;
+  }
+  
+  .sendButton:disabled {
+    background-color: var(--text-light) !important;
+    opacity: 0.5 !important;
+  }
+  
+  .sendSpinner {
+    animation: spin 1s linear infinite !important;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg) !important; }
+    100% { transform: rotate(360deg) !important; }
+  }
+  
+  /* Yuklanish va ma'lumot yo'q */
+  .loading {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 60px 20px !important;
+    color: var(--text-light) !important;
+    gap: 16px !important;
+    text-align: center !important;
+  }
+  
+  .spinner {
+    animation: spin 1s linear infinite !important;
+    font-size: 2rem !important;
+    color: var(--primary) !important;
+  }
+  
+  .noData {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 60px 20px !important;
+    color: var(--text-light) !important;
+    gap: 16px !important;
+    text-align: center !important;
+  }
+  
+  .noDataIcon {
+    font-size: 3rem !important;
+    opacity: 0.5 !important;
+  }
+  
+  .noMessages {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 100% !important;
+    color: var(--text-light) !important;
+    gap: 16px !important;
+    text-align: center !important;
+  }
+  
+  .noMessagesIcon {
+    font-size: 4rem !important;
+    opacity: 0.5 !important;
+  }
+  
+  .noMessagesText {
+    font-size: 1.2rem !important;
+    font-weight: 500 !important;
+    color: var(--text) !important;
+  }
+  
+  .noMessagesSubtext {
+    font-size: 0.9rem !important;
+    opacity: 0.7 !important;
+  }
+  
+  .noSelection {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 100% !important;
+    color: var(--text-light) !important;
+    gap: 16px !important;
+    text-align: center !important;
+    padding: 40px !important;
+  }
+  
+  .noSelectionIcon {
+    font-size: 4rem !important;
+    opacity: 0.5 !important;
+  }
+  
+  .noSelectionText {
+    font-size: 1.3rem !important;
+    font-weight: 500 !important;
+    color: var(--text) !important;
+  }
+  
+  .noSelectionSubtext {
+    font-size: 1rem !important;
+    opacity: 0.7 !important;
+    max-width: 400px !important;
+    line-height: 1.5 !important;
+  }
+  
+  /* MUI componentlari uchun */
+  :global(.MuiPaper-root) {
+    background-color: var(--surface) !important;
+    color: var(--text) !important;
+  }
+  
+  :global(.MuiTextField-root) {
+    background-color: var(--surface) !important;
+  }
+  
+  :global(.MuiInputBase-input) {
+    color: var(--text) !important;
+  }
+  
+  :global(.MuiInputLabel-root) {
+    color: var(--text-light) !important;
+  }
+  
+  :global(.MuiOutlinedInput-notchedOutline) {
+    border-color: var(--border) !important;
+  }
+  
+  :global(.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline) {
+    border-color: var(--primary) !important;
+  }
+  
+  :global(.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline) {
+    border-color: var(--primary) !important;
+  }
+  
+  /* Responsive dizayn */
+  @media (max-width: 768px) {
+    .chatContainer {
+      flex-direction: column !important;
+    }
+    
+    .sidebar {
+      width: 100% !important;
+      height: 40vh !important;
+      border-right: none !important;
+      border-bottom: 1px solid var(--border) !important;
+    }
+    
+    .chatMain {
+      height: 60vh !important;
+    }
+    
+    .messageContent {
+      max-width: 85% !important;
+    }
+    
+    .sidebarHeader,
+    .searchSection {
+      padding: 12px 16px !important;
+    }
+    
+    .marketItem {
+      padding: 12px 16px !important;
+    }
+    
+    .chatHeader {
+      padding: 12px 16px !important;
+    }
+    
+    .messagesContainer {
+      padding: 12px 16px !important;
+    }
+    
+    .messageInputSection {
+      padding: 12px 16px !important;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .sidebarHeader h2 {
+      font-size: 1.1rem !important;
+    }
+    
+    .marketAvatar {
+      width: 36px !important;
+      height: 36px !important;
+    }
+    
+    .partnerAvatar {
+      width: 36px !important;
+      height: 36px !important;
+    }
+    
+    .messageContent {
+      max-width: 90% !important;
+      padding: 10px 12px !important;
+    }
+    
+    .inputContainer {
+      gap: 8px !important;
+    }
+    
+    .sendButton {
+      padding: 10px !important;
+    }
+  }
+  
+  /* Scrollbar stillari */
+  .messagesContainer::-webkit-scrollbar {
+    width: 6px !important;
+  }
+  
+  .messagesContainer::-webkit-scrollbar-track {
+    background: var(--item) !important;
+    border-radius: 3px !important;
+  }
+  
+  .messagesContainer::-webkit-scrollbar-thumb {
+    background: var(--primary) !important;
+    border-radius: 3px !important;
+  }
+  
+  .messagesContainer::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-dark) !important;
+  }
+  
+  .marketsList::-webkit-scrollbar {
+    width: 4px !important;
+  }
+  
+  .marketsList::-webkit-scrollbar-track {
+    background: var(--item) !important;
+  }
+  
+  .marketsList::-webkit-scrollbar-thumb {
+    background: var(--border) !important;
+    border-radius: 2px !important;
+  }
+  
+  /* Touch optimizatsiyasi */
+  @media (hover: none) {
+    .marketItem:hover {
+      background-color: inherit !important;
+    }
+    
+    .sendButton:hover {
+      background-color: var(--primary) !important;
+    }
+  }
+  
+  /* High contrast mode */
+  @media (prefers-contrast: high) {
+    .marketItemActive {
+      border: 2px solid var(--text) !important;
+    }
+    
+    .messageIncoming .messageContent {
+      border: 2px solid var(--text) !important;
+    }
+  }
+  
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .marketItem,
+    .sendButton {
+      transition: none !important;
+    }
+    
+    .spinner,
+    .sendSpinner {
+      animation: none !important;
+    }
+    
+    .messagesEndRef {
+      scroll-behavior: auto !important;
+    }
+  }

@@ -733,10 +733,7 @@ const OrderCard = ({
           <p className={styles.totalItems}>
             Jami {getTotalItems(localProducts)} ta mahsulot
           </p>
-          <div className={`${styles.statusBadge} ${styles[statusConfig.bgColor]}`}>
-            {statusConfig.icon}
-            <span>{statusConfig.text}</span>
-          </div>
+     
         </div>
       </div>
     </div>
