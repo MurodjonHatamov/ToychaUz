@@ -62,6 +62,8 @@ function Help() {
     }
   };
 
+
+
   // Xabar yuborish
   const sendMessage = async () => {
     if (!newMessage.trim()) {
@@ -116,9 +118,7 @@ function Help() {
   const templateQuestions = [
     "Buyurtma qachon yetib keladi?",
     "Mahsulot mavjudmi?",
-    "Narxlarni o'zgartirish mumkinmi?",
-    "Yetkazib berish qancha turadi?",
-    "Boshqa savollarim bor"
+    
   ];
 
   // Komponent yuklanganda chat tarixini olish

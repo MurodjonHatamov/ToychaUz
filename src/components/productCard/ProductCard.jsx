@@ -4,11 +4,15 @@ import { MdShoppingCart, MdAdd, MdRemove } from 'react-icons/md';
 import styles from './ProductCard.module.css';
 
 function ProductCard({ product, onAddToCart, getUnitText }) {
-  const [quantity, setQuantity] = useState(1);
+  // quantity — string bo'ladi
+  const [quantity, setQuantity] = useState("0");
 
   const handleAddToCart = () => {
-    onAddToCart(product._id, quantity);
-    setQuantity(1);
+    const num = Number(quantity);
+
+    if (num > 0) {
+      onAddToCart(product._id, num);
+    }
   };
 
   return (
@@ -18,43 +22,76 @@ function ProductCard({ product, onAddToCart, getUnitText }) {
         <h3>{product.name}</h3>
         <p>Oʻlchov birligi: {getUnitText(product.unit)}</p>
       </div>
-      
+
       <div className={styles.quantitySection}>
         <div className={styles.quantityRow}>
+
           <div className={styles.quantityControls}>
-            <IconButton 
-              size="small" 
-              onClick={() => setQuantity(prev => Math.max(1, prev - 1))}
+
+            {/* MINUS BUTTON */}
+            <IconButton
+              size="small"
+              onClick={() => {
+                const num = Number(quantity);
+                const newVal = Math.max(0, num - 1);
+                setQuantity(String(newVal));
+              }}
               className={styles.quantityBtn}
             >
               <MdRemove />
             </IconButton>
+
+            {/* INPUT */}
             <input
               type="number"
-              min="1"
+              min="0"
               value={quantity}
-              onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+              onChange={(e) => {
+                const val = e.target.value;
+
+                // Bo‘sh bo‘lsa bo‘sh qoldiramiz
+                if (val === "") {
+                  setQuantity("");
+                  return;
+                }
+
+                // Raqam bo‘lsa va 0 dan kichik bo‘lmasa
+                const num = parseInt(val);
+                if (!isNaN(num) && num >= 0) {
+                  setQuantity(String(num));
+                }
+              }}
               className={styles.quantityInput}
             />
-            <IconButton 
-              size="small" 
-              onClick={() => setQuantity(prev => prev + 1)}
+
+            {/* PLUS BUTTON */}
+            <IconButton
+              size="small"
+              onClick={() => {
+                const num = Number(quantity) || 0;
+                setQuantity(String(num + 1));
+              }}
               className={styles.quantityBtn}
             >
               <MdAdd />
             </IconButton>
+
           </div>
-          
+
+          {/* ADD TO CART BUTTON */}
           <Button
             variant="contained"
             startIcon={<MdShoppingCart />}
             onClick={handleAddToCart}
             className={styles.addButton}
+            disabled={quantity === "" || Number(quantity) === 0}
           >
             Qo'shish
           </Button>
+
         </div>
       </div>
+
     </div>
   );
 }

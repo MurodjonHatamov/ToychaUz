@@ -6,9 +6,11 @@ import styles from './TopNavbar.module.css';
 import { CiDark, CiLogout, CiSun } from 'react-icons/ci';
 import { TbTruckDelivery } from 'react-icons/tb';
 
-function TopNavbar({ onMenuToggle, setOpenSidebar, openSidebar, handleLogout, setNotifications, notifications }) {
+function TopNavbar({ onMenuToggle, setOpenSidebar, openSidebar, handleLogout, setNotifications, notifications,userType }) {
   const [darkMode, setDarkMode] = useState(true);
   const [allMessages, setAllMessages] = useState([]);
+  const [messages, setMessages] = useState([]);
+
   const navigate = useNavigate(); // useNavigate hook'ini ishlatish
 
   const fetchAllMessages = async () => {
@@ -30,23 +32,55 @@ function TopNavbar({ onMenuToggle, setOpenSidebar, openSidebar, handleLogout, se
       console.error('Barcha xabarlarni yuklab boʻlmadi:', error);
     }
   };
-
-  const getTotalUnread = () => {
-    return allMessages.filter(msg =>
-      msg.status === 'new' &&
-      msg.from !== 'deliver' // market tomonidan yuborilgan xabarlar
-    ).length;
+  
+  // Chat tarixini olish
+  const fetchMarketMessages = async () => {
+    try {
+      const response = await fetch('http://localhost:2277/contact/chat', {
+        method: 'GET',
+        headers: { 'accept': '*/*', 'Content-Type': 'application/json' },
+        credentials: 'include'
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        setMessages(data);
+        Console.log('Market xabarlari:', data);
+      }
+    } catch (error) {
+      console.error('Market xabarlarini yuklab boʻlmadi:', error);
+    }
   };
+  
+  const getTotalUnread = () => {
+    let messagesList = [];
+  
+    if (userType === "deliver") {
+      messagesList = allMessages;
+    } else if (userType === "market") {
+      messagesList = messages; // yoki market uchun endpoint’dan kelgan xabarlar
+    }
+  
+    if (!Array.isArray(messagesList)) return 0;
+  
+    return messagesList.filter(msg => msg.status === 'new' && msg.from !== userType).length;
+  };
+  
+console.log(getTotalUnread());
 
   // Notification tugmasi bosilganda chat sahifasiga o'tish
   const handleNotificationClick = () => {
     navigate('/chat');
   };
 
-  console.log(getTotalUnread());
+ 
 
   useEffect(() => {
+     if (userType === "deliver") {
     fetchAllMessages();
+  } else if (userType === "market") {
+    fetchMarketMessages();
+  }
     if (darkMode) {
       document.body.classList.add("dark-mode");
     } else {
@@ -57,8 +91,8 @@ function TopNavbar({ onMenuToggle, setOpenSidebar, openSidebar, handleLogout, se
   return (
     <div className={styles.navbar}>
       <div className={styles.leftSection}>
-        <div className={styles.logo}>
-          <TbTruckDelivery />
+      <div className={styles.logo}>
+          <img src={"/imgs/Light.png"} alt="" />
           <h2>ToychaUz</h2>
         </div>
       </div>

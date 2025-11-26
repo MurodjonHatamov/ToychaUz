@@ -66,23 +66,22 @@
 .logo {
     display: none;
     align-items: center;
-    gap: 12px;
+    gap: 6px;
     font-weight: 700;
-}
+  }
   
-.logo svg {
-    font-size: 2rem;
-    color: var(--primary);
-}
+  .logo img {
+    width: 35px;
+    height: 35px;
+  }
   
-.logo h2 {
+  .logo h2 {
     margin: 0;
     font-size: 1.5rem;
     font-weight: 700;
-    color: var(--primary);
+    color:var(--primary);
     letter-spacing: -0.5px;
-}
-
+  }
 .menuButtonIcon {
     display: none !important;
     color: var(--text-light) !important;

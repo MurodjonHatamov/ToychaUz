@@ -25,6 +25,7 @@ const OrderCard = ({
   const [isMobile, setIsMobile] = useState(false);
   const [availableProducts, setAvailableProducts] = useState([]);
   const [localProducts, setLocalProducts] = useState([...order.products]);
+
   
   // 🎯 YANGI: Faqat shu OrderCard uchun loader statelari
   const [isSaving, setIsSaving] = useState(false); // Saqlash jarayoni
@@ -110,14 +111,15 @@ const OrderCard = ({
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString("uz-UZ", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    const date = new Date(dateString);
+  
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+  
+    return `${day}.${month}.${year}`;
   };
+  
 
   const getTotalItems = (products) => {
     return products.reduce((total, product) => total + product.quantity, 0);

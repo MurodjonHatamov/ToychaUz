@@ -66,13 +66,13 @@
 .logo {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 6px;
   font-weight: 700;
 }
 
-.logo svg {
-  font-size: 2rem;
-  color: #ffffff;
+.logo img {
+  width: 35px;
+  height: 35px;
 }
 
 .logo h2 {

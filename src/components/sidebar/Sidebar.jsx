@@ -87,7 +87,7 @@ const menuItems=getMenuItems();
       {/* Header */}
       <div className={styles.headerMenu}>
         <div className={styles.logo}>
-          <TbTruckDelivery />
+          <img src="/imgs/dark.png" alt="" />
           <h2>ToychaUz</h2>
         </div>
         <div onClick={() => setDarkMode(!darkMode)} className={styles.darkMode}>
