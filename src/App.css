@@ -65,7 +65,7 @@ body {
 /* Oddiy content (login bo'lmagan) */
 .content {
   flex: 1;
-  padding: 24px;
+  padding-left: 24px;
   padding-top: 80px;
   background-color: var(--background);
   overflow-y: auto;

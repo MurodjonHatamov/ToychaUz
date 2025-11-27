@@ -91,6 +91,11 @@
   border-color: rgba(244, 67, 54, 0.3);
   color: var(--error);
 }
+.statusAccepted {
+  background-color: rgba(248, 163, 5, 0.096);
+  border-color: rgb(248, 163, 5);
+  color:rgb(248, 163, 5);
+}
 
 /* Button Styles */
 .editButton, .saveButton, .cancelOrderButton {

@@ -285,7 +285,8 @@ function ChatD({setNotifications, notifications }) {
         fetchMarketChat(selectedMarket._id);
         fetchAllMessages();
       }
-    }, 10000);
+      
+    }, 30000);
 
     return () => clearInterval(interval);
   }, [selectedMarket]);

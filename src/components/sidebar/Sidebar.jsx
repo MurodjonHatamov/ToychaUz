@@ -10,7 +10,7 @@ import { TbTruckDelivery } from "react-icons/tb";
 import { MdShoppingCart, MdListAlt, MdHelp, MdPerson, MdPayment, MdCheckCircle, MdLocalShipping, MdFileDownload, MdChat, MdStore, MdInventory } from "react-icons/md";
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import { IoExitOutline } from "react-icons/io5";
+import { IoChatbubbleSharp, IoExitOutline } from "react-icons/io5";
 import { CiDark, CiSun } from "react-icons/ci";
 
 export default function Sidebar({ openSidebar,   handleLogout,userType }) {
@@ -41,7 +41,7 @@ return [
       { name: "Buyurtma Berish", path: "/", icon: <MdShoppingCart size={24} /> },
       { name: "Mening Buyurtmalarim", path: "/myorders", icon: <MdListAlt size={24} /> },
       { name: "Profil", path: "/profile", icon: <MdPerson size={24} /> },
-      { name: "Yordam", path: "/help", icon: <MdHelp size={24} /> },
+      { name: "Yordam", path: "/help", icon: <IoChatbubbleSharp  size={24} /> },
     ];
   }
   

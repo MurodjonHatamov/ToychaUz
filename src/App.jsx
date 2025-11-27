@@ -321,6 +321,7 @@ const AppContent = ({ openSidebar, setOpenSidebar,setNotifications, notification
 };
 
 function App() {
+
   const [openSidebar, setOpenSidebar] = useState(true);
 const [notifications, setNotifications] = useState(null);
   return (

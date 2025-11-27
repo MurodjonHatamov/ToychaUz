@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { Button, TextField, MenuItem, CircularProgress } from "@mui/material";
 import styles from "./OrderCard.module.css";
+
+
 import {
   MdAccessTime,
   MdCancel,
@@ -11,6 +13,7 @@ import {
   MdAdd,
   MdSave,
   MdClose,
+  MdDoneAll
 } from "react-icons/md";
 
 const OrderCard = ({
@@ -102,10 +105,15 @@ const OrderCard = ({
         bgColor: "statusDelivered",
       },
       accepted: {
-        icon: <MdCancel />,
+        icon: <MdDoneAll />,
         text: "Qabul qilingan",
-        bgColor: "statusCancelled",
+        bgColor: "statusAccepted",
       },
+      rejected: {
+        icon: <MdCancel />,
+        text: "Bekor qilingan",
+        bgColor: "statusCancelled",
+      }
     };
     return configs[status] || configs.new;
   };
