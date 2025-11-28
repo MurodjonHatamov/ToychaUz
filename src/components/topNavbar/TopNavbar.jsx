@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { MdMenu, MdNotifications, MdEmail } from 'react-icons/md';
 import { Badge, IconButton, Stack } from '@mui/material';
-import { useNavigate } from 'react-router-dom'; // Yangi import
+import { useNavigate } from 'react-router-dom';
 import styles from './TopNavbar.module.css';
 import { CiDark, CiLogout, CiSun } from 'react-icons/ci';
 import { TbTruckDelivery } from 'react-icons/tb';
 
-function TopNavbar({ onMenuToggle, setOpenSidebar, openSidebar, handleLogout, setNotifications, notifications,userType }) {
+function TopNavbar({ onMenuToggle, setOpenSidebar, openSidebar, handleLogout, setNotifications, notifications, userType }) {
   const [darkMode, setDarkMode] = useState(true);
   const [allMessages, setAllMessages] = useState([]);
   const [messages, setMessages] = useState([]);
 
-  const navigate = useNavigate(); // useNavigate hook'ini ishlatish
+  const navigate = useNavigate();
 
   const fetchAllMessages = async () => {
     try {
@@ -45,12 +45,12 @@ function TopNavbar({ onMenuToggle, setOpenSidebar, openSidebar, handleLogout, se
       if (response.ok) {
         const data = await response.json();
         setMessages(data);
-        Console.log('Market xabarlari:', data);
+        console.log('Market xabarlari:', data); // ✅ Tuzatildi: console.log
       }
     } catch (error) {
       console.error('Market xabarlarini yuklab boʻlmadi:', error);
     }
-  };
+  };  
   
   const getTotalUnread = () => {
     let messagesList = [];
@@ -58,7 +58,7 @@ function TopNavbar({ onMenuToggle, setOpenSidebar, openSidebar, handleLogout, se
     if (userType === "deliver") {
       messagesList = allMessages;
     } else if (userType === "market") {
-      messagesList = messages; // yoki market uchun endpoint’dan kelgan xabarlar
+      messagesList = messages;
     }
   
     if (!Array.isArray(messagesList)) return 0;
@@ -66,32 +66,30 @@ function TopNavbar({ onMenuToggle, setOpenSidebar, openSidebar, handleLogout, se
     return messagesList.filter(msg => msg.status === 'new' && msg.from !== userType).length;
   };
   
-console.log(getTotalUnread());
+  console.log(getTotalUnread());
 
-  // Notification tugmasi bosilganda chat sahifasiga o'tish
   const handleNotificationClick = () => {
     navigate('/chat');
   };
 
- 
-
   useEffect(() => {
-     if (userType === "deliver") {
-    fetchAllMessages();
-  } else if (userType === "market") {
-    fetchMarketMessages();
-  }
+    if (userType === "deliver") {
+      fetchAllMessages();
+    } else if (userType === "market") {
+      fetchMarketMessages();
+    }
+    
     if (darkMode) {
       document.body.classList.add("dark-mode");
     } else {
       document.body.classList.remove("dark-mode");
     }
-  }, [darkMode]);
+  }, [darkMode, userType]); // ✅ userType ni dependency ga qo'shish kerak
 
   return (
     <div className={styles.navbar}>
       <div className={styles.leftSection}>
-      <div className={styles.logo}>
+        <div className={styles.logo}>
           <img src={"/imgs/Light.png"} alt="" />
           <h2>ToychaUz</h2>
         </div>
@@ -99,7 +97,6 @@ console.log(getTotalUnread());
 
       <div className={styles.rightSection}>
         <div className={styles.actions}>
-          {/* Notification tugmasi */}
           <div className={styles.notification}>
             <Stack direction="row" spacing={1}>
               <IconButton 

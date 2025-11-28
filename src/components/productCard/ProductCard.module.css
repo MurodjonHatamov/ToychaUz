@@ -109,7 +109,7 @@
   .quantityControls {
     display: flex;
     align-items: center;
-    gap: 0.25rem;
+    gap: .25rem;
     background: var(--item);
     border-radius: var(--radius);
     padding: 0.25rem;
@@ -117,7 +117,7 @@
   }
   
   .quantityInput {
-    width: 50px;
+    width: 80px;
     padding: 0.5rem;
     border: none;
     border-radius: var(--radius);

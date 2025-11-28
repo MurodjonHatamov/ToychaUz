@@ -32,7 +32,7 @@ const getMenuItems = ()=>{
       { name: "Markets", path: "/markets", icon: <MdStore size={24} /> },
       { name: "Products", path: "/products", icon: <MdInventory size={24} /> },
       { name: "Chat", path: "/chat", icon: <MdChat size={24} /> },
-      { name: "Profil", path: "/deliver/profile", icon: <MdPerson size={24} /> },
+      { name: "Profil", path: "/deliver-user", icon: <MdPerson size={24} /> },
 
     ];
     

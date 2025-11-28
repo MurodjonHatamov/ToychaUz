@@ -19,6 +19,7 @@ import DashboardD from "./pages/dashboardD/DashboardD";
 import MarketsD from "./pages/marketsD/MarketsD";
 import ProductsD from "./pages/productsD/ProductsD";
 import ChatD from "./pages/chatD/ChatD";
+import Deliver from "./pages/deliver/Deliver";
 
 // 🔹 DELIVER UCHUN YANGI SAHIFALARNI IMPORT QILISH KERAK
 // import DeliverDashboard from "./pages/deliver/DeliverDashboard";
@@ -306,6 +307,16 @@ const AppContent = ({ openSidebar, setOpenSidebar,setNotifications, notification
                 </RoleProtectedRoute>
               }
             />
+                             <Route
+              path="/deliver-user"
+              element={
+                <RoleProtectedRoute allowedRoles={["deliver"]}>
+          
+                <Deliver/>
+                </RoleProtectedRoute>
+              }
+            />
+
             {/* Not found route */}
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>

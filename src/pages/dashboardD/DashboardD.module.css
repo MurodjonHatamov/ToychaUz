@@ -39,6 +39,7 @@
   background-color: var(--background);
   padding: 20px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  transition: all 0.3s ease;
 }
 
 /* FILTR PANELI */
@@ -49,6 +50,7 @@
   box-shadow: var(--shadow);
   border: 1px solid var(--border);
   margin-bottom: 20px;
+  transition: all 0.3s ease;
 }
 
 .filterHeader {
@@ -90,6 +92,7 @@
   color: var(--text);
   font-size: 0.9rem;
   transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .filterSelect:focus,
@@ -133,6 +136,7 @@
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
+  opacity: 0.6;
 }
 
 .buttonSpinner {
@@ -154,27 +158,30 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.3s ease;
 }
 
 .excelTableContainer {
   width: 100%;
   overflow-x: auto;
   max-height: 70vh;
+  position: relative;
 }
 
 /* EXCEL TABLE STYLES */
 .excelTable {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   min-width: 800px;
   background-color: var(--surface);
+  transition: all 0.3s ease;
 }
 
 .excelTable th,
 .excelTable td {
   border: 1px solid var(--border);
-  padding: 10px 12px;
+  padding: 8px 10px;
   text-align: center;
   white-space: nowrap;
   transition: all 0.2s ease;
@@ -186,41 +193,59 @@
   color: white;
   font-weight: 700;
   text-align: left;
-  min-width: 250px;
+  min-width: 200px;
   position: sticky;
   left: 0;
   z-index: 10;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
+  border-right: 2px solid var(--border);
 }
 
-.marketHeader {
+.orderHeader {
   font-weight: 600;
   min-width: 180px;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   border-bottom: 2px solid var(--border);
   transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
 }
 
-.marketHeader:hover {
+.orderHeader:hover {
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
-.statusBadge {
+.orderHeaderContent {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.orderTitle {
+  font-weight: 600;
   font-size: 0.7rem;
+  line-height: 1.2;
+}
+
+.statusBadge {
+  font-size: 0.65rem;
   opacity: 0.9;
-  margin-top: 4px;
   font-weight: 500;
+  padding: 2px 6px;
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .totalHeader {
   background-color: var(--primary-dark);
   color: white;
   font-weight: 700;
-  min-width: 100px;
+  min-width: 80px;
   position: sticky;
   right: 0;
   z-index: 10;
+  border-left: 2px solid var(--border);
 }
 
 /* Body styles */
@@ -233,6 +258,8 @@
   z-index: 5;
   color: var(--text);
   border-right: 2px solid var(--border);
+  font-size: 0.75rem;
+  transition: all 0.3s ease;
 }
 
 .quantityCell {
@@ -240,6 +267,7 @@
   font-weight: 500;
   color: var(--text);
   transition: background-color 0.2s ease;
+  font-size: 0.75rem;
 }
 
 .quantityCell:hover {
@@ -254,6 +282,7 @@
   right: 0;
   z-index: 5;
   border-left: 2px solid var(--border);
+  font-size: 0.75rem;
 }
 
 /* Grand total row */
@@ -270,6 +299,7 @@
   left: 0;
   z-index: 10;
   border-right: 2px solid var(--border);
+  font-size: 0.75rem;
 }
 
 .columnTotal {
@@ -277,6 +307,7 @@
   font-weight: 700;
   color: var(--warning);
   border-bottom: 2px solid var(--border);
+  font-size: 0.75rem;
 }
 
 .grandTotal {
@@ -287,6 +318,7 @@
   right: 0;
   z-index: 10;
   border-left: 2px solid var(--border);
+  font-size: 0.75rem;
 }
 
 /* Row hover effect */
@@ -296,7 +328,7 @@
 }
 
 .productRow:hover .quantityCell {
-  background-color: #f5f5f5;
+  background-color: var(--item);
 }
 
 /* YUKLASH VA XABARLAR */
@@ -355,6 +387,12 @@
   z-index: 1000;
   padding: 20px;
   backdrop-filter: blur(4px);
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .dialog {
@@ -367,6 +405,7 @@
   display: flex;
   flex-direction: column;
   animation: dialogAppear 0.3s ease-out;
+  overflow: hidden;
 }
 
 @keyframes dialogAppear {
@@ -387,6 +426,7 @@
   padding: 20px;
   border-bottom: 1px solid var(--border);
   position: relative;
+  background-color: var(--surface);
 }
 
 .dialogHeader h2 {
@@ -420,6 +460,7 @@
   padding: 20px;
   overflow-y: auto;
   flex: 1;
+  background-color: var(--surface);
 }
 
 .section {
@@ -458,12 +499,25 @@
   color: var(--text);
   font-weight: 500;
   word-break: break-all;
+  font-size: 0.9rem;
+}
+
+.statusBadgeLarge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+  display: inline-block;
+  white-space: nowrap;
 }
 
 .productsTable {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
+  background-color: var(--surface);
 }
 
 .productRowDetail {
@@ -472,6 +526,11 @@
   align-items: center;
   padding: 12px 16px;
   border-bottom: 1px solid var(--border);
+  transition: background-color 0.2s ease;
+}
+
+.productRowDetail:hover {
+  background-color: var(--item);
 }
 
 .productRowDetail:last-child {
@@ -481,26 +540,37 @@
 .productName {
   color: var(--text);
   font-weight: 500;
+  font-size: 0.9rem;
+  flex: 1;
 }
 
 .productQuantity {
   color: var(--primary);
   font-weight: 600;
+  font-size: 0.9rem;
+  background-color: var(--item);
+  padding: 4px 8px;
+  border-radius: 4px;
+  min-width: 50px;
+  text-align: center;
 }
 
+/* DIALOG ACTIONS */
 .dialogActions {
-  padding: 20px;
-  border-top: 1px solid var(--border);
   display: flex;
   gap: 12px;
   justify-content: flex-end;
+  padding: 20px;
+  border-top: 1px solid var(--border);
+  background-color: var(--surface);
+  flex-wrap: wrap;
 }
 
 .closeDialogBtn {
   padding: 10px 20px;
+  border: 1px solid var(--border);
   background-color: transparent;
   color: var(--text);
-  border: 2px solid var(--border);
   border-radius: var(--radius);
   cursor: pointer;
   font-weight: 500;
@@ -513,97 +583,81 @@
 
 .acceptBtn {
   padding: 10px 20px;
+  border: none;
   background-color: var(--success);
   color: white;
-  border: none;
   border-radius: var(--radius);
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   transition: all 0.3s ease;
 }
 
 .acceptBtn:hover {
   background-color: var(--success);
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
 }
 
 .rejectBtn {
   padding: 10px 20px;
+  border: none;
   background-color: var(--error);
   color: white;
-  border: none;
   border-radius: var(--radius);
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   transition: all 0.3s ease;
 }
 
 .rejectBtn:hover {
   background-color: var(--error);
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
 }
 
 .deliverBtn {
   padding: 10px 20px;
-  background-color: var(--primary);
-  color: white;
   border: none;
+  background-color: var(--warning);
+  color: white;
   border-radius: var(--radius);
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   transition: all 0.3s ease;
 }
 
 .deliverBtn:hover {
-  background-color: var(--primary-dark);
+  background-color: var(--warning);
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
 }
 
-/* RESPONSIVE DESIGN */
-@media (max-width: 1024px) {
-  .filterControls {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .excelTable {
-    font-size: 0.75rem;
-  }
-  
-  .excelTable th,
-  .excelTable td {
-    padding: 8px 10px;
-  }
+.actionIcon {
+  font-size: 0.9rem;
 }
 
+/* Responsive design */
 @media (max-width: 768px) {
   .dashboard {
     padding: 10px;
-  }
-  
-  .filterPanel {
-    padding: 16px;
   }
   
   .filterControls {
     grid-template-columns: 1fr;
   }
   
-  .excelTable {
-    font-size: 0.7rem;
-    min-width: 600px;
-  }
-  
-  .excelTable th,
-  .excelTable td {
-    padding: 6px 8px;
-  }
-  
-  .productHeader {
-    min-width: 200px;
-  }
-  
-  .marketHeader {
-    min-width: 150px;
+  .dialog {
+    margin: 10px;
+    max-height: calc(100vh - 20px);
   }
   
   .detailGrid {
@@ -613,34 +667,190 @@
   .dialogActions {
     flex-direction: column;
   }
-}
-
-@media (max-width: 480px) {
-  .filterHeader h2 {
-    font-size: 1.2rem;
+  
+  .dialogActions button {
+    width: 100%;
   }
   
   .excelTable {
-    min-width: 500px;
+    font-size: 0.7rem;
+  }
+  
+  .excelTable th,
+  .excelTable td {
+    padding: 6px 8px;
   }
 }
 
-/* Scrollbar styling */
+@media (max-width: 480px) {
+  .filterPanel {
+    padding: 15px;
+  }
+  
+  .dialogHeader {
+    padding: 15px;
+  }
+  
+  .dialogContent {
+    padding: 15px;
+  }
+  
+  .sectionTitle {
+    font-size: 1rem;
+  }
+  
+  .productRowDetail {
+    padding: 10px 12px;
+  }
+}
+
+/* Scrollbar styles */
 .excelTableContainer::-webkit-scrollbar {
-  height: 8px;
   width: 8px;
+  height: 8px;
 }
 
 .excelTableContainer::-webkit-scrollbar-track {
-  background: var(--item);
-  border-radius: 4px;
+  background: var(--background);
 }
 
 .excelTableContainer::-webkit-scrollbar-thumb {
-  background: var(--primary);
+  background: var(--border);
   border-radius: 4px;
 }
 
 .excelTableContainer::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-dark);
+  background: var(--text-light);
+}
+
+.dialogContent::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dialogContent::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+.dialogContent::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+/* Loading states */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  border-radius: var(--radius);
+}
+
+/* Print styles */
+@media print {
+  .filterPanel,
+  .exportButton,
+  .dialogOverlay {
+    display: none !important;
+  }
+  
+  .dashboard {
+    padding: 0;
+    background-color: white;
+  }
+  
+  .excelTablePanel {
+    box-shadow: none;
+    border: none;
+  }
+  
+  .excelTable th,
+  .excelTable td {
+    border-color: #000;
+  }
+}
+/* PAGINATION STYLES */
+.paginationContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background-color: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  margin-bottom: 20px;
+}
+
+.paginationInfo {
+  color: var(--text);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+.paginationControls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pageSizeSelect {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background-color: var(--surface);
+  color: var(--text);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.paginationBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
+  background-color: var(--surface);
+  color: var(--text);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.paginationBtn:hover:not(:disabled) {
+  background-color: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.paginationBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pageInfo {
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 500;
+  min-width: 60px;
+  text-align: center;
+}
+
+/* Responsive pagination */
+@media (max-width: 768px) {
+  .paginationContainer {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+  
+  .paginationControls {
+    justify-content: center;
+  }
 }
