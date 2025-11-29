@@ -8,6 +8,7 @@ function Help() {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState('');
   const messagesEndRef = useRef(null);
+  const messagesContainerRef = useRef(null);
 
   // Chatni pastga scroll qilish
   const scrollToBottom = () => {
@@ -61,8 +62,6 @@ function Help() {
       setLoading(false);
     }
   };
-
-
 
   // Xabar yuborish
   const sendMessage = async () => {
@@ -118,7 +117,9 @@ function Help() {
   const templateQuestions = [
     "Buyurtma qachon yetib keladi?",
     "Mahsulot mavjudmi?",
-    
+    "To'lov usullari qanday?",
+    "Yetkazib berish muddati qancha?",
+    "Mahsulotni qaytarish mumkinmi?"
   ];
 
   // Komponent yuklanganda chat tarixini olish
@@ -204,7 +205,10 @@ function Help() {
       )}
 
       <div className={styles.chatContainer}>
-        <div className={styles.messagesContainer}>
+        <div 
+          className={styles.messagesContainer}
+          ref={messagesContainerRef}
+        >
           {loading && messages.length === 0 ? (
             <div className={styles.loading}>
               <div className={styles.spinner}></div>

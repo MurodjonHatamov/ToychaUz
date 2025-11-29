@@ -343,7 +343,7 @@ function ProductsD() {
                   <TableCell className={styles.tableHeaderCell}>Mahsulot Nomi</TableCell>
                   <TableCell className={styles.tableHeaderCell}>Oʻlchov Birligi</TableCell>
                   <TableCell className={styles.tableHeaderCell}>Qoʻshilgan Sana</TableCell>
-                  <TableCell className={styles.tableHeaderCell}>Yangilangan Sana</TableCell>
+               
                   <TableCell className={styles.tableHeaderCell}>Harakatlar</TableCell>
                 </TableRow>
               </TableHead>
@@ -369,11 +369,7 @@ function ProductsD() {
                         {formatDate(product.createdAt)}
                       </span>
                     </TableCell>
-                    <TableCell className={styles.tableCell}>
-                      <span className={styles.dateText}>
-                        {formatDate(product.updatedAt)}
-                      </span>
-                    </TableCell>
+                  
                     <TableCell className={styles.tableCell}>
                       <div className={styles.actionButtons}>
                         <IconButton

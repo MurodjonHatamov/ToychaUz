@@ -494,7 +494,7 @@ function DashboardD() {
       const date = new Date(order.createdAt).toLocaleDateString();
       const status = order.status;
       // Buyurtma kaliti: Market nomi (sana) - buyurtma ID si (qisqartirilgan)
-      const orderKey = `${marketName} (${date}) - ${order._id.substring(0, 8)}`;
+      const orderKey = `${marketName} (${date}) `;
 
       orderColumns[orderKey] = {
         order: order,

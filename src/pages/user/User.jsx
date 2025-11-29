@@ -161,15 +161,7 @@ const url = userType === 'deliver'
                 </div>
               </div>
 
-              <div className={styles.detailRow}>
-                <div className={styles.detailLabel}>
-                  <FaCalendar className={styles.detailIcon} />
-                  So'ngi Yangilanish
-                </div>
-                <div className={styles.detailValue}>
-                  {userData?.updatedAt ? formatDate(userData.updatedAt) : ''}
-                </div>
-              </div>
+       
             </div>
           </div>
         </div>

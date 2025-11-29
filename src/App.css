@@ -1,18 +1,24 @@
 /* App.css */
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
 body {
   font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
   background-color: var(--background);
   color: var(--text);
   line-height: 1.5;
+  overflow: hidden; /* ✅ Body scroll ni o'chirish */
 }
 
 .app {
   display: flex;
   height: 100vh;
   background-color: var(--background);
-  overflow: hidden;
+  overflow: hidden; /* ✅ Asosiy app container scroll ni o'chirish */
 }
 
 /* Asosiy kontent - sidebar bilan birga */
@@ -23,7 +29,7 @@ body {
   flex-direction: column;
   height: 100vh;
   transition: margin-left 0.3s ease;
-  overflow: hidden;
+  overflow: hidden; /* ✅ Asosiy content scroll ni o'chirish */
 }
 
 /* Sidebar yopilganda */
@@ -46,6 +52,7 @@ body {
   margin-left: 0 !important;
   background-color: var(--background);
   height: 100vh;
+  overflow: auto; /* ✅ Login sahifada scrollga ruxsat */
 }
 
 .login-page .top-navbar-container,
@@ -59,16 +66,32 @@ body {
   align-items: center;
   justify-content: center;
   height: 100vh;
-  overflow: hidden;
+  min-height: 100vh; /* ✅ Minimum balandlik */
 }
 
 /* Oddiy content (login bo'lmagan) */
 .content {
   flex: 1;
-  padding-left: 24px;
+  padding: 20px;
   padding-top: 80px;
   background-color: var(--background);
-  overflow-y: auto;
+  overflow-y: auto; /* ✅ Faqat content ichida scroll */
+  height: calc(100vh - 80px); /* ✅ TopNavbar balandligini hisobga olgan holda */
+}
+
+/* Top navbar container */
+.top-navbar-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 260px;
+  z-index: 100;
+  background-color: var(--surface);
+  transition: left 0.3s ease;
+}
+
+.sidebar-closed .top-navbar-container {
+  left: 0;
 }
 
 /* Responsive Design */
@@ -77,12 +100,22 @@ body {
       margin-left: 0;
       padding-bottom: 80px;
   }
+  
+  .top-navbar-container {
+      left: 0;
+  }
+  
+  .content {
+      height: calc(100vh - 140px); /* ✅ Mobile: TopNavbar + BottomNav balandligi */
+      padding-top: 70px;
+  }
 }
 
 @media (max-width: 768px) {
   .content {
       padding: 16px;
       padding-top: 70px;
+      height: calc(100vh - 140px);
   }
 }
 
@@ -90,6 +123,7 @@ body {
   .content {
       padding: 12px;
       padding-top: 70px;
+      height: calc(100vh - 140px);
   }
 }
 
@@ -101,4 +135,22 @@ body {
   height: 100vh;
   color: var(--text);
   font-size: 1.1rem;
+}
+
+/* Scrollbar styling */
+.content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.content::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+.content::-webkit-scrollbar-thumb:hover {
+  background: var(--text-light);
 }
