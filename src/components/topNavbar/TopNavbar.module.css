@@ -23,7 +23,6 @@
 }
 
 .darkMode {
-    background-color: var(--background);
     width: 40px;
     height: 40px;
     border-radius: 50%;
@@ -127,7 +126,7 @@
 
 /* Material-UI Badge customization */
 .MuiBadge-badge {
-    background-color: var(--primary) !important;
+
     color: white !important;
     font-size: 0.7rem !important;
     font-weight: 600 !important;

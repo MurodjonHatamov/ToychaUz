@@ -13,68 +13,85 @@ import styles from "./DashboardD.module.css";
 
 function DashboardD() {
   // ==================== STATE DEFINITIONS ====================
+  
+  // Marketlar ro'yxati - barcha mavjud marketlar
   const [markets, setMarkets] = useState([]);
+  
+  // Tanlangan market - "all" bo'lsa barcha marketlar
   const [selectedMarket, setSelectedMarket] = useState("all");
+  
+  // Buyurtmalar ro'yxati - joriy sahifadagi buyurtmalar
   const [orders, setOrders] = useState([]);
+  
+  // Tanlangan buyurtma - batafsil ko'rish uchun
   const [selectedOrder, setSelectedOrder] = useState(null);
+  
+  // Mahsulotlar ro'yxati - barcha mavjud mahsulotlar
   const [products, setProducts] = useState([]);
+  
+  // Market nomlari xaritasi - ID bo'yicha tez qidirish uchun
   const [marketNames, setMarketNames] = useState({});
+  
+  // Mahsulot nomlari xaritasi - ID bo'yicha tez qidirish uchun
   const [productNames, setProductNames] = useState({});
 
-  // Pagination state
+  // ✅ TO'G'RI PAGINATION STATE - Sahifalash ma'lumotlari
   const [pagination, setPagination] = useState({
-    page: 1,
-    limit: 1000,
-    total: 0,
-    totalPages: 0
+    page: 1,           // Joriy sahifa raqami
+    limit: 10,         // Sahifadagi elementlar soni
+    total: 0,          // Jami buyurtmalar soni
+    totalPages: 0      // Jami sahifalar soni
   });
 
-  console.log("Orders:", orders);
-  console.log("Selected Order:", selectedOrder);
-  console.log("Pagination:", pagination);
-
-  // Filtrlar
+  // Filtrlar - buyurtmalarni filtrlash uchun parametrlar
   const [filters, setFilters] = useState({
-    status: "all",
-    from: "",
-    to: "",
+    status: "all",    // Buyurtma holati: all, new, accepted, delivered, rejected
+    from: "",         // Boshlanish sanasi
+    to: "",           // Tugash sanasi
   });
 
-  // Yuklanish holatlari
+  // Yuklanish holatlari - turli operatsiyalarning yuklanish holati
   const [loading, setLoading] = useState({
-    markets: true,
-    orders: false,
-    export: false,
-    details: false,
-    products: true,
+    markets: true,    // Marketlar yuklanmoqda
+    orders: false,    // Buyurtmalar yuklanmoqda
+    export: false,    // Excel export yuklanmoqda
+    details: false,   // Buyurtma tafsilotlari yuklanmoqda
+    products: true,   // Mahsulotlar yuklanmoqda
   });
 
+  // Xabar ko'rsatish uchun - foydalanuvchiga xabar ko'rsatish
   const [snackbar, setSnackbar] = useState({
-    open: false,
-    message: "",
-    severity: "success",
+    open: false,      // Xabar ochiq/yopiq
+    message: "",      // Xabar matni
+    severity: "success", // Xabar turi: success, error, warning, info
   });
 
+  // Buyurtma tafsilotlari dialogi ochiq/yopiq
   const [orderDialogOpen, setOrderDialogOpen] = useState(false);
 
   // ==================== API FUNCTIONS ====================
 
+  /**
+   * Marketlarni serverdan yuklash
+   * Barcha mavjud marketlarni olish va ularni state ga saqlash
+   */
   const fetchMarkets = async () => {
     try {
-      setLoading((prev) => ({ ...prev, markets: true }));
+      setLoading((prev) => ({ ...prev, markets: true })); // Yuklanish holatini true qilish
       const response = await fetch("http://localhost:2277/markets", {
         method: "GET",
         headers: {
           accept: "*/*",
           "Content-Type": "application/json",
         },
-        credentials: "include",
+        credentials: "include", // Cookie bilan autentifikatsiya
       });
 
       if (response.ok) {
         const marketsData = await response.json();
-        setMarkets(marketsData);
+        setMarkets(marketsData); // Marketlarni state ga saqlash
         
+        // Market nomlarini xarita ko'rinishida saqlash (tez qidirish uchun)
         const marketMap = {};
         marketsData.forEach(market => {
           marketMap[market._id] = market.name;
@@ -85,10 +102,14 @@ function DashboardD() {
       console.error("Marketlarni yuklab boʻlmadi:", error);
       showSnackbar("Marketlarni yuklab boʻlmadi", "error");
     } finally {
-      setLoading((prev) => ({ ...prev, markets: false }));
+      setLoading((prev) => ({ ...prev, markets: false })); // Yuklanish holatini false qilish
     }
   };
 
+  /**
+   * Mahsulotlarni serverdan yuklash
+   * Barcha mavjud mahsulotlarni olish va ularni state ga saqlash
+   */
   const fetchProducts = async () => {
     try {
       setLoading((prev) => ({ ...prev, products: true }));
@@ -103,8 +124,9 @@ function DashboardD() {
 
       if (response.ok) {
         const productsData = await response.json();
-        setProducts(productsData);
+        setProducts(productsData); // Mahsulotlarni state ga saqlash
 
+        // Mahsulot nomlarini xarita ko'rinishida saqlash
         const productMap = {};
         productsData.forEach(product => {
           productMap[product._id] = product.name;
@@ -119,11 +141,17 @@ function DashboardD() {
     }
   };
 
+  /**
+   * ✅ TO'G'RILANGAN fetchOrders FUNKSIYASI
+   * Buyurtmalarni serverdan yuklash filtr va pagination bilan
+   * @param {number} page - Yuklanayotgan sahifa raqami (default: 1)
+   * @param {number} limit - Sahifadagi elementlar soni (default: 10)
+   */
   const fetchOrders = async (page = 1, limit = 10) => {
     try {
-      setLoading((prev) => ({ ...prev, orders: true }));
+      setLoading((prev) => ({ ...prev, orders: true })); // Buyurtmalar yuklanmoqda
 
-      const queryParams = new URLSearchParams();
+      const queryParams = new URLSearchParams(); // URL parametrlari uchun
 
       // Required parametrlarni faqat qiymati bo'lsa qo'shamiz
       if (selectedMarket && selectedMarket !== "all") {
@@ -162,24 +190,20 @@ function DashboardD() {
         const data = await response.json();
         console.log("Orders API response:", data);
         
-        setOrders(data.data || []);
+        setOrders(data.data || []); // Buyurtmalarni state ga saqlash
         
-        // Pagination ma'lumotlarini yangilash
-        if (data.pagination) {
-          setPagination({
-            page: data.pagination.currentPage || page,
-            limit: data.pagination.limit || limit,
-            total: data.pagination.total || 0,
-            totalPages: data.pagination.totalPages || 1
-          });
-        } else {
-          // Agar pagination ma'lumotlari kelmasa
-          setPagination(prev => ({
-            ...prev,
-            page,
-            limit
-          }));
-        }
+        // ✅ TO'G'RI PAGINATION - Backenddan to'g'ri kelgan ma'lumotlar
+        const total = data.total || 0;        // Jami buyurtmalar soni
+        const lim = data.limit || limit;      // Limit qiymati
+        const currentPage = data.page || page; // Joriy sahifa
+
+        setPagination({
+          page: currentPage,
+          limit: lim,
+          total: total,
+          totalPages: Math.ceil(total / lim), // ✅ Avtomatik hisoblaymiz: jami sahifalar soni
+        });
+
       } else {
         throw new Error(`Server xatosi: ${response.status}`);
       }
@@ -187,10 +211,14 @@ function DashboardD() {
       console.error("Buyurtmalarni yuklab boʻlmadi:", error);
       showSnackbar("Buyurtmalarni yuklab boʻlmadi", "error");
     } finally {
-      setLoading((prev) => ({ ...prev, orders: false }));
+      setLoading((prev) => ({ ...prev, orders: false })); // Yuklanish tugadi
     }
   };
 
+  /**
+   * Buyurtma tafsilotlarini olish
+   * @param {string} orderId - Buyurtma ID si
+   */
   const fetchOrderDetails = async (orderId) => {
     try {
       setLoading((prev) => ({ ...prev, details: true }));
@@ -208,9 +236,8 @@ function DashboardD() {
 
       if (response.ok) {
         const order = await response.json();
-        console.log("Order details API response:", order);
-        setSelectedOrder(order);
-        setOrderDialogOpen(true);
+        setSelectedOrder(order); // Tanlangan buyurtmani saqlash
+        setOrderDialogOpen(true); // Dialogni ochish
       } else {
         throw new Error(`Server xatosi: ${response.status}`);
       }
@@ -224,29 +251,49 @@ function DashboardD() {
 
   // ==================== PAGINATION FUNCTIONS ====================
 
+  /**
+   * Sahifa o'zgartirish
+   * @param {number} newPage - Yangi sahifa raqami
+   */
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= pagination.totalPages) {
-      fetchOrders(newPage, pagination.limit);
+      fetchOrders(newPage, pagination.limit); // Yangi sahifani yuklash
     }
   };
 
+  /**
+   * Limit o'zgartirish (sahifadagi elementlar soni)
+   * @param {number} newLimit - Yangi limit qiymati
+   */
   const handleLimitChange = (newLimit) => {
-    fetchOrders(1, newLimit);
+    fetchOrders(1, newLimit); // 1-sahifadan boshlab yangi limit bilan yuklash
   };
 
   // ==================== HELPER FUNCTIONS ====================
 
+  /**
+   * Market ID bo'yicha market nomini olish
+   * @param {string|object} marketId - Market ID yoki market objekti
+   * @returns {string} Market nomi
+   */
   const getMarketName = (marketId) => {
     if (!marketId) return "Noma'lum market";
     
+    // Agar marketId object bo'lsa va name property si bo'lsa
     if (typeof marketId === 'object' && marketId.name) {
       return marketId.name;
     }
     
+    // Xaritadan market nomini olish
     const marketName = marketNames[marketId];
     return marketName || "Noma'lum market";
   };
 
+  /**
+   * Mahsulot ID bo'yicha mahsulot nomini olish
+   * @param {string|object} productId - Mahsulot ID yoki mahsulot objekti
+   * @returns {string} Mahsulot nomi
+   */
   const getProductName = (productId) => {
     if (!productId) return "Noma'lum mahsulot";
     
@@ -258,6 +305,10 @@ function DashboardD() {
     return productName || "Noma'lum mahsulot";
   };
 
+  /**
+   * Buyurtmani qabul qilish
+   * @param {string} orderId - Buyurtma ID si
+   */
   const acceptOrder = async (orderId) => {
     try {
       const response = await fetch(
@@ -274,8 +325,8 @@ function DashboardD() {
 
       if (response.ok) {
         showSnackbar("Buyurtma muvaffaqiyatli qabul qilindi", "success");
-        fetchOrders(pagination.page, pagination.limit);
-        setOrderDialogOpen(false);
+        fetchOrders(pagination.page, pagination.limit); // Yangilangan ro'yxatni yuklash
+        setOrderDialogOpen(false); // Dialogni yopish
       } else {
         throw new Error(`Server xatosi: ${response.status}`);
       }
@@ -285,6 +336,10 @@ function DashboardD() {
     }
   };
 
+  /**
+   * Buyurtmani yetkazib berish
+   * @param {string} orderId - Buyurtma ID si
+   */
   const deliverOrder = async (orderId) => {
     try {
       const response = await fetch(
@@ -312,8 +367,13 @@ function DashboardD() {
     }
   };
 
+  /**
+   * Buyurtmani rad etish (bekor qilish)
+   * @param {string} orderId - Buyurtma ID si
+   */
   const rejectOrder = async (orderId) => {
     try {
+      // Foydalanuvchidan tasdiq olish
       const isConfirmed = window.confirm(
         "Haqiqatan ham bu buyurtmani bekor qilmoqchimisiz?"
       );
@@ -344,6 +404,10 @@ function DashboardD() {
     }
   };
 
+  /**
+   * Excel faylga export qilish
+   * Barcha filtrlangan ma'lumotlarni Excel fayl sifatida yuklab olish
+   */
   const exportToExcel = async () => {
     try {
       setLoading((prev) => ({ ...prev, export: true }));
@@ -377,13 +441,14 @@ function DashboardD() {
       );
 
       if (response.ok) {
-        const blob = await response.blob();
+        const blob = await response.blob(); // Excel fayl ni olish
         
         // Blob ni tekshirish
         if (blob.size === 0) {
           throw new Error("Fayl bo'sh");
         }
 
+        // Faylni yuklab olish
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
@@ -393,7 +458,7 @@ function DashboardD() {
         a.download = fileName;
         
         document.body.appendChild(a);
-        a.click();
+        a.click(); // Faylni yuklab olish
         
         // Tozalash
         window.URL.revokeObjectURL(url);
@@ -415,16 +480,20 @@ function DashboardD() {
 
   // ==================== EXCEL TABLE FUNCTIONS ====================
 
+  /**
+   * Excel jadvali uchun ma'lumotlarni hisoblash
+   * Mahsulotlar va buyurtmalar o'rtasidagi bog'liqlikni hisoblaydi
+   * @returns {object} Excel jadvali uchun tayyor ma'lumotlar
+   */
   const calculateExcelTableData = () => {
-    const productData = {};
-    const orderColumns = {};
-
-    console.log("Calculating excel data with orders:", orders);
+    const productData = {};    // Mahsulotlar ma'lumotlari: {productName: {orderKey: quantity}}
+    const orderColumns = {};   // Buyurtma ustunlari: {orderKey: {order, status, marketName, date}}
 
     orders.forEach((order) => {
       const marketName = getMarketName(order.marketId);
       const date = new Date(order.createdAt).toLocaleDateString();
       const status = order.status;
+      // Buyurtma kaliti: Market nomi (sana) - buyurtma ID si (qisqartirilgan)
       const orderKey = `${marketName} (${date}) - ${order._id.substring(0, 8)}`;
 
       orderColumns[orderKey] = {
@@ -434,6 +503,7 @@ function DashboardD() {
         date: date,
       };
 
+      // Har bir mahsulot uchun ma'lumotlarni to'plash
       order.products?.forEach((product) => {
         const productName = getProductName(product.productId);
 
@@ -441,6 +511,7 @@ function DashboardD() {
           productData[productName] = {};
         }
 
+        // Mahsulot miqdorini saqlash
         productData[productName][orderKey] = product.quantity;
       });
     });
@@ -448,21 +519,29 @@ function DashboardD() {
     return {
       productData,
       orderColumns,
-      orderKeys: Object.keys(orderColumns).sort(),
+      orderKeys: Object.keys(orderColumns).sort(), // Tartiblangan buyurtma kalitlari
     };
   };
 
+  /**
+   * Excel jadvali uchun jami summalarni hisoblash
+   * @param {object} productData - Mahsulotlar ma'lumotlari
+   * @param {array} orderKeys - Buyurtma kalitlari
+   * @returns {object} Jami summalar
+   */
   const calculateTotals = (productData, orderKeys) => {
-    const rowTotals = {};
-    const columnTotals = {};
-    let grandTotal = 0;
+    const rowTotals = {};      // Qator jami: har bir mahsulotning umumiy miqdori
+    const columnTotals = {};   // Ustun jami: har bir buyurtmaning umumiy miqdori
+    let grandTotal = 0;        // Umumiy jami: barcha mahsulotlarning umumiy miqdori
 
+    // Har bir mahsulot uchun qator jami hisoblash
     Object.keys(productData).forEach((productName) => {
       rowTotals[productName] = orderKeys.reduce((sum, orderKey) => {
         return sum + (productData[productName][orderKey] || 0);
       }, 0);
     });
 
+    // Har bir buyurtma uchun ustun jami hisoblash
     orderKeys.forEach((orderKey) => {
       columnTotals[orderKey] = Object.keys(productData).reduce(
         (sum, productName) => {
@@ -472,6 +551,7 @@ function DashboardD() {
       );
     });
 
+    // Umumiy jami hisoblash
     grandTotal = Object.values(rowTotals).reduce(
       (sum, total) => sum + total,
       0
@@ -480,6 +560,11 @@ function DashboardD() {
     return { rowTotals, columnTotals, grandTotal };
   };
 
+  /**
+   * Xabar ko'rsatish funksiyasi
+   * @param {string} message - Xabar matni
+   * @param {string} severity - Xabar turi: success, error, warning, info
+   */
   const showSnackbar = (message, severity) => {
     setSnackbar({
       open: true,
@@ -488,21 +573,31 @@ function DashboardD() {
     });
   };
 
+  /**
+   * Status bo'yicha rang olish
+   * @param {string} status - Buyurtma holati
+   * @returns {string} Rang kodi
+   */
   const getStatusColor = (status) => {
     switch (status) {
-      case "new":
+      case "new":        // Yangi buyurtma - ko'k
         return "#1976d2";
-      case "accepted":
+      case "accepted":   // Qabul qilingan - to'q sariq
         return "#ed6c02";
-      case "delivered":
+      case "delivered":  // Yetkazilgan - yashil
         return "#2e7d32";
-      case "rejected":
+      case "rejected":   // Rad etilgan - qizil
         return "#d32f2f";
-      default:
+      default:           // Noma'lum - kulrang
         return "#666666";
     }
   };
 
+  /**
+   * Status bo'yicha matn olish
+   * @param {string} status - Buyurtma holati
+   * @returns {string} Status matni
+   */
   const getStatusText = (status) => {
     switch (status) {
       case "new":
@@ -520,11 +615,13 @@ function DashboardD() {
 
   // ==================== USE EFFECT HOOKS ====================
 
+  // Komponent yuklanganda marketlar va mahsulotlarni yuklash
   useEffect(() => {
     fetchMarkets();
     fetchProducts();
   }, []);
 
+  // Market yoki filtr o'zgarganda buyurtmalarni qayta yuklash
   useEffect(() => {
     // Filtr o'zgarganda 1-sahifaga qaytish
     fetchOrders(1, pagination.limit);
@@ -541,14 +638,14 @@ function DashboardD() {
 
   return (
     <div className={styles.dashboard}>
-      {/* FILTR PANELI */}
+      {/* FILTR PANELI - Buyurtmalarni filtrlash uchun interfeys */}
       <div className={styles.filterPanel}>
         <div className={styles.filterHeader}>
           <h2>Excel Jadval - Har Bir Buyurtma Alohida</h2>
         </div>
 
         <div className={styles.filterControls}>
-          {/* Market tanlash */}
+          {/* Market tanlash - Qaysi marketning buyurtmalarini ko'rish */}
           <div className={styles.filterGroup}>
             <label className={styles.filterLabel}>Market</label>
             <select
@@ -565,7 +662,7 @@ function DashboardD() {
             </select>
           </div>
 
-          {/* Status filtri */}
+          {/* Status filtri - Buyurtma holati bo'yicha filtrlash */}
           <div className={styles.filterGroup}>
             <label className={styles.filterLabel}>Status</label>
             <select
@@ -583,7 +680,7 @@ function DashboardD() {
             </select>
           </div>
 
-          {/* Sana filtrlari */}
+          {/* Sana filtrlari - Vaqt oralig'i bo'yicha filtrlash */}
           <div className={styles.filterGroup}>
             <label className={styles.filterLabel}>Dan</label>
             <input
@@ -608,7 +705,7 @@ function DashboardD() {
             />
           </div>
 
-          {/* Export tugmasi */}
+          {/* Export tugmasi - Excel faylga export qilish */}
           <button
             className={styles.exportButton}
             onClick={exportToExcel}
@@ -624,41 +721,46 @@ function DashboardD() {
         </div>
       </div>
 
-      {/* PAGINATION CONTROLS */}
+      {/* ✅ TO'G'RI PAGINATION CONTROLS - Sahifalash boshqaruvi */}
       {orders.length > 0 && (
         <div className={styles.paginationContainer}>
           <div className={styles.paginationInfo}>
-            Jami: {pagination.total} ta buyurtma
+            Jami: {pagination.total} ta buyurtma | 
+            Sahifa: {pagination.page} / {pagination.totalPages}
           </div>
           
           <div className={styles.paginationControls}>
+            {/* Sahifadagi elementlar sonini o'zgartirish */}
             <select
               className={styles.pageSizeSelect}
               value={pagination.limit}
               onChange={(e) => handleLimitChange(parseInt(e.target.value))}
             >
+              <option value={5}>5 ta</option>
               <option value={10}>10 ta</option>
               <option value={25}>25 ta</option>
               <option value={50}>50 ta</option>
-              <option value={100}>100 ta</option>
             </select>
 
+            {/* Oldingi sahifaga o'tish */}
             <button
               className={styles.paginationBtn}
               onClick={() => handlePageChange(pagination.page - 1)}
-              disabled={pagination.page <= 1}
+              disabled={pagination.page <= 1} // 1-sahifada disabled
             >
               <FaChevronLeft />
             </button>
 
+            {/* Sahifa raqamlari */}
             <span className={styles.pageInfo}>
               {pagination.page} / {pagination.totalPages}
             </span>
 
+            {/* Keyingi sahifaga o'tish */}
             <button
               className={styles.paginationBtn}
               onClick={() => handlePageChange(pagination.page + 1)}
-              disabled={pagination.page >= pagination.totalPages}
+              disabled={pagination.page >= pagination.totalPages} // Oxirgi sahifada disabled
             >
               <FaChevronRight />
             </button>
@@ -666,14 +768,16 @@ function DashboardD() {
         </div>
       )}
 
-      {/* EXCEL JADVALI */}
+      {/* EXCEL JADVALI - Buyurtmalar va mahsulotlarni ko'rsatish */}
       <div className={styles.excelTablePanel}>
         {loading.orders ? (
+          // Yuklanish ko'rsatkichi
           <div className={styles.loading}>
             <FaSpinner className={styles.spinner} />
             <span>Buyurtmalar yuklanmoqda...</span>
           </div>
         ) : orders.length > 0 ? (
+          // Excel style jadval
           <div className={styles.excelTableContainer}>
             <table className={styles.excelTable}>
               <thead>
@@ -681,6 +785,7 @@ function DashboardD() {
                   <th className={styles.productHeader}>
                     Mahsulot NOMi / Bo'g'chalar
                   </th>
+                  {/* Buyurtma ustunlari - har bir buyurtma alohida ustun */}
                   {orderKeys.map((orderKey) => {
                     const order = orderColumns[orderKey]?.order;
                     const status = orderColumns[orderKey]?.status;
@@ -710,21 +815,24 @@ function DashboardD() {
                 </tr>
               </thead>
               <tbody>
+                {/* Mahsulot qatorlari - har bir mahsulot alohida qator */}
                 {Object.keys(productData).map((productName) => (
                   <tr key={productName} className={styles.productRow}>
                     <td className={styles.productCell}>{productName}</td>
+                    {/* Har bir buyurtma uchun mahsulot miqdori */}
                     {orderKeys.map((orderKey) => (
                       <td key={orderKey} className={styles.quantityCell}>
                         {productData[productName][orderKey] || 0}
                       </td>
                     ))}
+                    {/* Qator jami */}
                     <td className={styles.rowTotal}>
                       {rowTotals[productName]}
                     </td>
                   </tr>
                 ))}
 
-                {/* JAMI QATORI */}
+                {/* JAMI QATORI - Barcha ustunlar va qatorlar uchun jami */}
                 <tr className={styles.grandTotalRow}>
                   <td className={styles.grandTotalLabel}>JAMI</td>
                   {orderKeys.map((orderKey) => (
@@ -738,6 +846,7 @@ function DashboardD() {
             </table>
           </div>
         ) : (
+          // Hech qanday ma'lumot topilmaganda
           <div className={styles.noData}>
             <FaExclamationTriangle className={styles.noDataIcon} />
             <div>Hech qanday buyurtma topilmadi</div>
@@ -748,7 +857,7 @@ function DashboardD() {
         )}
       </div>
 
-      {/* BUYURTMA TAFSILOTLARI DIALOGI */}
+      {/* BUYURTMA TAFSILOTLARI DIALOGI - Buyurtma haqida batafsil ma'lumot */}
       {orderDialogOpen && selectedOrder && (
         <div
           className={styles.dialogOverlay}
@@ -773,6 +882,7 @@ function DashboardD() {
                 </div>
               ) : (
                 <div>
+                  {/* Umumiy ma'lumotlar bo'limi */}
                   <div className={styles.section}>
                     <h3 className={styles.sectionTitle}>Umumiy ma'lumotlar</h3>
                     <div className={styles.detailGrid}>
@@ -810,6 +920,7 @@ function DashboardD() {
                     </div>
                   </div>
 
+                  {/* Mahsulotlar bo'limi */}
                   <div className={styles.section}>
                     <h3 className={styles.sectionTitle}>
                       Mahsulotlar ({selectedOrder.products?.length || 0})
@@ -831,6 +942,7 @@ function DashboardD() {
               )}
             </div>
 
+            {/* Dialog amallari - buyurtma holatini o'zgartirish */}
             <div className={styles.dialogActions}>
               <button
                 className={styles.closeDialogBtn}
@@ -839,6 +951,7 @@ function DashboardD() {
                 Yopish
               </button>
 
+              {/* Yangi buyurtma uchun amallar */}
               {selectedOrder.status === "new" && (
                 <>
                   <button
@@ -858,6 +971,7 @@ function DashboardD() {
                 </>
               )}
 
+              {/* Qabul qilingan buyurtma uchun amallar */}
               {selectedOrder.status === "accepted" && (
                 <button
                   className={styles.deliverBtn}
@@ -872,7 +986,7 @@ function DashboardD() {
         </div>
       )}
 
-      {/* XABARLAR UCHUN SNACKBAR */}
+      {/* XABARLAR UCHUN SNACKBAR - Foydalanuvchiga xabar ko'rsatish */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}

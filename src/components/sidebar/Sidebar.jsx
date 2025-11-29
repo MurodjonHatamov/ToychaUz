@@ -7,7 +7,7 @@ import Box from "@mui/material/Box";
 import { IconButton, ListItemIcon } from "@mui/material";
 import styles from './Sidebar.module.css';
 import { TbTruckDelivery } from "react-icons/tb";
-import { MdShoppingCart, MdListAlt, MdHelp, MdPerson, MdPayment, MdCheckCircle, MdLocalShipping, MdFileDownload, MdChat, MdStore, MdInventory } from "react-icons/md";
+import { MdShoppingCart, MdListAlt, MdHelp, MdPerson, MdPayment, MdCheckCircle, MdLocalShipping, MdFileDownload, MdChat, MdStore, MdInventory, MdDeliveryDining, MdOutlineAssignment } from "react-icons/md";
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import { IoChatbubbleSharp, IoExitOutline } from "react-icons/io5";
@@ -21,31 +21,27 @@ console.log(userType);
 
 
 
-const getMenuItems = ()=>{
-  if (userType==="deliver") {
+const getMenuItems = () => {
+  if (userType === "deliver") {
     return [
       { name: "Buyurtmalar", path: "/", icon: <MdListAlt size={24} /> },
-      // { name: "Yangi buyurtmalar", path: "/deliver/new-orders", icon: <MdPayment size={24} /> },
-      // { name: "Qabul qilinganlar", path: "/deliver/http://localhost:5173/deliver/acceptedaccepted", icon: <MdCheckCircle size={24} /> },
-      // { name: "Yetkazilganlar", path: "/deliver/delivered", icon: <MdLocalShipping size={24} /> },
-      // { name: "Excel Export", path: "/deliver/export", icon: <MdFileDownload size={24} /> },
-      { name: "Markets", path: "/markets", icon: <MdStore size={24} /> },
-      { name: "Products", path: "/products", icon: <MdInventory size={24} /> },
+      { name: "Bozorlar", path: "/markets", icon: <MdStore size={24} /> },
+      { name: "Mahsulotlar", path: "/products", icon: <MdInventory size={24} /> },
+      { name: "Mahsulot chegarasi", path: "/product-limit", icon: <MdOutlineAssignment size={24} /> },
       { name: "Chat", path: "/chat", icon: <MdChat size={24} /> },
-      { name: "Profil", path: "/deliver-user", icon: <MdPerson size={24} /> },
-
-    ];
-    
-  }else{
-return [
-      { name: "Buyurtma Berish", path: "/", icon: <MdShoppingCart size={24} /> },
-      { name: "Mening Buyurtmalarim", path: "/myorders", icon: <MdListAlt size={24} /> },
+      { name: "Yetkazib beruvchilar", path: "/delivers", icon: <MdDeliveryDining size={24} /> },
       { name: "Profil", path: "/profile", icon: <MdPerson size={24} /> },
-      { name: "Yordam", path: "/help", icon: <IoChatbubbleSharp  size={24} /> },
+    ];
+  } else {
+    return [
+      { name: "Buyurtma berish", path: "/", icon: <MdShoppingCart size={24} /> },
+      { name: "Mening buyurtmalarim", path: "/myorders", icon: <MdListAlt size={24} /> },
+      { name: "Profil", path: "/profile", icon: <MdPerson size={24} /> },
+      { name: "Yordam", path: "/help", icon: <IoChatbubbleSharp size={24} /> },
     ];
   }
-  
-}
+};
+
 const menuItems=getMenuItems();
 
 

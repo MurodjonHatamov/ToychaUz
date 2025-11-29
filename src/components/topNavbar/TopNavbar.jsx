@@ -127,7 +127,7 @@ function TopNavbar({ onMenuToggle, setOpenSidebar, openSidebar, handleLogout, se
             <Stack 
               onClick={handleLogout}
               sx={{
-                backgroundColor:'var(--background) ',
+                
                 borderRadius:'50%'
               }} 
               direction="row" 

@@ -8,11 +8,7 @@ import {
   Alert,
   CircularProgress,
   InputAdornment,
-  IconButton,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem
+  IconButton
 } from '@mui/material';
 import { 
   FaStore, 
@@ -22,7 +18,10 @@ import {
   FaEye, 
   FaEyeSlash,
   FaSignInAlt,
-  FaExclamationTriangle
+  FaExclamationTriangle,
+  FaShieldAlt,
+  FaBolt,
+  FaCheckCircle
 } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import styles from "./Login.module.css";
@@ -54,14 +53,11 @@ function Login() {
     if (error) setError('');
   };
 
-  // Yangilangan telefon raqam formati (90 166 95 65 - ikkala tur uchun ham)
   const handlePhoneChange = (e) => {
-    let value = e.target.value.replace(/\D/g, ''); // Faqat raqamlarni qoldirish
+    let value = e.target.value.replace(/\D/g, '');
     
-    // Ikkala tur uchun ham 90 166 95 65 formatida
     if (value.length > 9) value = value.slice(0, 9);
     
-    // Formatlash: 90 166 95 65
     if (value.length > 0) {
       let formattedValue = value;
       if (value.length > 2) {
@@ -84,11 +80,10 @@ function Login() {
     if (error) setError('');
   };
 
-  const handleLoginTypeChange = (e) => {
-    const loginType = e.target.value;
+  const handleLoginTypeChange = (type) => {
     setFormData(prev => ({
       ...prev,
-      loginType: loginType,
+      loginType: type,
       phone: ''
     }));
     if (error) setError('');
@@ -101,7 +96,6 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     
-    // Telefon raqamni tozalash (faqat raqamlarni qoldirish)
     const cleanPhone = formData.phone.replace(/\D/g, '');
     
     if (!cleanPhone || !formData.password) {
@@ -109,7 +103,6 @@ function Login() {
       return;
     }
 
-    // Ikkala tur uchun ham 9 xonali raqam tekshiruvi
     const phoneRegex = /^\d{9}$/;
     if (!phoneRegex.test(cleanPhone)) {
       setError('Iltimos, 9 xonali telefon raqamini kiriting (90 166 95 65)');
@@ -124,10 +117,7 @@ function Login() {
         ? 'http://localhost:2277/auth/market-login'
         : 'http://localhost:2277/auth/deliver-login';
 
-      // Deliver uchun +998 qo'shish, Market uchun oddiy
-      const phoneForApi = formData.loginType === 'market' 
-        ? cleanPhone 
-        : cleanPhone;
+      const phoneForApi = cleanPhone;
 
       const response = await fetch(apiUrl, {
         method: 'POST',
@@ -180,124 +170,181 @@ function Login() {
 
   return (
     <div className={styles.loginContainer}>
-      <Card className={styles.loginCard}>
-        <Box className={styles.loginHeader}>
-          <div className={styles.iconContainer}>
+      {/* Left Side - Illustration */}
+      <div className={styles.illustrationSection}>
+        <div className={styles.geometricShapes}>
+          <div className={`${styles.shape} ${styles.shape1}`}></div>
+          <div className={`${styles.shape} ${styles.shape2}`}></div>
+          <div className={`${styles.shape} ${styles.shape3}`}></div>
+        </div>
+        
+        <div className={styles.illustrationContent}>
+          <div className={styles.illustrationIcon}>
             {getLoginTypeIcon()}
           </div>
-          <Typography variant="h4" component="h1" className={styles.title}>
-            {getLoginTypeName()} Tizimi
-          </Typography>
-          <Typography variant="subtitle1" className={styles.subtitle}>
-            Hisobingizga kiring
-          </Typography>
-        </Box>
+          
+          <h1 className={styles.illustrationTitle}>
+            {getLoginTypeName()} Boshqaruv Tizimi
+          </h1>
+          
+          <p className={styles.illustrationSubtitle}>
+            Zamonaviy va xavfsiz platformaga xush kelibsiz. 
+            Biznesni boshqarish endi yanada oson va qulay!
+          </p>
+          
+          <div className={styles.featureList}>
+            <div className={styles.featureItem}>
+              <div className={styles.featureIcon}>
+                <FaShieldAlt />
+              </div>
+              <div>Xavfsiz kirish tizimi</div>
+            </div>
+            
+            <div className={styles.featureItem}>
+              <div className={styles.featureIcon}>
+                <FaBolt />
+              </div>
+              <div>Tezkor ishlov berish</div>
+            </div>
+            
+            <div className={styles.featureItem}>
+              <div className={styles.featureIcon}>
+                <FaCheckCircle />
+              </div>
+              <div>Oson boshqaruv</div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-        <form onSubmit={handleLogin} className={styles.loginForm}>
-          {error && (
-            <Alert 
-              severity="error" 
-              className={styles.alert}
-              icon={<FaExclamationTriangle />}
-            >
-              {error}
-            </Alert>
-          )}
+      {/* Right Side - Login Form */}
+      <div className={styles.formSection}>
+        <Card className={styles.loginCard}>
+          <Box className={styles.loginHeader}>
+            <div className={styles.iconContainer}>
+              {getLoginTypeIcon()}
+            </div>
+            <Typography variant="h4" component="h1" className={styles.title}>
+              {getLoginTypeName()} Tizimi
+            </Typography>
+            <Typography variant="subtitle1" className={styles.subtitle}>
+              Hisobingizga kiring
+            </Typography>
+          </Box>
 
-          <FormControl fullWidth className={styles.selectField}>
-            <InputLabel>Login Turi</InputLabel>
-            <Select
-              name="loginType"
-              value={formData.loginType}
-              label="Login Turi"
-              onChange={handleLoginTypeChange}
+          <form onSubmit={handleLogin} className={styles.loginForm}>
+            {error && (
+              <Alert 
+                severity="error" 
+                className={styles.alert}
+                icon={<FaExclamationTriangle />}
+              >
+                {error}
+              </Alert>
+            )}
+
+            {/* Toggle Button Group */}
+            <Box className={styles.toggleContainer}>
+              <button
+                type="button"
+                className={`${styles.toggleButton} ${formData.loginType === 'market' ? styles.active : ''}`}
+                onClick={() => handleLoginTypeChange('market')}
+                disabled={loading}
+              >
+                <FaStore />
+                Market
+              </button>
+              <button
+                type="button"
+                className={`${styles.toggleButton} ${formData.loginType === 'deliver' ? styles.active : ''}`}
+                onClick={() => handleLoginTypeChange('deliver')}
+                disabled={loading}
+              >
+                <FaTruck />
+                Deliver
+              </button>
+            </Box>
+
+            <TextField
+              fullWidth
+              label="Telefon Raqam"
+              name="phone"
+              value={formData.phone}
+              onChange={handlePhoneChange}
+              placeholder="90 166 95 65"
+              required
               disabled={loading}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <FaPhone style={{ color: '#B85042' }} />
+                  </InputAdornment>
+                ),
+              }}
+              className={styles.textField}
+              helperText="90 166 95 65 formatida kiriting"
+            />
+
+            <TextField
+              fullWidth
+              label="Parol"
+              name="password"
+              type={showPassword ? 'text' : 'password'}
+              value={formData.password}
+              onChange={handleChange}
+              required
+              disabled={loading}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <FaLock style={{ color: '#B85042' }} />
+                  </InputAdornment>
+                ),
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={handleClickShowPassword}
+                      edge="end"
+                      disabled={loading}
+                      size="small"
+                    >
+                      {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              className={styles.textField}
+            />
+
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              size="large"
+              disabled={loading}
+              className={styles.loginButton}
+              startIcon={
+                loading ? (
+                  <div className={styles.loadingSpinner}>
+                    <CircularProgress size={20} color="inherit" />
+                  </div>
+                ) : (
+                  <FaSignInAlt />
+                )
+              }
             >
-              <MenuItem value="market">
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <FaStore />
-                  Market
-                </Box>
-              </MenuItem>
-              <MenuItem value="deliver">
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <FaTruck />
-                  Deliver
-                </Box>
-              </MenuItem>
-            </Select>
-          </FormControl>
+              {loading ? 'Kirilmoqda...' : 'Hisobga kirish'}
+            </Button>
+          </form>
 
-          <TextField
-            fullWidth
-            label="Telefon Raqam"
-            name="phone"
-            value={formData.phone}
-            onChange={handlePhoneChange}
-            placeholder="90 166 95 65"
-            required
-            disabled={loading}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <FaPhone />
-                </InputAdornment>
-              ),
-            }}
-            className={styles.textField}
-            helperText="90 166 95 65 formatida kiriting"
-          />
-
-          <TextField
-            fullWidth
-            label="Parol"
-            name="password"
-            type={showPassword ? 'text' : 'password'}
-            value={formData.password}
-            onChange={handleChange}
-            required
-            disabled={loading}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <FaLock />
-                </InputAdornment>
-              ),
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={handleClickShowPassword}
-                    edge="end"
-                    disabled={loading}
-                  >
-                    {showPassword ? <FaEyeSlash /> : <FaEye />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            }}
-            className={styles.textField}
-          />
-
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            size="large"
-            disabled={loading}
-            className={styles.loginButton}
-            startIcon={loading ? <CircularProgress size={20} /> : <FaSignInAlt />}
-          >
-            {loading ? 'Kirilmoqda...' : 'Hisobga kirish'}
-          </Button>
-        </form>
-
-        <Box className={styles.loginFooter}>
-          <Typography variant="body2" color="textSecondary" align="center">
-            {getLoginTypeIcon()}
-            {getLoginTypeName()} tizimiga kirish
-          </Typography>
-        </Box>
-      </Card>
+          <Box className={styles.loginFooter}>
+            <Typography variant="body2" align="center">
+              {getLoginTypeIcon()}
+              {getLoginTypeName()} tizimiga kirish
+            </Typography>
+          </Box>
+        </Card>
+      </div>
     </div>
   );
 }

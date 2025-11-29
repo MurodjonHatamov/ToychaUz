@@ -1,585 +1,635 @@
 // pages/deliver/Deliver.jsx
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  Button,
-  Grid,
-  TextField,
+import { 
+  TextField, 
+  Button, 
+  Snackbar, 
+  Alert,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
-  Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  TablePagination,
-  Alert,
-  Snackbar,
-  CircularProgress,
-  AppBar,
-  Toolbar,
-  Tabs,
-  Tab
+  Paper,
+  IconButton
 } from '@mui/material';
 import { 
-  FaSearch, 
-  FaUserEdit,
-  FaUserPlus,
-  FaSync,
-  FaTimes,
-  FaCheck
+  FaPlus, 
+  FaEdit, 
+  FaTrash, 
+  FaUser, 
+  FaSpinner,
+  FaSearch,
+  FaSync
 } from 'react-icons/fa';
-import styled from './Deliver.module.css';
+import styles from './Deliver.module.css';
 
 function Deliver() {
+  // ==================== STATE DEFINITIONS ====================
+  
   const [delivers, setDelivers] = useState([]);
-  const [selectedDeliver, setSelectedDeliver] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [activeTab, setActiveTab] = useState(0);
-  const [createDialogOpen, setCreateDialogOpen] = useState(false);
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
   const [searchTerm, setSearchTerm] = useState('');
-
+  const [filteredDelivers, setFilteredDelivers] = useState([]);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [editingDeliver, setEditingDeliver] = useState(null);
+  
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
     password: '',
     return_password: ''
   });
-
-  const [editFormData, setEditFormData] = useState({
-    name: '',
-    phone: '',
-    password: '',
-    return_password: ''
+  
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success'
+  });
+  
+  const [loading, setLoading] = useState({
+    delivers: true,
+    submit: false,
+    delete: false
   });
 
-  const API_BASE = 'http://localhost:2277';
+  // ==================== API FUNCTIONS ====================
 
+  /**
+   * Barcha deliverlarni serverdan yuklash
+   */
   const fetchDelivers = async () => {
-    setLoading(true);
     try {
-      const response = await fetch(`${API_BASE}/deliver/all-delivers`, {
+      setLoading(prev => ({ ...prev, delivers: true }));
+      
+      const response = await fetch('http://localhost:2277/deliver/all-delivers', {
         method: 'GET',
-        headers: {
-          'accept': '*/*'
-        }
+        headers: { 
+          'accept': '*/*',
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
       });
+      
       if (response.ok) {
-        const data = await response.json();
-        setDelivers(data);
+        const deliversData = await response.json();
+        setDelivers(deliversData);
+        setFilteredDelivers(deliversData);
+        console.log('Deliverlar:', deliversData);
+        
       } else {
-        throw new Error('Deliverlarni olishda xatolik');
+        throw new Error(`Server xatosi: ${response.status}`);
       }
-    } catch (err) {
-      setError('Xatolik: ' + err.message);
+    } catch (error) {
+      console.error('Deliverlarni yuklab boʻlmadi:', error);
+      showSnackbar('Deliverlarni yuklab boʻlmadi', 'error');
     } finally {
-      setLoading(false);
+      setLoading(prev => ({ ...prev, delivers: false }));
     }
   };
 
-  const createDeliver = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    
-    if (formData.password !== formData.return_password) {
-      setError('Parollar mos kelmadi');
-      setLoading(false);
-      return;
-    }
-
+  /**
+   * Yangi deliver qo'shish
+   */
+  const createDeliver = async (deliverData) => {
     try {
-      const response = await fetch(`${API_BASE}/deliver`, {
+      setLoading(prev => ({ ...prev, submit: true }));
+      
+      // Parollarni tekshirish
+      if (deliverData.password !== deliverData.return_password) {
+        throw new Error('Parollar mos kelmadi');
+      }
+
+      const response = await fetch('http://localhost:2277/deliver', {
         method: 'POST',
-        headers: {
+        headers: { 
           'accept': '*/*',
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(formData)
+        credentials: 'include',
+        body: JSON.stringify({
+          name: deliverData.name,
+          phone: deliverData.phone,
+          password: deliverData.password,
+          return_password: deliverData.return_password
+        })
       });
       
       if (response.ok) {
-        const data = await response.json();
-        setSuccess('Deliver muvaffaqiyatli qo\'shildi');
-        setFormData({ name: '', phone: '', password: '', return_password: '' });
-        setCreateDialogOpen(false);
+        showSnackbar('Deliver muvaffaqiyatli qoʻshildi', 'success');
         fetchDelivers();
-      } else {
-        throw new Error('Deliver qo\'shishda xatolik');
-      }
-    } catch (err) {
-      setError('Xatolik: ' + err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const updateDeliver = async () => {
-    setLoading(true);
-    setError('');
-    
-    if (!selectedDeliver) return;
-    
-    if (editFormData.password !== editFormData.return_password) {
-      setError('Parollar mos kelmadi');
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const response = await fetch(`${API_BASE}/deliver/${selectedDeliver._id}`, {
-        method: 'PATCH',
-        headers: {
-          'accept': '*/*',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(editFormData)
-      });
-      
-      if (response.ok) {
-        setSuccess('Deliver muvaffaqiyatli yangilandi');
-        setEditDialogOpen(false);
-        fetchDelivers();
+        resetForm();
+        setDialogOpen(false);
       } else {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Deliverni yangilashda xatolik');
+        throw new Error(errorData.message || `Server xatosi: ${response.status}`);
       }
-    } catch (err) {
-      setError('Xatolik: ' + err.message);
+    } catch (error) {
+      console.error('Deliver qoʻshib boʻlmadi:', error);
+      showSnackbar(error.message, 'error');
     } finally {
-      setLoading(false);
+      setLoading(prev => ({ ...prev, submit: false }));
     }
   };
 
-  const fetchDeliverById = async (id) => {
-    setLoading(true);
+  /**
+   * Deliver ma'lumotlarini yangilash
+   */
+  const updateDeliver = async (deliverId, deliverData) => {
     try {
-      const response = await fetch(`${API_BASE}/deliver/${id}/deliver`, {
-        method: 'GET',
-        headers: {
-          'accept': '*/*'
-        }
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setSelectedDeliver(data);
-        setEditFormData({
-          name: data.name,
-          phone: data.phone,
-          password: '',
-          return_password: ''
-        });
-        setEditDialogOpen(true);
-      } else {
-        throw new Error('Deliverni olishda xatolik');
+      setLoading(prev => ({ ...prev, submit: true }));
+      
+      // Agar parol o'zgartirilayotgan bo'lsa, tekshirish
+      if (deliverData.password && deliverData.password !== deliverData.return_password) {
+        throw new Error('Parollar mos kelmadi');
       }
-    } catch (err) {
-      setError('Xatolik: ' + err.message);
+
+      // Yangilash uchun tayyor ma'lumotlar
+      const updateData = {
+        name: deliverData.name,
+        phone: deliverData.phone
+      };
+
+      // Agar parol berilgan bo'lsa, qo'shamiz
+      if (deliverData.password) {
+        updateData.password = deliverData.password;
+        updateData.return_password = deliverData.return_password;
+      }
+
+      const response = await fetch(`http://localhost:2277/deliver/${deliverId}`, {
+        method: 'PATCH',
+        headers: { 
+          'accept': '*/*',
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(updateData)
+      });
+      
+      if (response.ok) {
+        showSnackbar('Deliver maʼlumotlari muvaffaqiyatli yangilandi', 'success');
+        fetchDelivers();
+        resetForm();
+        setDialogOpen(false);
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `Server xatosi: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Deliver maʼlumotlarini yangilab boʻlmadi:', error);
+      showSnackbar(error.message, 'error');
     } finally {
-      setLoading(false);
+      setLoading(prev => ({ ...prev, submit: false }));
     }
   };
 
-  const handleEditClick = (deliver) => {
-    fetchDeliverById(deliver._id);
+  /**
+   * Deliver ni o'chirish
+   */
+  const deleteDeliver = async (deliverId) => {
+    try {
+      setLoading(prev => ({ ...prev, delete: true }));
+      
+      const response = await fetch(`http://localhost:2277/deliver/${deliverId}`, {
+        method: 'DELETE',
+        headers: { 
+          'accept': '*/*',
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
+      });
+      
+      if (response.ok) {
+        showSnackbar('Deliver muvaffaqiyatli oʻchirildi', 'success');
+        fetchDelivers();
+        setDeleteDialogOpen(false);
+        setEditingDeliver(null);
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `Server xatosi: ${response.status}`);
+      }
+    } catch (error) {
+      console.error('Deliverni oʻchirib boʻlmadi:', error);
+      showSnackbar(error.message, 'error');
+    } finally {
+      setLoading(prev => ({ ...prev, delete: false }));
+    }
   };
+
+  // ==================== FORM HANDLERS ====================
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      phone: '',
+      password: '',
+      return_password: ''
+    });
+    setEditingDeliver(null);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    // Majburiy maydonlarni tekshirish
+    if (!formData.name || !formData.phone || !formData.password) {
+      showSnackbar('Iltimos, barcha majburiy maydonlarni toʻldiring', 'warning');
+      return;
+    }
+
+    // Parollarni tekshirish
+    if (formData.password !== formData.return_password) {
+      showSnackbar('Parollar mos kelmadi', 'warning');
+      return;
+    }
+
+    if (editingDeliver) {
+      updateDeliver(editingDeliver._id, formData);
+    } else {
+      createDeliver(formData);
+    }
+  };
+
+  const handleEdit = (deliver) => {
+    setEditingDeliver(deliver);
+    setFormData({
+      name: deliver.name,
+      phone: deliver.phone,
+      password: '', // Parolni ko'rsatmaymiz
+      return_password: ''
+    });
+    setDialogOpen(true);
+  };
+
+  const handleDelete = (deliver) => {
+    setEditingDeliver(deliver);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleAddNew = () => {
+    resetForm();
+    setDialogOpen(true);
+  };
+
+  // ==================== SEARCH & FILTER ====================
+
+  const handleSearch = (e) => {
+    const term = e.target.value.toLowerCase();
+    setSearchTerm(term);
+    
+    if (term === '') {
+      setFilteredDelivers(delivers);
+    } else {
+      const filtered = delivers.filter(deliver =>
+        deliver.name.toLowerCase().includes(term) ||
+        deliver.phone.includes(term) ||
+        (deliver.role && deliver.role.toLowerCase().includes(term))
+      );
+      setFilteredDelivers(filtered);
+    }
+  };
+
+  // ==================== HELPER FUNCTIONS ====================
+
+  const showSnackbar = (message, severity) => {
+    setSnackbar({
+      open: true,
+      message,
+      severity
+    });
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Noma\'lum';
+    return new Date(dateString).toLocaleDateString('uz-UZ', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
+  };
+
+  // ==================== USE EFFECT HOOKS ====================
 
   useEffect(() => {
     fetchDelivers();
   }, []);
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
-  const filteredDelivers = delivers.filter(deliver =>
-    deliver.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    deliver.phone.includes(searchTerm)
-  );
+  // ==================== RENDER ====================
 
   return (
-    <Box className={styled.container}>
-      <AppBar position="static" className={styled.appBar}>
-        <Toolbar>
-          <Typography variant="h6" className={styled.title}>
-            Deliver Boshqaruvi
-          </Typography>
-          <Button
-            color="inherit"
-            startIcon={<FaSync className={styled.buttonIcon} />}
-            onClick={fetchDelivers}
-            className={styled.refreshButton}
-          >
-            Yangilash
-          </Button>
-        </Toolbar>
-      </AppBar>
-
-      <Paper className={styled.tabsPaper}>
-        <Tabs
-          value={activeTab}
-          onChange={(e, newValue) => setActiveTab(newValue)}
-          className={styled.tabs}
-        >
-          <Tab label="Barcha Deliverlar" />
-          <Tab label="Yangi Deliver" />
-        </Tabs>
-      </Paper>
-
-      {error && (
-        <Alert severity="error" className={styled.alert}>
-          {error}
-        </Alert>
-      )}
-
-      {loading && (
-        <Box className={styled.loading}>
-          <CircularProgress />
-          <Typography>Yuklanmoqda...</Typography>
-        </Box>
-      )}
-
-      {/* Deliver List Tab */}
-      {activeTab === 0 && (
-        <Box className={styled.tabContent}>
-          <Box className={styled.tableHeader}>
-            <Box className={styled.searchContainer}>
-              <FaSearch className={styled.searchIcon} />
-              <TextField
-                placeholder="Ism yoki telefon bo'yicha qidirish..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className={styled.searchField}
-                InputProps={{
-                  disableUnderline: true
-                }}
-                variant="standard"
-              />
-            </Box>
+    <div className={styles.deliversPage}>
+      {/* SARLAVHA VA AKTsiYALAR */}
+      <div className={styles.headerSection}>
+        <div className={styles.header}>
+          <div className={styles.title}>
+            <FaUser className={styles.titleIcon} />
+            <h1>Deliverlar Boshqaruvi</h1>
+          </div>
+          <div className={styles.headerActions}>
+            <Button
+              variant="outlined"
+              startIcon={<FaSync />}
+              onClick={fetchDelivers}
+              className={styles.refreshButton}
+              disabled={loading.delivers}
+            >
+              {loading.delivers ? 'Yuklanmoqda...' : 'Yangilash'}
+            </Button>
             <Button
               variant="contained"
-              startIcon={<FaUserPlus className={styled.buttonIcon} />}
-              onClick={() => setCreateDialogOpen(true)}
-              className={styled.addButton}
+              startIcon={<FaPlus />}
+              onClick={handleAddNew}
+              className={styles.addButton}
             >
               Yangi Deliver
             </Button>
-          </Box>
+          </div>
+        </div>
 
-          <TableContainer component={Paper} className={styled.tableContainer}>
-            <Table>
-              <TableHead>
+        {/* QIDIRUV */}
+        <div className={styles.searchSection}>
+          <div className={styles.searchBox}>
+            <FaSearch className={styles.searchIcon} />
+            <input
+              type="text"
+              placeholder="Deliver ismi, telefon yoki roli boʻyicha qidirish..."
+              value={searchTerm}
+              onChange={handleSearch}
+              className={styles.searchInput}
+            />
+          </div>
+          <div className={styles.deliverCount}>
+            Jami: {filteredDelivers.length} ta deliver
+          </div>
+        </div>
+      </div>
+
+      {/* DELIVERLAR JADVALI */}
+      <div className={styles.tableSection}>
+        {loading.delivers ? (
+          <div className={styles.loading}>
+            <FaSpinner className={styles.spinner} />
+            <span>Deliverlar yuklanmoqda...</span>
+          </div>
+        ) : filteredDelivers.length > 0 ? (
+          <TableContainer component={Paper} className={styles.tableContainer}>
+            <Table className={styles.table}>
+              <TableHead className={styles.tableHead}>
                 <TableRow>
-                  <TableCell>Ism</TableCell>
-                  <TableCell>Telefon</TableCell>
-                  <TableCell>ID</TableCell>
-                  <TableCell>Ro'l</TableCell>
-                  <TableCell>Amallar</TableCell>
+                  <TableCell className={styles.tableHeaderCell}>Deliver Ismi</TableCell>
+                  <TableCell className={styles.tableHeaderCell}>Telefon</TableCell>
+                  <TableCell className={styles.tableHeaderCell}>Rol</TableCell>
+                  <TableCell className={styles.tableHeaderCell}>Qoʻshilgan Sana</TableCell>
+                  <TableCell className={styles.tableHeaderCell}>Harakatlar</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filteredDelivers.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={5} align="center" className={styled.noData}>
-                      Hech qanday deliver topilmadi
+                {filteredDelivers.map((deliver) => (
+                  <TableRow key={deliver._id} className={styles.tableRow}>
+                    <TableCell className={styles.tableCell}>
+                      <div className={styles.deliverNameCell}>
+                        <FaUser className={styles.deliverIcon} />
+                        <span className={styles.deliverName}>{deliver.name}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className={styles.tableCell}>
+                      <span className={styles.phoneText}>{deliver.phone}</span>
+                    </TableCell>
+                    <TableCell className={styles.tableCell}>
+                      <span className={styles.roleBadge}>
+                        {deliver.role || 'deliver'}
+                      </span>
+                    </TableCell>
+                    <TableCell className={styles.tableCell}>
+                      <span className={styles.dateText}>
+                        {formatDate(deliver.createdAt)}
+                      </span>
+                    </TableCell>
+                    <TableCell className={styles.tableCell}>
+                      <div className={styles.actionButtons}>
+                        <IconButton
+                          onClick={() => handleEdit(deliver)}
+                          className={styles.editButton}
+                          title="Tahrirlash"
+                          size="small"
+                        >
+                          <FaEdit />
+                        </IconButton>
+                        <IconButton
+                          onClick={() => handleDelete(deliver)}
+                          className={styles.deleteButton}
+                          title="Oʻchirish"
+                          size="small"
+                        >
+                          <FaTrash />
+                        </IconButton>
+                      </div>
                     </TableCell>
                   </TableRow>
-                ) : (
-                  filteredDelivers
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((deliver) => (
-                      <TableRow key={deliver._id} className={styled.tableRow}>
-                        <TableCell>
-                          <Typography className={styled.nameText}>
-                            {deliver.name}
-                          </Typography>
-                        </TableCell>
-                        <TableCell>{deliver.phone}</TableCell>
-                        <TableCell className={styled.idCell}>
-                          {deliver._id}
-                        </TableCell>
-                        <TableCell>
-                          <Box className={styled.roleBadge}>
-                            {deliver.role}
-                          </Box>
-                        </TableCell>
-                        <TableCell>
-                          <Button
-                            onClick={() => handleEditClick(deliver)}
-                            className={styled.editButton}
-                            startIcon={<FaUserEdit className={styled.buttonIcon} />}
-                          >
-                            Tahrirlash
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                )}
+                ))}
               </TableBody>
             </Table>
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
-              component="div"
-              count={filteredDelivers.length}
-              rowsPerPage={rowsPerPage}
-              page={page}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowsPerPage}
-              labelRowsPerPage="Sahifadagi qatorlar:"
-              className={styled.pagination}
-            />
           </TableContainer>
-        </Box>
-      )}
+        ) : (
+          <div className={styles.noData}>
+            <FaUser className={styles.noDataIcon} />
+            <div className={styles.noDataText}>
+              {searchTerm ? 'Qidiruv boʻyicha deliverlar topilmadi' : 'Hech qanday deliver topilmadi'}
+            </div>
+            {searchTerm && (
+              <Button
+                variant="outlined"
+                onClick={() => setSearchTerm('')}
+                className={styles.clearSearchButton}
+              >
+                Qidiruvni tozalash
+              </Button>
+            )}
+          </div>
+        )}
+      </div>
 
-      {/* Create Deliver Tab */}
-      {activeTab === 1 && (
-        <Box className={styled.tabContent}>
-          <Card className={styled.formCard}>
-            <CardContent>
-              <Typography variant="h6" className={styled.formTitle}>
-                <FaUserPlus className={styled.titleIcon} />
-                Yangi Deliver Qo'shish
-              </Typography>
-              <form onSubmit={createDeliver} className={styled.form}>
-                <Grid container spacing={3}>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      label="Ism"
-                      value={formData.name}
-                      onChange={(e) => setFormData({...formData, name: e.target.value})}
-                      required
-                      fullWidth
-                      className={styled.textField}
-                      placeholder="To'liq ism"
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      label="Telefon"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                      required
-                      fullWidth
-                      className={styled.textField}
-                      placeholder="901234567"
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      label="Parol"
-                      type="password"
-                      value={formData.password}
-                      onChange={(e) => setFormData({...formData, password: e.target.value})}
-                      required
-                      fullWidth
-                      className={styled.textField}
-                      placeholder="Kamida 4 ta belgi"
-                    />
-                  </Grid>
-                  <Grid item xs={12} sm={6}>
-                    <TextField
-                      label="Parolni Takrorlang"
-                      type="password"
-                      value={formData.return_password}
-                      onChange={(e) => setFormData({...formData, return_password: e.target.value})}
-                      required
-                      fullWidth
-                      className={styled.textField}
-                    />
-                  </Grid>
-                </Grid>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  className={styled.submitButton}
-                  disabled={loading}
-                  fullWidth
-                >
-                  <FaCheck className={styled.buttonIcon} />
-                  {loading ? 'Qo\'shilmoqda...' : 'Deliverni Qo\'shish'}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
-        </Box>
-      )}
-
-      {/* Create Deliver Dialog */}
+      {/* DELIVER QO'SHISH/TAHRIRLASH MODALI */}
       <Dialog
-        open={createDialogOpen}
-        onClose={() => setCreateDialogOpen(false)}
-        className={styled.dialog}
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle className={styles.dialogTitle}>
+          <FaUser className={styles.dialogIcon} />
+          {editingDeliver ? 'Deliverni Tahrirlash' : 'Yangi Deliver Qoʻshish'}
+        </DialogTitle>
+        
+        <form onSubmit={handleSubmit}>
+          <DialogContent className={styles.dialogContent}>
+            <div className={styles.formGrid}>
+              <TextField
+                fullWidth
+                label="Deliver Ismi"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                required
+                className={styles.formField}
+                placeholder="Masalan: Ali Valiyev"
+              />
+
+              <TextField
+                fullWidth
+                label="Telefon Raqami"
+                name="phone"
+                value={formData.phone}
+                onChange={handleInputChange}
+                required
+                className={styles.formField}
+                placeholder="Masalan: 901234567"
+                inputProps={{ 
+                  maxLength: 9,
+                  pattern: "[0-9]*"
+                }}
+              />
+
+              <TextField
+                fullWidth
+                label={editingDeliver ? "Yangi Parol (ixtiyoriy)" : "Parol"}
+                name="password"
+                type="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                required={!editingDeliver}
+                className={styles.formField}
+                placeholder={editingDeliver ? "Faqat o'zgartirmoqchi bo'lsangiz" : "Deliver uchun parol"}
+                helperText={editingDeliver ? "Agar parolni o'zgartirmasangiz, bo'sh qoldiring" : ""}
+              />
+
+              <TextField
+                fullWidth
+                label="Parolni Takrorlang"
+                name="return_password"
+                type="password"
+                value={formData.return_password}
+                onChange={handleInputChange}
+                required={!editingDeliver}
+                className={styles.formField}
+                placeholder="Parolni qayta kiriting"
+              />
+            </div>
+          </DialogContent>
+
+          <DialogActions className={styles.dialogActions}>
+            <Button
+              onClick={() => setDialogOpen(false)}
+              className={styles.cancelButton}
+            >
+              Bekor qilish
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              disabled={loading.submit}
+              className={styles.submitButton}
+            >
+              {loading.submit ? (
+                <>
+                  <FaSpinner className={styles.buttonSpinner} />
+                  {editingDeliver ? 'Saqlanmoqda...' : 'Qoʻshilmoqda...'}
+                </>
+              ) : (
+                editingDeliver ? 'Saqlash' : 'Qoʻshish'
+              )}
+            </Button>
+          </DialogActions>
+        </form>
+      </Dialog>
+
+      {/* O'CHIRISH TASDIQLASH MODALI */}
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle className={styled.dialogTitle}>
-          <FaUserPlus className={styled.dialogTitleIcon} />
-          Yangi Deliver Qo'shish
+        <DialogTitle className={styles.deleteDialogTitle}>
+          <FaTrash className={styles.deleteDialogIcon} />
+          Deliverni Oʻchirish
         </DialogTitle>
-        <DialogContent>
-          <form onSubmit={createDeliver} className={styled.dialogForm}>
-            <TextField
-              label="Ism"
-              value={formData.name}
-              onChange={(e) => setFormData({...formData, name: e.target.value})}
-              required
-              fullWidth
-              margin="normal"
-              className={styled.dialogField}
-            />
-            <TextField
-              label="Telefon"
-              value={formData.phone}
-              onChange={(e) => setFormData({...formData, phone: e.target.value})}
-              required
-              fullWidth
-              margin="normal"
-              className={styled.dialogField}
-            />
-            <TextField
-              label="Parol"
-              type="password"
-              value={formData.password}
-              onChange={(e) => setFormData({...formData, password: e.target.value})}
-              required
-              fullWidth
-              margin="normal"
-              className={styled.dialogField}
-            />
-            <TextField
-              label="Parolni Takrorlang"
-              type="password"
-              value={formData.return_password}
-              onChange={(e) => setFormData({...formData, return_password: e.target.value})}
-              required
-              fullWidth
-              margin="normal"
-              className={styled.dialogField}
-            />
-          </form>
+        
+        <DialogContent className={styles.deleteDialogContent}>
+          <div className={styles.deleteWarning}>
+            Quyidagi deliverni oʻchirishni tasdiqlaysizmi?
+          </div>
+          
+          {editingDeliver && (
+            <div className={styles.deliverToDelete}>
+              <div className={styles.deleteDeliverName}>{editingDeliver.name}</div>
+              <div className={styles.deleteDeliverPhone}>{editingDeliver.phone}</div>
+              <div className={styles.deleteDeliverRole}>
+                Rol: {editingDeliver.role || 'deliver'}
+              </div>
+            </div>
+          )}
+
+          <div className={styles.deleteNote}>
+            ⚠️ Bu amalni ortga qaytarib boʻlmaydi!
+          </div>
         </DialogContent>
-        <DialogActions className={styled.dialogActions}>
-          <Button 
-            onClick={() => setCreateDialogOpen(false)}
-            className={styled.cancelButton}
-            startIcon={<FaTimes className={styled.buttonIcon} />}
+
+        <DialogActions className={styles.deleteDialogActions}>
+          <Button
+            onClick={() => setDeleteDialogOpen(false)}
+            className={styles.cancelDeleteButton}
           >
-            Bekor Qilish
+            Bekor qilish
           </Button>
           <Button
-            onClick={createDeliver}
+            onClick={() => deleteDeliver(editingDeliver?._id)}
             variant="contained"
-            disabled={loading}
-            className={styled.confirmButton}
-            startIcon={<FaCheck className={styled.buttonIcon} />}
+            color="error"
+            disabled={loading.delete}
+            className={styles.confirmDeleteButton}
           >
-            {loading ? 'Qo\'shilmoqda...' : 'Qo\'shish'}
+            {loading.delete ? (
+              <>
+                <FaSpinner className={styles.buttonSpinner} />
+                Oʻchirilmoqda...
+              </>
+            ) : (
+              'Oʻchirish'
+            )}
           </Button>
         </DialogActions>
       </Dialog>
 
-      {/* Edit Deliver Dialog */}
-      <Dialog
-        open={editDialogOpen}
-        onClose={() => setEditDialogOpen(false)}
-        className={styled.dialog}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle className={styled.dialogTitle}>
-          <FaUserEdit className={styled.dialogTitleIcon} />
-          Deliverni Tahrirlash
-        </DialogTitle>
-        <DialogContent>
-          <form className={styled.dialogForm}>
-            <TextField
-              label="Ism"
-              value={editFormData.name}
-              onChange={(e) => setEditFormData({...editFormData, name: e.target.value})}
-              required
-              fullWidth
-              margin="normal"
-              className={styled.dialogField}
-            />
-            <TextField
-              label="Telefon"
-              value={editFormData.phone}
-              onChange={(e) => setEditFormData({...editFormData, phone: e.target.value})}
-              required
-              fullWidth
-              margin="normal"
-              className={styled.dialogField}
-            />
-            <TextField
-              label="Yangi Parol"
-              type="password"
-              value={editFormData.password}
-              onChange={(e) => setEditFormData({...editFormData, password: e.target.value})}
-              fullWidth
-              margin="normal"
-              className={styled.dialogField}
-              placeholder="Agar o'zgartirmoqchi bo'lsangiz"
-              helperText="Agar parolni o'zgartirmasangiz, bo'sh qoldiring"
-            />
-            <TextField
-              label="Yangi Parolni Takrorlang"
-              type="password"
-              value={editFormData.return_password}
-              onChange={(e) => setEditFormData({...editFormData, return_password: e.target.value})}
-              fullWidth
-              margin="normal"
-              className={styled.dialogField}
-            />
-          </form>
-        </DialogContent>
-        <DialogActions className={styled.dialogActions}>
-          <Button 
-            onClick={() => setEditDialogOpen(false)}
-            className={styled.cancelButton}
-            startIcon={<FaTimes className={styled.buttonIcon} />}
-          >
-            Bekor Qilish
-          </Button>
-          <Button
-            onClick={updateDeliver}
-            variant="contained"
-            disabled={loading}
-            className={styled.confirmButton}
-            startIcon={<FaCheck className={styled.buttonIcon} />}
-          >
-            {loading ? 'Yangilanmoqda...' : 'Yangilash'}
-          </Button>
-        </DialogActions>
-      </Dialog>
-
+      {/* XABARLAR UCHUN SNACKBAR */}
       <Snackbar
-        open={!!success}
+        open={snackbar.open}
         autoHideDuration={6000}
-        onClose={() => setSuccess('')}
+        onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       >
-        <Alert severity="success" onClose={() => setSuccess('')}>
-          {success}
+        <Alert 
+          severity={snackbar.severity}
+          onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
+          sx={{ width: '100%' }}
+        >
+          {snackbar.message}
         </Alert>
       </Snackbar>
-    </Box>
+    </div>
   );
 }
 

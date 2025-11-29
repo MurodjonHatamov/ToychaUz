@@ -20,6 +20,7 @@ import MarketsD from "./pages/marketsD/MarketsD";
 import ProductsD from "./pages/productsD/ProductsD";
 import ChatD from "./pages/chatD/ChatD";
 import Deliver from "./pages/deliver/Deliver";
+import ProductLimitD from "./pages/productLimit/ProductLimitD";
 
 // 🔹 DELIVER UCHUN YANGI SAHIFALARNI IMPORT QILISH KERAK
 // import DeliverDashboard from "./pages/deliver/DeliverDashboard";
@@ -254,7 +255,7 @@ const AppContent = ({ openSidebar, setOpenSidebar,setNotifications, notification
               path="/profile"
               element={
                 <ProtectedRoute>
-                  <User />
+                  <User   userType={userType}/>
                 </ProtectedRoute>
               }
             />
@@ -307,8 +308,9 @@ const AppContent = ({ openSidebar, setOpenSidebar,setNotifications, notification
                 </RoleProtectedRoute>
               }
             />
+
                              <Route
-              path="/deliver-user"
+              path="/delivers"
               element={
                 <RoleProtectedRoute allowedRoles={["deliver"]}>
           
@@ -317,6 +319,15 @@ const AppContent = ({ openSidebar, setOpenSidebar,setNotifications, notification
               }
             />
 
+                             <Route
+              path="/product-limit"
+              element={
+                <RoleProtectedRoute allowedRoles={["deliver"]}>
+          
+                <ProductLimitD/>
+                </RoleProtectedRoute>
+              }
+            />
             {/* Not found route */}
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>

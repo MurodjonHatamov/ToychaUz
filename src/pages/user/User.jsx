@@ -9,17 +9,20 @@ import {
 } from 'react-icons/fa';
 import styles from './User.module.css';
 
-function User() {
+function User({ userType }) {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-
+console.log(userType);
+const url = userType === 'deliver' 
+  ? 'http://localhost:2277/deliver/own-profile'
+  : 'http://localhost:2277/orders/profile' ;
   const fetchUserProfile = async () => {
     try {
       setLoading(true);
       setError('');
 
-      const response = await fetch('http://localhost:2277/orders/profile', {
+      const response = await fetch(url, {
         method: 'GET',
         headers: {
           'accept': '*/*'
@@ -33,6 +36,8 @@ function User() {
 
       const data = await response.json();
       setUserData(data);
+      console.log(data);
+      
       
     } catch (error) {
       console.error('User ma\'lumotlarini olishda xatolik:', error);

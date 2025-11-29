@@ -21,12 +21,13 @@ const menuItems = [
   { name: "Yordam", path: "/help", icon: <MdHelp size={22} /> },
 ];
 
-const MobileBottomNav = () => {
+const MobileBottomNav = ({userType}) => {
   const location = useLocation();
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [value, setValue] = useState(location.pathname);
+console.log(userType);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -36,10 +37,14 @@ const MobileBottomNav = () => {
   if (!isMobile) {
     return null;
   }
+const display=userType==="market" ? 'block' : 'none';
+
 
   return (
     <Box
+
       sx={{
+        display:display,
         position: 'fixed',
         bottom: 16,
         left: '50%',
