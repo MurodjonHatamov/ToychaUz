@@ -517,7 +517,8 @@ function MarketsD() {
           )}
 
           <div className={styles.deleteNote}>
-            ⚠️ Bu amalni ortga qaytarib boʻlmaydi!
+            ⚠️ Marketni o‘chirsangiz, unga tegishli barcha buyurtmalar ham birgalikda o‘chirilib ketadi.
+            Bu amalni ortga qaytarib bo‘lmaydi.
           </div>
         </DialogContent>
 

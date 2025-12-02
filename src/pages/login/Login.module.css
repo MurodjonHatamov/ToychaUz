@@ -1,4 +1,3 @@
-
 /* Main Container with Split Screen */
 .loginContainer {
   width: 100%;
@@ -742,10 +741,15 @@
   font-weight: 500 !important;
 }
 
-/* Responsive Design */
-@media (max-width: 1200px) {
+/* =========================== */
+/* MOBILE RESPONSIVE DESIGN */
+/* =========================== */
+
+/* Tablet va kichik ekranlar (1200px dan kichik) */
+@media (max-width: 1199px) {
   .loginContainer {
       grid-template-columns: 1fr;
+      min-height: 100vh;
   }
 
   .illustrationSection {
@@ -753,13 +757,23 @@
   }
 
   .formSection {
+      padding: 20px;
       min-height: 100vh;
+      align-items: flex-start;
+      padding-top: 40px;
+  }
+
+  .loginCard {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 40px 32px !important;
   }
 }
 
-@media (max-width: 600px) {
+/* Tablet (768px - 1024px) */
+@media (max-width: 1024px) {
   .formSection {
-      padding: 24px;
+      padding: 20px;
   }
 
   .loginCard {
@@ -768,22 +782,279 @@
   }
 
   .title {
+      font-size: 32px !important;
+  }
+
+  .iconContainer {
+      width: 80px;
+      height: 80px;
+      font-size: 36px;
+  }
+
+  .toggleButton {
+      padding: 14px 20px;
+      font-size: 15px;
+  }
+}
+
+/* Katta mobil (576px - 768px) */
+@media (max-width: 768px) {
+  .formSection {
+      padding: 16px;
+      padding-top: 30px;
+  }
+
+  .loginCard {
+      padding: 32px 24px !important;
+      border-radius: 18px !important;
+      box-shadow: 
+          0 15px 40px rgba(0, 0, 0, 0.1),
+          0 6px 16px rgba(0, 0, 0, 0.06) !important;
+  }
+
+  .loginHeader {
+      margin-bottom: 32px;
+  }
+
+  .title {
       font-size: 28px !important;
+      margin-bottom: 8px !important;
+  }
+
+  .subtitle {
+      font-size: 15px !important;
   }
 
   .iconContainer {
       width: 70px;
       height: 70px;
       font-size: 32px;
+      margin-bottom: 20px;
+  }
+
+  .loginForm {
+      gap: 20px;
+  }
+
+  .toggleContainer {
+      gap: 8px;
+      padding: 6px;
   }
 
   .toggleButton {
-      padding: 14px 18px;
-      font-size: 15px;
+      padding: 12px 16px;
+      font-size: 14px;
+      gap: 8px;
+  }
+
+  .toggleButton svg {
+      font-size: 18px;
   }
 
   .loginButton {
       padding: 16px !important;
+      font-size: 16px !important;
+      border-radius: 12px !important;
+      margin-top: 12px;
+  }
+
+  .loginFooter {
+      margin-top: 24px;
+      padding-top: 20px;
+  }
+}
+
+/* Kichik mobil (480px - 576px) */
+@media (max-width: 576px) {
+  .formSection {
+      padding: 12px;
+      padding-top: 20px;
+      align-items: flex-start;
+  }
+
+  .loginCard {
+      padding: 28px 20px !important;
+      border-radius: 16px !important;
+      width: 100%;
+      max-width: none;
+  }
+
+  .loginHeader {
+      margin-bottom: 28px;
+  }
+
+  .title {
+      font-size: 26px !important;
+  }
+
+  .iconContainer {
+      width: 65px;
+      height: 65px;
+      font-size: 28px;
+      margin-bottom: 18px;
+      border-radius: 18px;
+  }
+
+  .loginForm {
+      gap: 18px;
+  }
+
+  .toggleContainer {
+      flex-direction: column;
+      gap: 6px;
+      padding: 6px;
+  }
+
+  .toggleButton {
+      padding: 14px 16px;
+      font-size: 14px;
+  }
+
+  .textField :global(.MuiOutlinedInput-root) {
+      border-radius: 10px !important;
+  }
+
+  .loginButton {
+      padding: 15px !important;
+      font-size: 15px !important;
+      border-radius: 10px !important;
+  }
+
+  .loginFooter p {
+      font-size: 14px !important;
+      flex-direction: column;
+      gap: 6px;
+  }
+}
+
+/* Juda kichik mobil (480px dan kichik) */
+@media (max-width: 480px) {
+  .formSection {
+      padding: 8px;
+      padding-top: 16px;
+  }
+
+  .loginCard {
+      padding: 24px 16px !important;
+      border-radius: 14px !important;
+  }
+
+  .title {
+      font-size: 24px !important;
+  }
+
+  .subtitle {
+      font-size: 14px !important;
+  }
+
+  .iconContainer {
+      width: 60px;
+      height: 60px;
+      font-size: 24px;
+      margin-bottom: 16px;
+      border-radius: 16px;
+  }
+
+  .toggleButton {
+      padding: 12px 14px;
+      font-size: 13px;
+  }
+
+  .loginButton {
+      padding: 14px !important;
+      font-size: 14px !important;
+  }
+
+  /* Input fieldlarni mobil uchun optimallashtirish */
+  .textField :global(.MuiInputBase-input) {
+      font-size: 16px !important; /* iOS zoom ni oldini olish */
+  }
+
+  .textField :global(.MuiInputLabel-root) {
+      font-size: 14px !important;
+  }
+}
+
+/* Landscape mode uchun moslashuv */
+@media (max-height: 600px) and (orientation: landscape) {
+  .formSection {
+      padding-top: 20px;
+      padding-bottom: 20px;
+      align-items: flex-start;
+  }
+
+  .loginCard {
+      padding: 20px 24px !important;
+  }
+
+  .loginHeader {
+      margin-bottom: 20px;
+  }
+
+  .iconContainer {
+      width: 50px;
+      height: 50px;
+      font-size: 22px;
+      margin-bottom: 12px;
+  }
+
+  .title {
+      font-size: 22px !important;
+      margin-bottom: 4px !important;
+  }
+
+  .subtitle {
+      font-size: 13px !important;
+  }
+
+  .loginForm {
+      gap: 16px;
+  }
+
+  .loginButton {
+      padding: 12px !important;
+      font-size: 14px !important;
+      margin-top: 8px;
+  }
+}
+
+/* Yuqori pikselli nisbatlar uchun */
+@media (min-width: 1440px) {
+  .loginCard {
+      max-width: 520px;
+      padding: 52px 44px !important;
+  }
+}
+
+/* Touch device optimizatsiyasi */
+@media (hover: none) and (pointer: coarse) {
+  .loginCard:hover {
+      transform: none;
+  }
+
+  .toggleButton:hover {
+      transform: none;
+  }
+
+  .toggleButton:hover svg {
+      transform: none;
+  }
+
+  .textField :global(.MuiOutlinedInput-root:hover) {
+      transform: none;
+  }
+
+  .loginButton:hover {
+      transform: none !important;
+  }
+
+  /* Touch uchun active states */
+  .toggleButton:active {
+      transform: scale(0.98);
+  }
+
+  .loginButton:active {
+      transform: scale(0.98) !important;
   }
 }
 

@@ -5,7 +5,8 @@ import {
   MdCheckCircle,
   MdAccessTime,
   MdCancel,
-  MdRefresh
+  MdRefresh,
+  MdDoneAll
 } from 'react-icons/md';
 import styles from './MyOrders.module.css';
 import OrderCard from '../../components/orderCard/OrderCard';
@@ -17,7 +18,8 @@ const OrderStats = ({ orders }) => {
     total: orders.length,
     delivered: orders.filter(order => order.status === 'delivered').length,
     new: orders.filter(order => order.status === 'new').length,
-    accepted: orders.filter(order => order.status === 'accepted').length
+    accepted: orders.filter(order => order.status === 'accepted').length,
+    rejected: orders.filter(order => order.status === 'rejected').length
   };
 
   return (
@@ -47,11 +49,18 @@ const OrderStats = ({ orders }) => {
             <div className={styles.statLabel}>Yangi</div>
           </div>
           <div className={styles.statItem}>
-            <MdCancel className={styles.statIcon} />
-            <div className={`${styles.statNumber} ${styles.statNumberCancelled}`}>
+            <MdDoneAll  className={styles.statIcon} />
+            <div className={`${styles.statNumber} ${styles.statNumberAccepted}`}>
               {stats.accepted}
             </div>
             <div className={styles.statLabel}>Qabul qilingan</div>
+          </div>
+          <div className={styles.statItem}>
+            <MdCancel className={styles.statIcon} />
+            <div className={`${styles.statNumber} ${styles.statNumberRejected}`}>
+              {stats.rejected}
+            </div>
+            <div className={styles.statLabel}>Bekor qilingan</div>
           </div>
         </div>
       </div>

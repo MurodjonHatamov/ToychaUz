@@ -37,12 +37,7 @@ function Login() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const getCookie = (name) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-    return null;
-  };
+  // ✅ getCookie funksiyasini OLIB TASHLAYMIZ - kerak emas
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -116,7 +111,7 @@ function Login() {
       const apiUrl = formData.loginType === 'market' 
         ? 'http://localhost:2277/auth/market-login'
         : 'http://localhost:2277/auth/deliver-login';
-
+ 
       const phoneForApi = cleanPhone;
 
       const response = await fetch(apiUrl, {
@@ -125,31 +120,40 @@ function Login() {
           'Content-Type': 'application/json',
           'accept': '*/*'
         },
-        credentials: 'include',
+        credentials: 'include', // ✅ Cookie'larni avtomatik yuborish
         body: JSON.stringify({
           phone: phoneForApi,
           password: formData.password
         })
       });
 
+      console.log('Login response status:', response.status);
+
+      // ✅ MUHIM: Faqat response status ga qaraymiz, cookie'ni o'qimaymiz
       if (response.status === 201) {
-        const authToken = getCookie('AuthToken');
+        // ✅ Server cookie'ni qo'ydi, frontend faqat login holatini saqlaydi
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('userType', formData.loginType);
+        localStorage.setItem('loginTime', new Date().toISOString());
         
-        if (authToken) {
-          localStorage.setItem('isLoggedIn', 'true');
-          localStorage.setItem('userType', formData.loginType);
-          localStorage.setItem('loginTime', new Date().toISOString());
-          
-          window.dispatchEvent(new Event('storage'));
-          navigate('/');
-        } else {
-          setError('Login muvaffaqiyatli, ammo token olinmadi');
-        }
+        // ✅ App.js dagi isLoggedIn() funksiyasi cookie'ni tekshiradi
+        window.dispatchEvent(new Event('storage'));
+        
+        // ✅ Token olishga harakat qilmaymiz - httpOnly cookie JS bilan o'qilmaydi
+        console.log('Login muvaffaqiyatli! Browser cookie ni saqladi');
+        
+        navigate('/');
+      } else if (response.status === 404) {
+        setError('Telefon raqam yoki parol noto\'g\'ri');
+      } else if (response.status === 401) {
+        setError('Kirish rad etildi. Parolni tekshiring');
       } else {
-        if (response.status === 404) {
-          setError('Telefon raqam yoki parol noto\'g\'ri');
-        } else {
-          setError(`Login xatosi: ${response.status}`);
+        // Server xatosi bo'lsa, tafsilotlarni olishga harakat qilamiz
+        try {
+          const errorData = await response.json();
+          setError(errorData.message || `Login xatosi: ${response.status}`);
+        } catch {
+          setError(`Server xatosi: ${response.status}`);
         }
       }
     } catch (error) {
@@ -189,7 +193,7 @@ function Login() {
           
           <p className={styles.illustrationSubtitle}>
             Zamonaviy va xavfsiz platformaga xush kelibsiz. 
-            Biznesni boshqarish endi yanada oson va qulay!
+            Browser avtomatik ravishda cookie'larni boshqaradi.
           </p>
           
           <div className={styles.featureList}>
@@ -197,21 +201,21 @@ function Login() {
               <div className={styles.featureIcon}>
                 <FaShieldAlt />
               </div>
-              <div>Xavfsiz kirish tizimi</div>
+              <div>Xavfsiz httpOnly cookie</div>
             </div>
             
             <div className={styles.featureItem}>
               <div className={styles.featureIcon}>
                 <FaBolt />
               </div>
-              <div>Tezkor ishlov berish</div>
+              <div>Avtomatik autentifikatsiya</div>
             </div>
             
             <div className={styles.featureItem}>
               <div className={styles.featureIcon}>
                 <FaCheckCircle />
               </div>
-              <div>Oson boshqaruv</div>
+              <div>Browser cookie boshqaruvi</div>
             </div>
           </div>
         </div>
@@ -228,7 +232,10 @@ function Login() {
               {getLoginTypeName()} Tizimi
             </Typography>
             <Typography variant="subtitle1" className={styles.subtitle}>
-              Hisobingizga kiring
+              Xavfsiz kirish tizimi
+            </Typography>
+            <Typography variant="body2" className={styles.cookieInfo}>
+              Tokenlar httpOnly cookie sifatida saqlanadi
             </Typography>
           </Box>
 
@@ -340,7 +347,10 @@ function Login() {
           <Box className={styles.loginFooter}>
             <Typography variant="body2" align="center">
               {getLoginTypeIcon()}
-              {getLoginTypeName()} tizimiga kirish
+              {getLoginTypeName()} tizimiga xavfsiz kirish
+            </Typography>
+            <Typography variant="caption" align="center" display="block" sx={{ mt: 1, color: 'text.secondary' }}>
+              Tokenlar browser tomonidan avtomatik boshqariladi
             </Typography>
           </Box>
         </Card>

@@ -88,6 +88,7 @@
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   margin-bottom: 20px;
+  
 }
 
 .statsContent {
@@ -106,7 +107,7 @@
 /* Desktop: 4 ta stat item bir qatorda */
 .statsGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 12px;
 }
 
@@ -140,17 +141,20 @@
 }
 
 .statNumberSuccess {
-  color: var(--success);
+  color: #2e7d32;
 }
 
 .statNumberWarning {
-  color: var(--warning);
+  color: #1976d2;
 }
 
-.statNumberCancelled {
-  color: var(--error);
+.statNumberAccepted {
+  color: #ed6c02;
 }
+.statNumberRejected{
+  color: #d32f2f;
 
+}
 .statLabel {
   color: var(--text-light);
   font-weight: 500;

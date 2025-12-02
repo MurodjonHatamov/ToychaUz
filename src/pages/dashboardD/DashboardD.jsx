@@ -640,9 +640,7 @@ function DashboardD() {
     <div className={styles.dashboard}>
       {/* FILTR PANELI - Buyurtmalarni filtrlash uchun interfeys */}
       <div className={styles.filterPanel}>
-        <div className={styles.filterHeader}>
-          <h2>Excel Jadval - Har Bir Buyurtma Alohida</h2>
-        </div>
+  
 
         <div className={styles.filterControls}>
           {/* Market tanlash - Qaysi marketning buyurtmalarini ko'rish */}
