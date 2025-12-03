@@ -70,7 +70,8 @@ function MarketsD() {
         },
         credentials: 'include'
       });
-      
+      logaut(response);
+
       if (response.ok) {
         const marketsData = await response.json();
         setMarkets(marketsData);
@@ -101,7 +102,8 @@ function MarketsD() {
         credentials: 'include',
         body: JSON.stringify(marketData)
       });
-      
+      logaut(response);
+
       if (response.ok) {
         showSnackbar('Market muvaffaqiyatli qoʻshildi', 'success');
         fetchMarkets();
@@ -131,7 +133,8 @@ function MarketsD() {
         credentials: 'include',
         body: JSON.stringify(marketData)
       });
-      
+      logaut(response);
+
       if (response.ok) {
         showSnackbar('Market maʼlumotlari muvaffaqiyatli yangilandi', 'success');
         fetchMarkets();
@@ -160,7 +163,8 @@ function MarketsD() {
         },
         credentials: 'include'
       });
-      
+      logaut(response);
+
       if (response.ok) {
         showSnackbar('Market muvaffaqiyatli oʻchirildi', 'success');
         fetchMarkets();

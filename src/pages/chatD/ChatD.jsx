@@ -19,6 +19,7 @@ import {
   FaCheck,
 } from "react-icons/fa";
 import styles from "./ChatD.module.css";
+import { logaut } from "../logaut";
 
 function ChatD({ setNotifications, notifications }) {
   // ==================== STATE DEFINITIONS ====================
@@ -59,7 +60,7 @@ function ChatD({ setNotifications, notifications }) {
         },
         credentials: "include",
       });
-
+      logaut(response);
       if (response.ok) {
         const marketsData = await response.json();
         setMarkets(marketsData);
@@ -97,7 +98,7 @@ function ChatD({ setNotifications, notifications }) {
           credentials: "include",
         }
       );
-
+      logaut(response);
       if (response.ok) {
         const chatData = await response.json();
         setMessages(chatData);
@@ -152,7 +153,7 @@ function ChatD({ setNotifications, notifications }) {
           }),
         }
       );
-
+      logaut(response);
       if (response.ok) {
         const sentMessage = await response.json();
         setNewMessage("");

@@ -8,11 +8,16 @@ import {
   FaCheckCircle
 } from 'react-icons/fa';
 import styles from './User.module.css';
+import { useNavigate } from 'react-router-dom';
+import { logaut } from '../logaut';
+
+
 
 function User({ userType }) {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
 console.log(userType);
 const url = userType === 'deliver' 
   ? 'http://localhost:2277/deliver/own-profile'
@@ -30,10 +35,14 @@ const url = userType === 'deliver'
         credentials: 'include'
       });
 
+      logaut(response);
+
+      
       if (!response.ok) {
         throw new Error(`Ma'lumotlarni olishda xatolik: ${response.status}`);
       }
-
+ 
+      
       const data = await response.json();
       setUserData(data);
       console.log(data);

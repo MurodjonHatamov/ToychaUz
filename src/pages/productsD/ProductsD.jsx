@@ -31,6 +31,7 @@ import {
   FaWineBottle
 } from 'react-icons/fa';
 import styles from './ProductsD.module.css';
+import { logaut } from '../logaut';
 
 function ProductsD() {
   // ==================== STATE DEFINITIONS ====================
@@ -81,7 +82,7 @@ function ProductsD() {
         },
         credentials: 'include'
       });
-      
+      logaut(response);
       if (response.ok) {
         const productsData = await response.json();
         setProducts(productsData);
@@ -110,7 +111,7 @@ function ProductsD() {
         credentials: 'include',
         body: JSON.stringify(productData)
       });
-      
+      logaut(response);
       if (response.ok) {
         showSnackbar('Mahsulot muvaffaqiyatli qoʻshildi', 'success');
         fetchProducts();
@@ -140,7 +141,7 @@ function ProductsD() {
         credentials: 'include',
         body: JSON.stringify(productData)
       });
-      
+      logaut(response);
       if (response.ok) {
         showSnackbar('Mahsulot maʼlumotlari muvaffaqiyatli yangilandi', 'success');
         fetchProducts();
@@ -169,7 +170,7 @@ function ProductsD() {
         },
         credentials: 'include'
       });
-      
+      logaut(response);
       if (response.ok) {
         showSnackbar('Mahsulot muvaffaqiyatli oʻchirildi', 'success');
         fetchProducts();

@@ -5,6 +5,7 @@ import ProductCard from '../../components/productCard/ProductCard';
 import Cart from '../../components/cart/Cart';
 import { IoIosArrowUp } from 'react-icons/io';
 import { Button, Snackbar, Alert } from '@mui/material';
+import { logaut } from '../logaut';
 
 function Dashboard() {
   const [products, setProducts] = useState([]);
@@ -34,22 +35,30 @@ function Dashboard() {
       method: "GET",
       credentials: "include"
     })
-    .then(res => {
-      if (!res.ok) {
-        throw new Error('Serverda xatolik');
-      }
-      return res.json();
-    })
-    .then(products => {
-      setProducts(products);
-      setLoading(false);
-    })
-    .catch(err => {
-      console.error('Xato:', err);
-      setError('Serverga ulanishda xatolik. Iltimos, keyinroq urinib ko\'ring.');
-      setLoading(false);
-    });
+      .then(res => {
+  
+        // 👉 401 | 402 bo‘lsa to‘g‘ri logout qilish
+        logaut(res);
+  
+        if (!res.ok) {
+          throw res; // 👈 res ni throw qilamiz
+        }
+  
+        return res.json();
+      })
+      .then(products => {
+        setProducts(products);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Xato:", err);
+  
+        // bu yerda faqat umumiy xatolar
+        setError('Serverga ulanishda xatolik.');
+        setLoading(false);
+      });
   };
+  
 
   useEffect(() => {
     getData();
@@ -139,7 +148,35 @@ function Dashboard() {
         credentials: "include",
         body: JSON.stringify(orderData)
       });
+const getData = () => {
+  fetch("http://localhost:2277/orders/products", {
+    method: "GET",
+    credentials: "include"
+  })
+    .then(res => {
 
+      // 👉 401 | 402 bo‘lsa to‘g‘ri logout qilish
+      logaut(res);
+
+      if (!res.ok) {
+        throw res; // 👈 res ni throw qilamiz
+      }
+
+      return res.json();
+    })
+    .then(products => {
+      setProducts(products);
+      setLoading(false);
+    })
+    .catch(err => {
+      console.error("Xato:", err);
+
+      // bu yerda faqat umumiy xatolar
+      setError('Serverga ulanishda xatolik.');
+      setLoading(false);
+    });
+};
+logaut(response);
       if (!response.ok) {
         const errorData = await response.json();
         

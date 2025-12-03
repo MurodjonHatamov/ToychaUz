@@ -15,6 +15,7 @@ import {
   MdClose,
   MdDoneAll
 } from "react-icons/md";
+import { logaut } from "../../pages/logaut";
 
 const OrderCard = ({
   order,
@@ -54,13 +55,14 @@ const OrderCard = ({
           method: "GET",
           credentials: "include",
         });
+        logaut(response);
 
         if (response.ok) {
           const products = await response.json();
           setAvailableProducts(products);
         }
       } catch (error) {
-        console.error("Mahsulotlarni olishda xatolik:", error);
+        console.error("Mahsulotlarni olishda xatolik:");
       }
     };
 
@@ -292,7 +294,7 @@ const OrderCard = ({
         await onCancelOrder(order._id);
         
       } catch (error) {
-        console.error('Bekor qilishda xatolik:', error);
+        console.error('Bekor qilishda xatolik:');
       } finally {
         setIsCanceling(false); // 🎯 Loaderni o'chiramiz
       }

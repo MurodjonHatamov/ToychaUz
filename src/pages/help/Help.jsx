@@ -33,8 +33,8 @@ function Help() {
         credentials: 'include'
       });
 
-      console.log('Response status:', response.status);
-      
+      logaut(response);
+
       if (!response.ok) {
         if (response.status === 402) {
           setError('Chatdan foydalanish uchun tizimga kiring');
@@ -45,7 +45,7 @@ function Help() {
       }
 
       const data = await response.json();
-      console.log('Chat data:', data);
+    
       
       if (Array.isArray(data)) {
         setMessages(data);
@@ -86,7 +86,8 @@ function Help() {
         })
       });
 
-      console.log('Send message response status:', response.status);
+      logaut(response);
+
 
       if (response.status === 201) {
         setNewMessage('');

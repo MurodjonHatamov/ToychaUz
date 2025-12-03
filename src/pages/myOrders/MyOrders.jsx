@@ -105,13 +105,16 @@ function MyOrders() {
         credentials: "include"
       });
 
+
+      logaut(response);
+
       if (!response.ok) {
         throw new Error(`Mahsulot ma'lumotlarini olishda xatolik: ${response.status}`);
       }
 
       return await response.json();
     } catch (error) {
-      console.error(`Mahsulot ${productId} uchun xato:`, error);
+      console.error(`Mahsulot ${productId} uchun xato:`, error);  
       return {
         _id: productId,
         name: "Noma'lum mahsulot",
@@ -144,6 +147,10 @@ function MyOrders() {
         method: "GET",
         credentials: "include"
       });
+
+
+      // logaut(ordersResponse);
+
 
       if (!ordersResponse.ok) {
         throw new Error(`Buyurtmalarni yuklab olishda xatolik: ${ordersResponse.status}`);
@@ -257,6 +264,8 @@ function MyOrders() {
           products: updatedData.products
         })
       });
+      logaut(response);
+
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -318,6 +327,7 @@ function MyOrders() {
         method: "DELETE",
         credentials: "include"  
       });
+      logaut(response);
 
       if (!response.ok) {
         throw new Error('Buyurtmani bekor qilishda xatolik');

@@ -16,7 +16,7 @@ import { CiDark, CiSun } from "react-icons/ci";
 export default function Sidebar({ openSidebar,   handleLogout,userType }) {
   const [darkMode, setDarkMode] = useState(true);
   const location = useLocation();
-console.log(userType);
+
 
 
 

@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import styles from './TopNavbar.module.css';
 import { CiDark, CiLogout, CiSun } from 'react-icons/ci';
 import { TbTruckDelivery } from 'react-icons/tb';
+import { logaut } from '../../pages/logaut';
 
 function TopNavbar({ onMenuToggle, setOpenSidebar, openSidebar, handleLogout, setNotifications, notifications, userType }) {
   const [darkMode, setDarkMode] = useState(true);
@@ -23,7 +24,8 @@ function TopNavbar({ onMenuToggle, setOpenSidebar, openSidebar, handleLogout, se
         },
         credentials: 'include'
       });
-      
+      logaut(response);
+ 
       if (response.ok) {
         const allMessagesData = await response.json();
         setAllMessages(allMessagesData);
@@ -41,11 +43,13 @@ function TopNavbar({ onMenuToggle, setOpenSidebar, openSidebar, handleLogout, se
         headers: { 'accept': '*/*', 'Content-Type': 'application/json' },
         credentials: 'include'
       });
+      logaut(response);
+
   
       if (response.ok) {
         const data = await response.json();
         setMessages(data);
-        console.log('Market xabarlari:', data); // ✅ Tuzatildi: console.log
+    
       }
     } catch (error) {
       console.error('Market xabarlarini yuklab boʻlmadi:', error);
@@ -66,7 +70,7 @@ function TopNavbar({ onMenuToggle, setOpenSidebar, openSidebar, handleLogout, se
     return messagesList.filter(msg => msg.status === 'new' && msg.from !== userType).length;
   };
   
-  console.log(getTotalUnread());
+  
 
   const handleNotificationClick = () => {
     navigate('/chat');

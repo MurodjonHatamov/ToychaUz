@@ -86,6 +86,8 @@ function DashboardD() {
         },
         credentials: "include", // Cookie bilan autentifikatsiya
       });
+      logaut(response);
+
 
       if (response.ok) {
         const marketsData = await response.json();
@@ -121,6 +123,7 @@ function DashboardD() {
         },
         credentials: "include",
       });
+      logaut(response);
 
       if (response.ok) {
         const productsData = await response.json();
@@ -185,6 +188,7 @@ function DashboardD() {
           credentials: "include",
         }
       );
+      logaut(response);
 
       if (response.ok) {
         const data = await response.json();
@@ -233,6 +237,7 @@ function DashboardD() {
           credentials: "include",
         }
       );
+      logaut(response);
 
       if (response.ok) {
         const order = await response.json();
@@ -322,6 +327,7 @@ function DashboardD() {
           credentials: "include",
         }
       );
+      logaut(response);
 
       if (response.ok) {
         showSnackbar("Buyurtma muvaffaqiyatli qabul qilindi", "success");
@@ -353,6 +359,8 @@ function DashboardD() {
           credentials: "include",
         }
       );
+      logaut(response);
+
 
       if (response.ok) {
         showSnackbar("Buyurtma muvaffaqiyatli yetkazib berildi", "success");
@@ -390,6 +398,7 @@ function DashboardD() {
           credentials: "include",
         }
       );
+      logaut(response);
 
       if (response.ok) {
         showSnackbar("Buyurtma muvaffaqiyatli bekor qilindi", "warning");
@@ -439,6 +448,7 @@ function DashboardD() {
           credentials: "include",
         }
       );
+      logaut(response);
 
       if (response.ok) {
         const blob = await response.blob(); // Excel fayl ni olish

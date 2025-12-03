@@ -293,14 +293,8 @@
 
 .loginCard:hover::before {
   opacity: 0.1;
-}
+} 
 
-.loginCard:hover {
-  transform: translateY(-8px);
-  box-shadow: 
-      0 30px 70px rgba(0, 0, 0, 0.15),
-      0 12px 32px rgba(0, 0, 0, 0.1) !important;
-}
 
 @keyframes cardSlideIn {
   0% {

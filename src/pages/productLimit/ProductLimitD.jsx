@@ -34,6 +34,7 @@ import {
   FaCube
 } from 'react-icons/fa';
 import styles from './ProductLimitD.module.css';
+import { logaut } from '../logaut';
 
 function ProductLimitD() {
   // ==================== STATE DEFINITIONS ====================
@@ -92,6 +93,7 @@ function ProductLimitD() {
         },
         credentials: 'include'
       });
+      logaut(response);
       
       if (response.ok) {
         const marketsData = await response.json();
@@ -122,7 +124,7 @@ function ProductLimitD() {
         },
         credentials: 'include'
       });
-      
+      logaut(response);
       if (response.ok) {
         const productsData = await response.json();
         setProducts(productsData);
@@ -156,7 +158,7 @@ function ProductLimitD() {
         },
         credentials: 'include'
       });
-      
+      logaut(response);
       if (response.ok) {
         const limitsData = await response.json();
         setProductLimits(limitsData);
@@ -194,7 +196,7 @@ function ProductLimitD() {
           })
         }
       );
-      
+      logaut(response);
       if (response.ok) {
         showSnackbar('Limit muvaffaqiyatli qoʻshildi', 'success');
         fetchProductLimits();
@@ -231,7 +233,7 @@ function ProductLimitD() {
           days: parseInt(limitData.days)
         })
       });
-      
+      logaut(response);
       if (response.ok) {
         showSnackbar('Limit muvaffaqiyatli yangilandi', 'success');
         fetchProductLimits();
@@ -264,7 +266,7 @@ function ProductLimitD() {
         },
         credentials: 'include'
       });
-      
+      logaut(response);
       if (response.ok) {
         showSnackbar('Limit muvaffaqiyatli oʻchirildi', 'success');
         fetchProductLimits();

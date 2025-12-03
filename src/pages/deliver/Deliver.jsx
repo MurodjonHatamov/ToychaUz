@@ -28,6 +28,7 @@ import {
   FaSync
 } from 'react-icons/fa';
 import styles from './Deliver.module.css';
+import { logaut } from '../logaut';
 
 function Deliver() {
   // ==================== STATE DEFINITIONS ====================
@@ -75,6 +76,8 @@ function Deliver() {
         },
         credentials: 'include'
       });
+      // ❗ TOKEN YOKI SESSION TUGASA
+      logaut(response);
       
       if (response.ok) {
         const deliversData = await response.json();
@@ -119,7 +122,8 @@ function Deliver() {
           return_password: deliverData.return_password
         })
       });
-      
+      logaut(response);
+
       if (response.ok) {
         showSnackbar('Deliver muvaffaqiyatli qoʻshildi', 'success');
         fetchDelivers();
@@ -170,7 +174,8 @@ function Deliver() {
         credentials: 'include',
         body: JSON.stringify(updateData)
       });
-      
+      logaut(response);
+
       if (response.ok) {
         showSnackbar('Deliver maʼlumotlari muvaffaqiyatli yangilandi', 'success');
         fetchDelivers();
@@ -203,7 +208,8 @@ function Deliver() {
         },
         credentials: 'include'
       });
-      
+      logaut(response);
+
       if (response.ok) {
         showSnackbar('Deliver muvaffaqiyatli oʻchirildi', 'success');
         fetchDelivers();
