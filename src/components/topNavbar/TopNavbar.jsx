@@ -4,14 +4,12 @@ import { Badge, IconButton, Stack } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import styles from './TopNavbar.module.css';
 import { CiDark, CiLogout, CiSun } from 'react-icons/ci';
-import { TbTruckDelivery } from 'react-icons/tb';
 import { logaut } from '../../pages/logaut';
 
-function TopNavbar({ onMenuToggle, setOpenSidebar, openSidebar, handleLogout, setNotifications, notifications, userType }) {
+function TopNavbar({ onMenuToggle, setOpenSidebar, openSidebar, handleLogout,  userType }) {
   const [darkMode, setDarkMode] = useState(true);
   const [allMessages, setAllMessages] = useState([]);
-  const [messages, setMessages] = useState([]);
-
+ 
   const navigate = useNavigate();
 
   const fetchAllMessages = async () => {
@@ -36,38 +34,13 @@ function TopNavbar({ onMenuToggle, setOpenSidebar, openSidebar, handleLogout, se
   };
   
   // Chat tarixini olish
-  const fetchMarketMessages = async () => {
-    try {
-      const response = await fetch('http://localhost:2277/contact/chat', {
-        method: 'GET',
-        headers: { 'accept': '*/*', 'Content-Type': 'application/json' },
-        credentials: 'include'
-      });
-      logaut(response);
-
-  
-      if (response.ok) {
-        const data = await response.json();
-        setMessages(data);
-    
-      }
-    } catch (error) {
-      console.error('Market xabarlarini yuklab boʻlmadi:', error);
-    }
-  };  
-  
   const getTotalUnread = () => {
-    let messagesList = [];
+    if (userType !== "deliver") return 0;
+    if (!Array.isArray(allMessages)) return 0;
   
-    if (userType === "deliver") {
-      messagesList = allMessages;
-    } else if (userType === "market") {
-      messagesList = messages;
-    }
-  
-    if (!Array.isArray(messagesList)) return 0;
-  
-    return messagesList.filter(msg => msg.status === 'new' && msg.from !== userType).length;
+    return allMessages.filter(
+      msg => msg.status === 'new' && msg.from !== userType
+    ).length;
   };
   
   
@@ -77,11 +50,9 @@ function TopNavbar({ onMenuToggle, setOpenSidebar, openSidebar, handleLogout, se
   };
 
   useEffect(() => {
-    if (userType === "deliver") {
+  
       fetchAllMessages();
-    } else if (userType === "market") {
-      fetchMarketMessages();
-    }
+    
     
     if (darkMode) {
       document.body.classList.add("dark-mode");
@@ -101,23 +72,25 @@ function TopNavbar({ onMenuToggle, setOpenSidebar, openSidebar, handleLogout, se
 
       <div className={styles.rightSection}>
         <div className={styles.actions}>
-          <div className={styles.notification}>
-            <Stack direction="row" spacing={1}>
-              <IconButton 
-                aria-label="notifications" 
-                className={styles.iconButton}
-                onClick={handleNotificationClick}
-              >
-                <Badge 
-                  badgeContent={getTotalUnread()} 
-                  color="error"
-                  max={99}
-                >
-                  <MdNotifications />
-                </Badge>
-              </IconButton>
-            </Stack>
-          </div>
+    {
+      userType === "deliver" && (      <div className={styles.notification}>
+        <Stack direction="row" spacing={1}>
+          <IconButton 
+            aria-label="notifications" 
+            className={styles.iconButton}
+            onClick={handleNotificationClick}
+          >
+            <Badge 
+              badgeContent={getTotalUnread()} 
+              color="error"
+              max={99}
+            >
+              <MdNotifications />
+            </Badge>
+          </IconButton>
+        </Stack>
+      </div>)
+    }
 
           <div onClick={() => setDarkMode(!darkMode)} className={styles.darkMode}>
             <Stack direction="row" spacing={1}>
