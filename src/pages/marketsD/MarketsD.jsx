@@ -26,6 +26,7 @@ import {
   FaSearch
 } from 'react-icons/fa';
 import styles from './MarketsD.module.css';
+import { logaut } from '../logaut';
 
 function MarketsD() {
   // ==================== STATE DEFINITIONS ====================

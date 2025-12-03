@@ -123,7 +123,7 @@ function ChatD({ setNotifications, notifications }) {
         },
         credentials: "include",
       });
-
+logaut(response);
       if (response.ok) {
         const allMessagesData = await response.json();
         setAllMessages(allMessagesData);

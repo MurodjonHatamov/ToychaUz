@@ -5,7 +5,7 @@
   background-color: var(--background);
   padding: 20px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  transition: all 0.3s ease;
+  /* transition: all 0.3s ease; */
 }
 
 /* FILTR PANELI */
@@ -16,7 +16,7 @@
   box-shadow: var(--shadow);
   border: 1px solid var(--border);
   margin-bottom: 20px;
-  transition: all 0.3s ease;
+  /* transition: all 0.3s ease; */
 }
 
 .filterHeader {
@@ -57,7 +57,7 @@
   background-color: var(--surface);
   color: var(--text);
   font-size: 0.9rem;
-  transition: all 0.3s ease;
+  /* transition: all 0.3s ease; */
   cursor: pointer;
   
 }
@@ -142,7 +142,7 @@
   font-size: 0.75rem;
   min-width: 800px;
   background-color: var(--surface);
-  transition: all 0.3s ease;
+  /* transition: all 0.3s ease; */
 }
 
 .excelTable th,
@@ -151,7 +151,7 @@
   padding: 8px 10px;
   text-align: center;
   white-space: nowrap;
-  transition: all 0.2s ease;
+  /* transition: all 0.2s ease; */
 }
 
 /* Header styles */
@@ -173,7 +173,7 @@
   min-width: 180px;
   font-size: 0.75rem;
   border-bottom: 2px solid var(--border);
-  transition: all 0.3s ease;
+  /* transition: all 0.3s ease; */
   cursor: pointer;
   position: relative;
 }
@@ -191,12 +191,12 @@
 
 .orderTitle {
   font-weight: 600;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   line-height: 1.2;
 }
 
 .statusBadge {
-  font-size: 0.65rem;
+  font-size: 0.55rem;
   opacity: 0.9;
   font-weight: 500;
   padding: 2px 6px;
@@ -226,23 +226,90 @@
   color: var(--text);
   border-right: 2px solid var(--border);
   font-size: 0.75rem;
-  transition: all 0.3s ease;
+
 }
 
 .quantityCell {
   background-color: var(--surface);
   font-weight: 500;
   color: var(--text);
-  transition: background-color 0.2s ease;
+
   font-size: 0.75rem;
+}
+
+/* Jadval qatorlari uchun alternativ ranglar - productRow klasiga ta'sir qilish */
+.excelTable tbody .productRow:nth-child(even) {
+  background-color: var(--item);
+}
+
+.excelTable tbody .productRow:nth-child(odd) {
+  background-color: var(--surface);
+}
+
+/* Sticky columnlar uchun mos ranglar */
+.excelTable tbody .productRow:nth-child(even) .productCell {
+  background-color: var(--item);
+}
+
+.excelTable tbody .productRow:nth-child(odd) .productCell {
+  background-color: var(--surface);
+}
+
+.excelTable tbody .productRow:nth-child(even) .rowTotal {
+  background-color: #d4e8d4; /* Yengil yashil */
+}
+
+.excelTable tbody .productRow:nth-child(odd) .rowTotal {
+  background-color: #e8f5e8; /* Ochiq yashil */
+}
+
+/* Hover effektlari */
+.productRow:hover {
+  background-color: var(--item) !important;
+}
+
+.productRow:hover .productCell {
+  background-color: var(--primary) !important;
+  color: white !important;
+}
+
+.productRow:hover .quantityCell {
+  background-color:var(--item) !important;
+}
+
+.productRow:hover .rowTotal {
+  background-color:var(--item) !important;
+}
+
+/* Quantity cell uchun alternativ ranglar */
+.excelTable tbody .productRow:nth-child(even) .quantityCell {
+  background-color: var(--item);
+}
+
+.excelTable tbody .productRow:nth-child(odd) .quantityCell {
+  background-color: var(--surface);
+}
+
+/* Jami qator uchun alohida stil */
+.grandTotalRow {
+  background-color: var(--primary) !important;
+  color: white !important;
+  font-weight: 700;
+}
+
+.grandTotalRow td {
+  background-color: var(--primary) !important;
+  color: white !important;
+  border-top: 2px solid var(--border);
 }
 
 .quantityCell:hover {
   background-color: var(--item);
 }
 
+
 .rowTotal {
-  background-color: #e8f5e8;
+  background-color: var(--secondary);
   font-weight: 700;
   color: var(--success);
   position: sticky;
@@ -256,7 +323,7 @@
 /* Row hover effect */
 .productRow:hover .productCell {
   background-color: var(--primary);
-  color: white;
+
 }
 
 .productRow:hover .quantityCell {
@@ -458,7 +525,7 @@
   align-items: center;
   padding: 12px 16px;
   border-bottom: 1px solid var(--border);
-  transition: background-color 0.2s ease;
+
 }
 
 .productRowDetail:hover {
@@ -786,3 +853,4 @@
     justify-content: center;
   }
 }
+

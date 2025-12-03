@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from "./Help.module.css";
+import { logaut } from '../logaut';
 
 function Help() {
   const [messages, setMessages] = useState([]);

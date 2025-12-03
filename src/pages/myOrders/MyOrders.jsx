@@ -11,6 +11,7 @@ import {
 import styles from './MyOrders.module.css';
 import OrderCard from '../../components/orderCard/OrderCard';
 import Error from '../../components/error/Error';
+import { logaut } from '../logaut';
 
 // OrderStats komponenti - Buyurtma statistikasini ko'rsatadi
 const OrderStats = ({ orders }) => {
@@ -151,6 +152,7 @@ function MyOrders() {
 
       // logaut(ordersResponse);
 
+      logaut(ordersResponse);
 
       if (!ordersResponse.ok) {
         throw new Error(`Buyurtmalarni yuklab olishda xatolik: ${ordersResponse.status}`);
