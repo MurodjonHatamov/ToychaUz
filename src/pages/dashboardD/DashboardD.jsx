@@ -158,7 +158,7 @@ function DashboardD() {
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Orders API response:", data);
+  
 
         setOrders(data.data || []);
 
@@ -258,7 +258,7 @@ function DashboardD() {
     const hours = date.getHours().toString().padStart(2, '0');
     const minutes = date.getMinutes().toString().padStart(2, '0');
     
-    return `${month}/${day}/${year} ${hours}:${minutes}`;
+    return `(${month}/${day}/${year} ${hours}:${minutes})`;
   };
 
   const acceptOrder = async (orderId) => {
