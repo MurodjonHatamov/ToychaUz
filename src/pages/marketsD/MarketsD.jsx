@@ -27,6 +27,7 @@ import {
 } from 'react-icons/fa';
 import styles from './MarketsD.module.css';
 import { logaut } from '../logaut';
+import { baseURL } from '../config';
 
 function MarketsD() {
   // ==================== STATE DEFINITIONS ====================
@@ -63,7 +64,7 @@ function MarketsD() {
     try {
       setLoading(prev => ({ ...prev, markets: true }));
       
-      const response = await fetch('http://localhost:2277/markets', {
+      const response = await fetch(`${baseURL}/markets`, {
         method: 'GET',
         headers: { 
           'accept': '*/*',
@@ -77,13 +78,13 @@ function MarketsD() {
         const marketsData = await response.json();
         setMarkets(marketsData);
         setFilteredMarkets(marketsData);
-        console.log(marketsData);
+      
         
       } else {
         throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
-      console.error('Marketlarni yuklab boʻlmadi:', error);
+
       showSnackbar('Marketlarni yuklab boʻlmadi', 'error');
     } finally {
       setLoading(prev => ({ ...prev, markets: false }));
@@ -94,7 +95,7 @@ function MarketsD() {
     try {
       setLoading(prev => ({ ...prev, submit: true }));
       
-      const response = await fetch('http://localhost:2277/markets', {
+      const response = await fetch(`${baseURL}/markets`, {
         method: 'POST',
         headers: { 
           'accept': '*/*',
@@ -114,7 +115,7 @@ function MarketsD() {
         throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
-      console.error('Market qoʻshib boʻlmadi:', error);
+
       showSnackbar('Market qoʻshib boʻlmadi', 'error');
     } finally {
       setLoading(prev => ({ ...prev, submit: false }));
@@ -125,7 +126,7 @@ function MarketsD() {
     try {
       setLoading(prev => ({ ...prev, submit: true }));
       
-      const response = await fetch(`http://localhost:2277/markets/${marketId}`, {
+      const response = await fetch(`${baseURL}/markets/${marketId}`, {
         method: 'PATCH',
         headers: { 
           'accept': '*/*',
@@ -145,7 +146,7 @@ function MarketsD() {
         throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
-      console.error('Market maʼlumotlarini yangilab boʻlmadi:', error);
+
       showSnackbar('Market maʼlumotlarini yangilab boʻlmadi', 'error');
     } finally {
       setLoading(prev => ({ ...prev, submit: false }));
@@ -156,7 +157,7 @@ function MarketsD() {
     try {
       setLoading(prev => ({ ...prev, delete: true }));
       
-      const response = await fetch(`http://localhost:2277/markets/${marketId}`, {
+      const response = await fetch(`${baseURL}/markets/${marketId}`, {
         method: 'DELETE',
         headers: { 
           'accept': '*/*',
@@ -175,7 +176,7 @@ function MarketsD() {
         throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
-      console.error('Marketni oʻchirib boʻlmadi:', error);
+     
       showSnackbar('Marketni oʻchirib boʻlmadi', 'error');
     } finally {
       setLoading(prev => ({ ...prev, delete: false }));

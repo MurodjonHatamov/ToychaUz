@@ -12,6 +12,7 @@ import styles from './MyOrders.module.css';
 import OrderCard from '../../components/orderCard/OrderCard';
 import Error from '../../components/error/Error';
 import { logaut } from '../logaut';
+import { baseURL } from '../config';
 
 // OrderStats komponenti - Buyurtma statistikasini ko'rsatadi
 const OrderStats = ({ orders }) => {
@@ -101,7 +102,7 @@ function MyOrders() {
   // 🎯 Mahsulot ma'lumotlarini ID bo'yicha olish
   const fetchProductDetails = async (productId) => {
     try {
-      const response = await fetch(`http://localhost:2277/orders/products/${productId}`, {
+      const response = await fetch(`${baseURL}/orders/products/${productId}`, {
         method: "GET",
         credentials: "include"
       });
@@ -115,7 +116,7 @@ function MyOrders() {
 
       return await response.json();
     } catch (error) {
-      console.error(`Mahsulot ${productId} uchun xato:`, error);  
+     
       return {
         _id: productId,
         name: "Noma'lum mahsulot",
@@ -141,8 +142,8 @@ function MyOrders() {
         queryParams.append('status', status);
       }
 
-      const url = `http://localhost:2277/orders?${queryParams}`;
-      console.log('API so\'rovi:', url);
+      const url = `${baseURL}/orders?${queryParams}`;
+
 
       const ordersResponse = await fetch(url, {
         method: "GET",
@@ -159,7 +160,7 @@ function MyOrders() {
       }
 
       const responseData = await ordersResponse.json();
-      console.log('Backenddan kelgan ma\'lumot:', responseData);
+   
 
       // 🎯 PAGINATION MA'LUMOTLARINI SAQLASH
       setPagination(prev => ({
@@ -190,7 +191,7 @@ function MyOrders() {
                     unit: productDetails.unit || "dona"
                   };
                 } catch (error) {
-                  console.error(`Mahsulot ${product.productId} uchun xato:`, error);
+                
                   return {
                     ...product,
                     productId: product.productId._id || product.productId,
@@ -206,7 +207,7 @@ function MyOrders() {
               products: productsWithDetails
             };
           } catch (error) {
-            console.error(`Buyurtma ${order._id} uchun xato:`, error);
+       
             return {
               ...order,
               products: []
@@ -219,7 +220,7 @@ function MyOrders() {
       setLoading(false);
 
     } catch (err) {
-      console.error('Buyurtmalarni yuklashda xatolik:', err);
+     
       setError('Buyurtmalarni yuklab olishda xatolik. Iltimos, keyinroq urinib ko\'ring.');
       setLoading(false);
     }
@@ -254,9 +255,9 @@ function MyOrders() {
   // 🎯 Buyurtmani yangilash funksiyasi
   const handleUpdateProduct = async (orderId, updatedData) => {
     try {
-      console.log('Yangilanish so\'rovi:', { orderId, updatedData });
+    
       
-      const response = await fetch(`http://localhost:2277/orders/${orderId}`, {
+      const response = await fetch(`${baseURL}/orders/${orderId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json"
@@ -287,7 +288,7 @@ function MyOrders() {
               unit: productDetails.unit
             };
           } catch (error) {
-            console.error(`Mahsulot ${product.productId} uchun xato:`, error);
+ 
             return {
               ...product,
               productName: "Noma'lum mahsulot",
@@ -312,7 +313,7 @@ function MyOrders() {
       });
 
     } catch (error) {
-      console.error('Buyurtmani yangilashda xatolik:', error);
+  
       setSnackbar({
         open: true,
         message: 'Buyurtmani yangilashda xatolik yuz berdi',
@@ -325,7 +326,7 @@ function MyOrders() {
   // 🎯 Buyurtmani bekor qilish funksiyasi
   const handleCancelOrder = async (orderId) => {
     try {
-      const response = await fetch(`http://localhost:2277/orders/${orderId}`, {
+      const response = await fetch(`${baseURL}/orders/${orderId}`, {
         method: "DELETE",
         credentials: "include"  
       });
@@ -345,7 +346,7 @@ function MyOrders() {
       });
 
     } catch (error) {
-      console.error('Buyurtmani bekor qilishda xatolik:', error);
+   
       setSnackbar({
         open: true,
         message: 'Buyurtmani bekor qilishda xatolik yuz berdi',

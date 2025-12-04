@@ -31,7 +31,7 @@ function Dashboard() {
 
   // 🎯 BACKEND DAN MAHSULOTLARNI OLISH FUNKSIYASI
   const getData = () => {
-    fetch("http://localhost:2277/orders/products", {
+    fetch(`${baseURL}/orders/products`, {
       method: "GET",
       credentials: "include"
     })
@@ -51,7 +51,7 @@ function Dashboard() {
         setLoading(false);
       })
       .catch(err => {
-        console.error("Xato:", err);
+       
   
         // bu yerda faqat umumiy xatolar
         setError('Serverga ulanishda xatolik.');
@@ -138,9 +138,9 @@ function Dashboard() {
         }))
       };
 
-      console.log('Yuborilayotgan buyurtma:', orderData);
+     
 
-      const response = await fetch("http://localhost:2277/orders", {
+      const response = await fetch(`${baseURL}/orders`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -149,7 +149,7 @@ function Dashboard() {
         body: JSON.stringify(orderData)
       });
 const getData = () => {
-  fetch("http://localhost:2277/orders/products", {
+  fetch(`${baseURL}/orders/products`, {
     method: "GET",
     credentials: "include"
   })
@@ -169,7 +169,7 @@ const getData = () => {
       setLoading(false);
     })
     .catch(err => {
-      console.error("Xato:", err);
+ 
 
       // bu yerda faqat umumiy xatolar
       setError('Serverga ulanishda xatolik.');
@@ -195,7 +195,7 @@ logaut(response);
       }
 
       const result = await response.json();
-      console.log('Buyurtma muvaffaqiyatli yuborildi:', result);
+  
 
       // 🎯 MUVAFFAQIYATLI TOAST
       setSnackbar({
@@ -208,7 +208,7 @@ logaut(response);
       setCart([]);
 
     } catch (error) {
-      console.error('Buyurtma yuborishda xatolik:', error);
+      
       
       // 🎯 XATOLIK TOAST
       setSnackbar({

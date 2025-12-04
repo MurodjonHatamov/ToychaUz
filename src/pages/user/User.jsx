@@ -10,6 +10,7 @@ import {
 import styles from './User.module.css';
 import { useNavigate } from 'react-router-dom';
 import { logaut } from '../logaut';
+import { baseURL } from '../config';
 
 
 
@@ -18,10 +19,10 @@ function User({ userType }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-console.log(userType);
+
 const url = userType === 'deliver' 
-  ? 'http://localhost:2277/deliver/own-profile'
-  : 'http://localhost:2277/orders/profile' ;
+  ? `${baseURL}/deliver/own-profile`
+  : `${baseURL}/orders/profile` ;
   const fetchUserProfile = async () => {
     try {
       setLoading(true);
@@ -45,11 +46,11 @@ const url = userType === 'deliver'
       
       const data = await response.json();
       setUserData(data);
-      console.log(data);
+
       
       
     } catch (error) {
-      console.error('User ma\'lumotlarini olishda xatolik:', error);
+
       setError('Ma\'lumotlarni yuklab olishda xatolik yuz berdi');
     } finally {
       setLoading(false);

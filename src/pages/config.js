@@ -1,0 +1,1 @@
+export const baseURL="https://toycha-bcknd.hurshidbe.uz"

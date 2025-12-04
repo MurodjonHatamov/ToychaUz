@@ -35,6 +35,7 @@ import {
 } from 'react-icons/fa';
 import styles from './ProductLimitD.module.css';
 import { logaut } from '../logaut';
+import { baseURL } from '../config';
 
 function ProductLimitD() {
   // ==================== STATE DEFINITIONS ====================
@@ -74,7 +75,7 @@ function ProductLimitD() {
     delete: false
   });
 
-  const API_BASE = 'http://localhost:2277';
+  const API_BASE = `${baseURL}`;
 
   // ==================== API FUNCTIONS ====================
 
@@ -102,7 +103,7 @@ function ProductLimitD() {
         throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
-      console.error('Marketlarni yuklab boʻlmadi:', error);
+    
       showSnackbar('Marketlarni yuklab boʻlmadi', 'error');
     } finally {
       setLoading(prev => ({ ...prev, markets: false }));
@@ -132,7 +133,7 @@ function ProductLimitD() {
         throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
-      console.error('Mahsulotlarni yuklab boʻlmadi:', error);
+          
       showSnackbar('Mahsulotlarni yuklab boʻlmadi', 'error');
     } finally {
       setLoading(prev => ({ ...prev, products: false }));
@@ -167,7 +168,7 @@ function ProductLimitD() {
         throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
-      console.error('Limitlarni yuklab boʻlmadi:', error);
+      
       showSnackbar('Limitlarni yuklab boʻlmadi', 'error');
     } finally {
       setLoading(prev => ({ ...prev, limits: false }));
@@ -207,7 +208,7 @@ function ProductLimitD() {
         throw new Error(errorData.message || `Server xatosi: ${response.status}`);
       }
     } catch (error) {
-      console.error('Limit qoʻshib boʻlmadi:', error);
+  
       showSnackbar(error.message, 'error');
     } finally {
       setLoading(prev => ({ ...prev, submit: false }));
@@ -244,7 +245,7 @@ function ProductLimitD() {
         throw new Error(errorData.message || `Server xatosi: ${response.status}`);
       }
     } catch (error) {
-      console.error('Limitni yangilab boʻlmadi:', error);
+   
       showSnackbar(error.message, 'error');
     } finally {
       setLoading(prev => ({ ...prev, submit: false }));
@@ -277,7 +278,7 @@ function ProductLimitD() {
         throw new Error(errorData.message || `Server xatosi: ${response.status}`);
       }
     } catch (error) {
-      console.error('Limitni oʻchirib boʻlmadi:', error);
+  
       showSnackbar(error.message, 'error');
     } finally {
       setLoading(prev => ({ ...prev, delete: false }));

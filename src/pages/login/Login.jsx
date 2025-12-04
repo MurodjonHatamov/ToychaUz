@@ -28,6 +28,7 @@ import {
 } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import styles from "./Login.module.css";
+import { baseURL } from '../config';
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -110,8 +111,8 @@ function Login() {
 
     try {
       const apiUrl = formData.loginType === 'market' 
-        ? 'http://localhost:2277/auth/market-login'
-        : 'http://localhost:2277/auth/deliver-login';
+        ? `${baseURL}/auth/market-login`
+        : `${baseURL}/auth/market-login`;
   
       const phoneForApi = cleanPhone;
 
@@ -148,7 +149,7 @@ function Login() {
         }
       }
     } catch (error) {
-      console.error('Login xatosi:', error);
+
       setError('Serverga ulanishda xatolik. Internet aloqasini tekshiring.');
     } finally {
       setLoading(false);

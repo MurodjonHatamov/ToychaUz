@@ -32,6 +32,7 @@ import {
 } from 'react-icons/fa';
 import styles from './ProductsD.module.css';
 import { logaut } from '../logaut';
+import { baseURL } from '../config';
 
 function ProductsD() {
   // ==================== STATE DEFINITIONS ====================
@@ -74,7 +75,7 @@ function ProductsD() {
     try {
       setLoading(prev => ({ ...prev, products: true }));
       
-      const response = await fetch('http://localhost:2277/products', {
+      const response = await fetch(`${baseURL}/products`, {
         method: 'GET',
         headers: { 
           'accept': '*/*',
@@ -91,7 +92,7 @@ function ProductsD() {
         throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
-      console.error('Mahsulotlarni yuklab boʻlmadi:', error);
+    
       showSnackbar('Mahsulotlarni yuklab boʻlmadi', 'error');
     } finally {
       setLoading(prev => ({ ...prev, products: false }));
@@ -102,7 +103,7 @@ function ProductsD() {
     try {
       setLoading(prev => ({ ...prev, submit: true }));
       
-      const response = await fetch('http://localhost:2277/products', {
+      const response = await fetch(`${baseURL}/products`, {
         method: 'POST',
         headers: { 
           'accept': '*/*',
@@ -121,7 +122,7 @@ function ProductsD() {
         throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
-      console.error('Mahsulot qoʻshib boʻlmadi:', error);
+    
       showSnackbar('Mahsulot qoʻshib boʻlmadi', 'error');
     } finally {
       setLoading(prev => ({ ...prev, submit: false }));
@@ -132,7 +133,7 @@ function ProductsD() {
     try {
       setLoading(prev => ({ ...prev, submit: true }));
       
-      const response = await fetch(`http://localhost:2277/products/${productId}`, {
+      const response = await fetch(`${baseURL}/products/${productId}`, {
         method: 'PATCH',
         headers: { 
           'accept': '*/*',
@@ -151,7 +152,7 @@ function ProductsD() {
         throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
-      console.error('Mahsulot maʼlumotlarini yangilab boʻlmadi:', error);
+  
       showSnackbar('Mahsulot maʼlumotlarini yangilab boʻlmadi', 'error');
     } finally {
       setLoading(prev => ({ ...prev, submit: false }));
@@ -162,7 +163,7 @@ function ProductsD() {
     try {
       setLoading(prev => ({ ...prev, delete: true }));
       
-      const response = await fetch(`http://localhost:2277/products/${productId}`, {
+      const response = await fetch(`${baseURL}/products/${productId}`, {
         method: 'DELETE',
         headers: { 
           'accept': '*/*',
@@ -180,7 +181,7 @@ function ProductsD() {
         throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
-      console.error('Mahsulotni oʻchirib boʻlmadi:', error);
+    
       showSnackbar('Mahsulotni oʻchirib boʻlmadi', 'error');
     } finally {
       setLoading(prev => ({ ...prev, delete: false }));

@@ -14,7 +14,7 @@ function TopNavbar({ onMenuToggle, setOpenSidebar, openSidebar, handleLogout,  u
 
   const fetchAllMessages = async () => {
     try {
-      const response = await fetch('http://localhost:2277/deliver/messages', {
+      const response = await fetch(`${baseURL}/deliver/messages`, {
         method: 'GET',
         headers: { 
           'accept': '*/*',
@@ -29,7 +29,7 @@ function TopNavbar({ onMenuToggle, setOpenSidebar, openSidebar, handleLogout,  u
         setAllMessages(allMessagesData);
       }
     } catch (error) {
-      console.error('Barcha xabarlarni yuklab boʻlmadi:', error);
+      // Barcha xabarlarni yuklab boʻlmadi
     }
   };
   

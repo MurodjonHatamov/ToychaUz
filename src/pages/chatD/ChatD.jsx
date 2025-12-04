@@ -52,7 +52,7 @@ function ChatD({ setNotifications, notifications }) {
     try {
       setLoading((prev) => ({ ...prev, markets: true }));
 
-      const response = await fetch("http://localhost:2277/markets", {
+      const response = await fetch(`${baseURL}/markets`, {
         method: "GET",
         headers: {
           accept: "*/*",
@@ -74,7 +74,7 @@ function ChatD({ setNotifications, notifications }) {
         throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
-      console.error("Marketlarni yuklab boʻlmadi:", error);
+     
       showSnackbar("Marketlarni yuklab boʻlmadi", "error");
     } finally {
       setLoading((prev) => ({ ...prev, markets: false }));
@@ -88,7 +88,7 @@ function ChatD({ setNotifications, notifications }) {
       setLoading((prev) => ({ ...prev, messages: true }));
 
       const response = await fetch(
-        `http://localhost:2277/deliver/chat/${marketId}`,
+        `${baseURL}/deliver/chat/${marketId}`,
         {
           method: "GET",
           headers: {
@@ -106,7 +106,7 @@ function ChatD({ setNotifications, notifications }) {
         throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
-      console.error("Chat ma'lumotlarini yuklab boʻlmadi:", error);
+ 
       showSnackbar("Chat ma'lumotlarini yuklab boʻlmadi", "error");
     } finally {
       setLoading((prev) => ({ ...prev, messages: false }));
@@ -115,7 +115,7 @@ function ChatD({ setNotifications, notifications }) {
 
   const fetchAllMessages = async () => {
     try {
-      const response = await fetch("http://localhost:2277/deliver/messages", {
+      const response = await fetch(`${baseURL}/deliver/messages`, {
         method: "GET",
         headers: {
           accept: "*/*",
@@ -129,7 +129,7 @@ logaut(response);
         setAllMessages(allMessagesData);
       }
     } catch (error) {
-      console.error("Barcha xabarlarni yuklab boʻlmadi:", error);
+      // Barcha xabarlarni yuklab boʻlmadi:
     }
   };
 
@@ -140,7 +140,7 @@ logaut(response);
       setLoading((prev) => ({ ...prev, send: true }));
 
       const response = await fetch(
-        `http://localhost:2277/deliver/send-message/${selectedMarket._id}`,
+        `${baseURL}/deliver/send-message/${selectedMarket._id}`,
         {
           method: "POST",
           headers: {
@@ -165,7 +165,7 @@ logaut(response);
         throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
-      console.error("Xabar yuborib boʻlmadi:", error);
+    
       showSnackbar("Xabar yuborib boʻlmadi", "error");
     } finally {
       setLoading((prev) => ({ ...prev, send: false }));

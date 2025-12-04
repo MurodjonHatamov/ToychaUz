@@ -28,8 +28,8 @@ const handleLogout = async () => {
   
   try {
     const logoutUrl = userType === "market" 
-      ? "http://localhost:2277/auth/market-logout"
-      : "http://localhost:2277/auth/deliver-logout";
+      ?`${baseURL}/auth/market-logout`
+      : `${baseURL}/auth/deliver-logout`;
     
     const response = await fetch(logoutUrl, {
       method: "DELETE",
@@ -39,11 +39,9 @@ const handleLogout = async () => {
       credentials: "include",
     });
 
-    if (response.ok) {
-      console.log(`${userType} logout muvaffaqiyatli`);
-    }
+  
   } catch (error) {
-    console.error("Logout API xatosi:", error);
+    // Logout API xatosi:
   } finally {
     manualLogout();
   }
@@ -71,13 +69,12 @@ const isLoggedIn = () => {
     const diffHours = (now - loginDate) / (1000 * 60 * 60);
     
     if (diffHours > 24) {
-      console.log("Session muddati tugadi (24 soat)");
+   
       manualLogout();
       return false;
     }
   }
   
-  console.log(`Auth check: localStorage=${localStorageAuth}`);
   return localStorageAuth;
 };
 
@@ -114,7 +111,7 @@ const ProtectedRoute = ({ children }) => {
         const diffHours = (now - loginDate) / (1000 * 60 * 60);
         
         if (diffHours > 24) {
-          console.log("24 soatlik session tugadi");
+         
           manualLogout();
         }
       }

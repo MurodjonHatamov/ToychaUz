@@ -27,7 +27,7 @@ const MobileBottomNav = ({userType}) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [value, setValue] = useState(location.pathname);
-console.log(userType);
+
 
   const handleChange = (event, newValue) => {
     setValue(newValue);

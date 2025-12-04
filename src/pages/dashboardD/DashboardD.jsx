@@ -57,7 +57,7 @@ function DashboardD() {
   const fetchMarkets = async () => {
     try {
       setLoading((prev) => ({ ...prev, markets: true }));
-      const response = await fetch("http://localhost:2277/markets", {
+      const response = await fetch(`${baseURL}/markets`, {
         method: "GET",
         headers: {
           accept: "*/*",
@@ -77,7 +77,7 @@ function DashboardD() {
         setMarketNames(marketMap);
       }
     } catch (error) {
-      console.error("Marketlarni yuklab boʻlmadi:", error);
+    
       showSnackbar("Marketlarni yuklab boʻlmadi", "error");
     } finally {
       setLoading((prev) => ({ ...prev, markets: false }));
@@ -87,7 +87,7 @@ function DashboardD() {
   const fetchProducts = async () => {
     try {
       setLoading((prev) => ({ ...prev, products: true }));
-      const response = await fetch("http://localhost:2277/products", {
+      const response = await fetch(`${baseURL}/products`, {
         method: "GET",
         headers: {
           accept: "*/*",
@@ -107,7 +107,7 @@ function DashboardD() {
         setProductNames(productMap);
       }
     } catch (error) {
-      console.error("Mahsulotlarni yuklab boʻlmadi:", error);
+  
       showSnackbar("Mahsulotlarni yuklab boʻlmadi", "error");
     } finally {
       setLoading((prev) => ({ ...prev, products: false }));
@@ -144,7 +144,7 @@ function DashboardD() {
       queryParams.append("limit", limit.toString());
 
       const response = await fetch(
-        `http://localhost:2277/deliver/orders?${queryParams}`,
+        `${baseURL}/deliver/orders?${queryParams}`,
         {
           method: "GET",
           headers: {
@@ -176,7 +176,7 @@ function DashboardD() {
         throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
-      console.error("Buyurtmalarni yuklab boʻlmadi:", error);
+    
       showSnackbar("Buyurtmalarni yuklab boʻlmadi", "error");
     } finally {
       setLoading((prev) => ({ ...prev, orders: false }));
@@ -187,7 +187,7 @@ function DashboardD() {
     try {
       setLoading((prev) => ({ ...prev, details: true }));
       const response = await fetch(
-        `http://localhost:2277/deliver/orders/${orderId}`,
+        `${baseURL}/deliver/orders/${orderId}`,
         {
           method: "GET",
           headers: {
@@ -207,7 +207,7 @@ function DashboardD() {
         throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
-      console.error("Buyurtma ma'lumotlarini olish mumkin emas:", error);
+  
       showSnackbar("Buyurtma ma'lumotlarini olish mumkin emas", "error");
     } finally {
       setLoading((prev) => ({ ...prev, details: false }));
@@ -264,7 +264,7 @@ function DashboardD() {
   const acceptOrder = async (orderId) => {
     try {
       const response = await fetch(
-        `http://localhost:2277/deliver/${orderId}/accept-order`,
+        `${baseURL}/deliver/${orderId}/accept-order`,
         {
           method: "PATCH",
           headers: {
@@ -284,7 +284,7 @@ function DashboardD() {
         throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
-      console.error("Buyurtmani qabul qilib boʻlmadi:", error);
+    
       showSnackbar("Buyurtmani qabul qilib boʻlmadi", "error");
     }
   };
@@ -292,7 +292,7 @@ function DashboardD() {
   const deliverOrder = async (orderId) => {
     try {
       const response = await fetch(
-        `http://localhost:2277/deliver/${orderId}/delivered-order`,
+        `${baseURL}/deliver/${orderId}/delivered-order`,
         {
           method: "PATCH",
           headers: {
@@ -312,7 +312,7 @@ function DashboardD() {
         throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
-      console.error("Buyurtmani yetkazib berib boʻlmadi:", error);
+     
       showSnackbar("Buyurtmani yetkazib berib boʻlmadi", "error");
     }
   };
@@ -325,7 +325,7 @@ function DashboardD() {
       if (!isConfirmed) return;
 
       const response = await fetch(
-        `http://localhost:2277/deliver/${orderId}/reject-order`,
+        `${baseURL}/deliver/${orderId}/reject-order`,
         {
           method: "PATCH",
           headers: {
@@ -345,7 +345,7 @@ function DashboardD() {
         throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
-      console.error("Buyurtmani bekor qilib boʻlmadi:", error);
+   
       showSnackbar("Buyurtmani bekor qilib boʻlmadi", "error");
     }
   };
@@ -372,7 +372,7 @@ function DashboardD() {
       }
 
       const response = await fetch(
-        `http://localhost:2277/deliver/export?${queryParams}`,
+        `${baseURL}/deliver/export?${queryParams}`,
         {
           method: "GET",
           headers: {
@@ -406,11 +406,11 @@ function DashboardD() {
         showSnackbar("Excel fayl muvaffaqiyatli yuklab olindi", "success");
       } else {
         const errorText = await response.text();
-        console.error("Export xatosi:", errorText);
+     
         throw new Error(`Server xatosi: ${response.status} - ${errorText}`);
       }
     } catch (error) {
-      console.error("Export qilib boʻlmadi:", error);
+
       showSnackbar(`Export qilib boʻlmadi: ${error.message}`, "error");
     } finally {
       setLoading((prev) => ({ ...prev, export: false }));

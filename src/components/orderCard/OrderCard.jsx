@@ -51,7 +51,7 @@ const OrderCard = ({
   useEffect(() => {
     const fetchAvailableProducts = async () => {
       try {
-        const response = await fetch("http://localhost:2277/orders/products", {
+        const response = await fetch(`${baseURL}/orders/products`, {
           method: "GET",
           credentials: "include",
         });
@@ -62,7 +62,7 @@ const OrderCard = ({
           setAvailableProducts(products);
         }
       } catch (error) {
-        console.error("Mahsulotlarni olishda xatolik:");
+        // Mahsulotlarni olishda xatolik
       }
     };
 
@@ -175,7 +175,7 @@ const OrderCard = ({
       setNewProduct(null);
       
     } catch (error) {
-      console.error('Saqlashda xatolik:', error);
+      // Saqlashda xatolik
     } finally {
       setIsSaving(false); // 🎯 Loaderni o'chiramiz
     }
@@ -294,7 +294,7 @@ const OrderCard = ({
         await onCancelOrder(order._id);
         
       } catch (error) {
-        console.error('Bekor qilishda xatolik:');
+        // Bekor qilishda xatolik
       } finally {
         setIsCanceling(false); // 🎯 Loaderni o'chiramiz
       }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from "./Help.module.css";
 import { logaut } from '../logaut';
+import { baseURL } from '../config';
 
 function Help() {
   const [messages, setMessages] = useState([]);
@@ -26,7 +27,7 @@ function Help() {
       setLoading(true);
       setError('');
       
-      const response = await fetch('http://localhost:2277/contact/chat', {
+      const response = await fetch(`${baseURL}/contact/chat`, {
         method: 'GET',
         headers: {
           'accept': '*/*'
@@ -51,12 +52,12 @@ function Help() {
       if (Array.isArray(data)) {
         setMessages(data);
       } else {
-        console.error('Kutilmagan ma\'lumot formati:', data);
+    
         setMessages([]);
       }
       
     } catch (error) {
-      console.error('Chat tarixini yuklashda xatolik:', error);
+    
       setError('Internet aloqasi bilan muammo. Qayta urinib ko\'ring.');
       setMessages([]);
     } finally {
@@ -75,7 +76,7 @@ function Help() {
     setError('');
     
     try {
-      const response = await fetch('http://localhost:2277/contact', {
+      const response = await fetch(`${baseURL}/contact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -100,7 +101,7 @@ function Help() {
         throw new Error(`Xabar yuborishda xatolik: ${response.status}`);
       }
     } catch (error) {
-      console.error('Xabar yuborishda xatolik:', error);
+ 
       setError('Xabar yuborishda xatolik yuz berdi. Qayta urinib ko\'ring.');
     } finally {
       setSending(false);

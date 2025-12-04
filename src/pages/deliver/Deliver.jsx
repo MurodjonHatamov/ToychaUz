@@ -29,6 +29,7 @@ import {
 } from 'react-icons/fa';
 import styles from './Deliver.module.css';
 import { logaut } from '../logaut';
+import { baseURL } from '../config';
 
 function Deliver() {
   // ==================== STATE DEFINITIONS ====================
@@ -68,7 +69,7 @@ function Deliver() {
     try {
       setLoading(prev => ({ ...prev, delivers: true }));
       
-      const response = await fetch('http://localhost:2277/deliver/all-delivers', {
+      const response = await fetch(`${baseURL}/deliver/all-delivers`, {
         method: 'GET',
         headers: { 
           'accept': '*/*',
@@ -83,13 +84,13 @@ function Deliver() {
         const deliversData = await response.json();
         setDelivers(deliversData);
         setFilteredDelivers(deliversData);
-        console.log('Deliverlar:', deliversData);
+     
         
       } else {
         throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
-      console.error('Deliverlarni yuklab boʻlmadi:', error);
+ 
       showSnackbar('Deliverlarni yuklab boʻlmadi', 'error');
     } finally {
       setLoading(prev => ({ ...prev, delivers: false }));
@@ -108,7 +109,7 @@ function Deliver() {
         throw new Error('Parollar mos kelmadi');
       }
 
-      const response = await fetch('http://localhost:2277/deliver', {
+      const response = await fetch(`${baseURL}/deliver`, {
         method: 'POST',
         headers: { 
           'accept': '*/*',
@@ -134,7 +135,7 @@ function Deliver() {
         throw new Error(errorData.message || `Server xatosi: ${response.status}`);
       }
     } catch (error) {
-      console.error('Deliver qoʻshib boʻlmadi:', error);
+      
       showSnackbar(error.message, 'error');
     } finally {
       setLoading(prev => ({ ...prev, submit: false }));
@@ -165,7 +166,7 @@ function Deliver() {
         updateData.return_password = deliverData.return_password;
       }
 
-      const response = await fetch(`http://localhost:2277/deliver/${deliverId}`, {
+      const response = await fetch(`${baseURL}/deliver/${deliverId}`, {
         method: 'PATCH',
         headers: { 
           'accept': '*/*',
@@ -186,7 +187,7 @@ function Deliver() {
         throw new Error(errorData.message || `Server xatosi: ${response.status}`);
       }
     } catch (error) {
-      console.error('Deliver maʼlumotlarini yangilab boʻlmadi:', error);
+   
       showSnackbar(error.message, 'error');
     } finally {
       setLoading(prev => ({ ...prev, submit: false }));
@@ -200,7 +201,7 @@ function Deliver() {
     try {
       setLoading(prev => ({ ...prev, delete: true }));
       
-      const response = await fetch(`http://localhost:2277/deliver/${deliverId}`, {
+      const response = await fetch(`${baseURL}/deliver/${deliverId}`, {
         method: 'DELETE',
         headers: { 
           'accept': '*/*',
@@ -220,7 +221,7 @@ function Deliver() {
         throw new Error(errorData.message || `Server xatosi: ${response.status}`);
       }
     } catch (error) {
-      console.error('Deliverni oʻchirib boʻlmadi:', error);
+   
       showSnackbar(error.message, 'error');
     } finally {
       setLoading(prev => ({ ...prev, delete: false }));
