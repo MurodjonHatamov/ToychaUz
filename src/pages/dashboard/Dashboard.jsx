@@ -6,6 +6,7 @@ import Cart from '../../components/cart/Cart';
 import { IoIosArrowUp } from 'react-icons/io';
 import { Button, Snackbar, Alert } from '@mui/material';
 import { logaut } from '../logaut';
+import { baseURL } from '../config';
 
 function Dashboard() {
   const [products, setProducts] = useState([]);

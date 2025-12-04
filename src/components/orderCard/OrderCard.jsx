@@ -16,6 +16,7 @@ import {
   MdDoneAll
 } from "react-icons/md";
 import { logaut } from "../../pages/logaut";
+import { baseURL } from "../../pages/config";
 
 const OrderCard = ({
   order,
@@ -29,6 +30,7 @@ const OrderCard = ({
   const [isMobile, setIsMobile] = useState(false);
   const [availableProducts, setAvailableProducts] = useState([]);
   const [localProducts, setLocalProducts] = useState([...order.products]);
+
 
   
   // 🎯 YANGI: Faqat shu OrderCard uchun loader statelari
@@ -52,19 +54,26 @@ const OrderCard = ({
     const fetchAvailableProducts = async () => {
       try {
         const response = await fetch(`${baseURL}/orders/products`, {
-          method: "GET",
-          credentials: "include",
+          method: 'GET',
+          headers: { 
+            'accept': '*/*',
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include'
         });
         logaut(response);
 
         if (response.ok) {
           const products = await response.json();
           setAvailableProducts(products);
+   
+          
         }
       } catch (error) {
         // Mahsulotlarni olishda xatolik
       }
     };
+
 
     if (isEditing) {
       fetchAvailableProducts();
@@ -398,7 +407,11 @@ const OrderCard = ({
             </thead>
             <tbody>
               {/* 📋 Mavjud mahsulotlar (local statedan o'qiymiz) */}
-              {localProducts.map((product) => (
+
+            
+              {
+              
+              localProducts.map((product) => (
                 <tr key={product._id} className={styles.tableRow}>
                   <td className={styles.tableCell}>
                     {isEditing && editingProduct?._id === product._id ? (
@@ -454,6 +467,7 @@ const OrderCard = ({
   {availableProducts.map((prod) => (
     <MenuItem key={prod._id} value={prod._id}>
       {prod.name}
+      
     </MenuItem>
   ))}
 </TextField>

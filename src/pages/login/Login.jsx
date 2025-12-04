@@ -112,7 +112,7 @@ function Login() {
     try {
       const apiUrl = formData.loginType === 'market' 
         ? `${baseURL}/auth/market-login`
-        : `${baseURL}/auth/market-login`;
+        : `${baseURL}/auth/deliver-login`;
   
       const phoneForApi = cleanPhone;
 

@@ -112,11 +112,11 @@ function MarketsD() {
         resetForm();
         setDialogOpen(false);
       } else {
-        throw new Error(`Server xatosi: ${response.status}`);
+        throw new Error(`Server xatosi: ${response.status}  Malumotlar xatolik bilan yuborildi`);
       }
     } catch (error) {
 
-      showSnackbar('Market qoʻshib boʻlmadi', 'error');
+      showSnackbar(error.message || 'Marketni qoʻshib boʻlmadi', 'error');
     } finally {
       setLoading(prev => ({ ...prev, submit: false }));
     }
@@ -428,7 +428,7 @@ function MarketsD() {
                 onChange={handleInputChange}
                 required
                 className={styles.formField}
-                placeholder="Masalan: Korzinka-7"
+                placeholder="Market nomi eng kamida 6 ta harfdan iborat boʻlsin"
               />
 
               <TextField

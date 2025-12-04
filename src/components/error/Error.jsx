@@ -2,7 +2,7 @@ import { Button } from '@mui/material'
 import React from 'react'
 import { MdRefresh } from 'react-icons/md'
 import styles from "./Error.module.css"
-function Error({error,fetchOrders}) {
+function Error({error,fetchOrders,filters}) {
   return (
     <div className={styles.container}>
     <div className={styles.error}>

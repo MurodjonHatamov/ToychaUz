@@ -20,6 +20,7 @@ import {
 } from "react-icons/fa";
 import styles from "./ChatD.module.css";
 import { logaut } from "../logaut";
+import { baseURL } from "../config";
 
 function ChatD({ setNotifications, notifications }) {
   // ==================== STATE DEFINITIONS ====================
@@ -74,6 +75,7 @@ function ChatD({ setNotifications, notifications }) {
         throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
+   
      
       showSnackbar("Marketlarni yuklab boʻlmadi", "error");
     } finally {

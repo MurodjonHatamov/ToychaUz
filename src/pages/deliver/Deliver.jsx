@@ -201,14 +201,16 @@ function Deliver() {
     try {
       setLoading(prev => ({ ...prev, delete: true }));
       
+      
       const response = await fetch(`${baseURL}/deliver/${deliverId}`, {
         method: 'DELETE',
-        headers: { 
-          'accept': '*/*',
-          'Content-Type': 'application/json'
+        headers: {
+          'Content-Type': 'application/json',
+          'accept': '*/*'
         },
         credentials: 'include'
       });
+      
       logaut(response);
 
       if (response.ok) {
