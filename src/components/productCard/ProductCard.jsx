@@ -3,7 +3,10 @@ import { Button, IconButton } from '@mui/material';
 import { MdShoppingCart, MdAdd, MdRemove } from 'react-icons/md';
 import styles from './ProductCard.module.css';
 
-function ProductCard({ product, onAddToCart, getUnitText }) {
+function ProductCard({ product, onAddToCart, getUnitText,isInCart }) {
+
+ 
+  
   // quantity — string bo'ladi
   const [quantity, setQuantity] = useState("0");
 
@@ -16,7 +19,8 @@ function ProductCard({ product, onAddToCart, getUnitText }) {
   };
 
   return (
-    <div className={styles.productCard}>
+    <div className={isInCart ?styles.isInCart :styles.productCard}>
+{isInCart && <div className={styles.inCartBadge}>Savatda</div>}
 
       <div className={styles.productInfo}>
         <h3>{product.name}</h3>
@@ -46,6 +50,7 @@ function ProductCard({ product, onAddToCart, getUnitText }) {
               type="number"
               min="0"
               value={quantity}
+              disabled={isInCart}
               onChange={(e) => {
                 const val = e.target.value;
 
@@ -84,7 +89,7 @@ function ProductCard({ product, onAddToCart, getUnitText }) {
             startIcon={<MdShoppingCart />}
             onClick={handleAddToCart}
             className={styles.addButton}
-            disabled={quantity === "" || Number(quantity) === 0}
+            disabled={quantity === "" || Number(quantity) === 0 || isInCart}
           >
             Qo'shish
           </Button>

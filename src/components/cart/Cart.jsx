@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Button,
   IconButton,
@@ -26,16 +26,90 @@ function Cart({
   onRemoveFromCart, 
   onUpdateCartQuantity, 
   onPlaceOrder,
-  getUnitText ,
+  getUnitText,
   orderLoading
 }) {
+  // 🎯 INPUT QIYMATLARINI SAQLASH UCHUN STATE
+  const [inputValues, setInputValues] = useState({});
+
+  // ✅ CART O'ZGARGANDA INPUT QIYMATLARNI YANGILASH
+  useEffect(() => {
+    const newInputValues = {};
+    cart.forEach(item => {
+      newInputValues[item.productId] = item.quantity.toString();
+    });
+    setInputValues(newInputValues);
+  }, [cart]);
+
+  // ✅ MAHSULOT MA'LUMOTLARINI OLISH
   const getCartItemDetails = (productId) => {
     return products.find(p => p._id === productId);
   };
 
+  // ✅ INPUT QIYMATINI O'ZGARTIRISH
+  const handleInputChange = (productId, value) => {
+    // Input qiymatini saqlaymiz
+    setInputValues(prev => ({
+      ...prev,
+      [productId]: value
+    }));
+
+    // Bo'sh qator bo'lsa, hech narsa qilmaymiz
+    if (value === "") {
+      return;
+    }
+
+    // Raqamga o'tkazish
+    const numValue = parseInt(value);
+
+    // ❌ Noto'g'ri qiymat (NaN yoki manfiy son)
+    if (isNaN(numValue) || numValue < 0) {
+      return;
+    }
+
+    // ❌ 0 bo'lsa, savatdan o'chirish
+    if (numValue === 0) {
+      onRemoveFromCart(productId);
+      return;
+    }
+
+    // ✅ Yangi qiymatni saqlash
+    onUpdateCartQuantity(productId, numValue);
+  };
+
+  // ✅ INPUT'NI TARK ETGANDA (blur)
+  const handleInputBlur = (productId, value) => {
+    // Agar input bo'sh bo'lsa yoki noto'g'ri qiymat bo'lsa
+    if (value === "" || isNaN(parseInt(value)) || parseInt(value) < 0) {
+      // Cart'dagi haqiqiy qiymatga qaytaramiz
+      const cartItem = cart.find(item => item.productId === productId);
+      if (cartItem) {
+        setInputValues(prev => ({
+          ...prev,
+          [productId]: cartItem.quantity.toString()
+        }));
+      }
+    }
+  };
+
+  // ✅ +/- TUGMALARI BOSILGANDA
+  const handleButtonQuantityChange = (productId, newQuantity) => {
+    if (newQuantity < 1) {
+      onRemoveFromCart(productId);
+    } else {
+      onUpdateCartQuantity(productId, newQuantity);
+    }
+  };
+
+  // ✅ MAHSULOTNI SAVATDA KO'RSATISH
   const renderCartItem = ({ item }) => {
     const product = getCartItemDetails(item.productId);
     if (!product) return null;
+
+    // Input qiymatini olish (state'dan yoki cart'dan)
+    const inputValue = inputValues[item.productId] !== undefined 
+      ? inputValues[item.productId] 
+      : item.quantity.toString();
 
     return (
       <Collapse key={item.productId}>
@@ -57,25 +131,40 @@ function Cart({
             <MdInventory />
           </ListItemIcon>
           <ListItemText
-  primary={product.name}
-  secondary={`${getUnitText(product.unit)} • ${item.quantity} ta`}
+            primary={product.name}
+            secondary={`${getUnitText(product.unit)}`}
+            secondaryTypographyProps={{ style: { color: '#A7BEAE' } }} 
+          />
 
-  secondaryTypographyProps={{ style: { color: '#A7BEAE' } }} 
-/>
-
+          {/* 🎯 QUANTITY CONTROLS WITH INPUT */}
           <div className={styles.cartQuantityControls}>
+            {/* MINUS BUTTON */}
             <IconButton 
               size="small" 
-              onClick={() => onUpdateCartQuantity(item.productId, item.quantity - 1)}
+              onClick={() => handleButtonQuantityChange(item.productId, item.quantity - 1)}
               className={styles.cartQuantityBtn}
+              disabled={item.quantity <= 1}
+              title="Kamaytirish"
             >
               <MdRemove />
             </IconButton>
-            <span className={styles.quantityText}>{item.quantity}</span>
+
+            {/* INPUT FIELD */}
+            <input
+              type="number"
+              value={inputValue}
+              onChange={(e) => handleInputChange(item.productId, e.target.value)}
+              onBlur={(e) => handleInputBlur(item.productId, e.target.value)}
+              className={styles.quantityInput}
+              min="0"
+            />
+
+            {/* PLUS BUTTON */}
             <IconButton 
               size="small" 
-              onClick={() => onUpdateCartQuantity(item.productId, item.quantity + 1)}
+              onClick={() => handleButtonQuantityChange(item.productId, item.quantity + 1)}
               className={styles.cartQuantityBtn}
+              title="Oshirish"
             >
               <MdAdd />
             </IconButton>
@@ -117,18 +206,17 @@ function Cart({
               </div>
             </div>
 
-          
-<Button
-  fullWidth
-  variant="contained"
-  size="large"
-  startIcon={orderLoading ? <CircularProgress size={20} style={{ color: 'white' }} /> : <MdLocalShipping />}
-  onClick={onPlaceOrder}
-  disabled={orderLoading || cart.length === 0}
-  className={styles.orderButton}
->
-  {orderLoading ? 'Joʻnatilmoqda...' : 'Buyurtma berish'}
-</Button>
+            <Button
+              fullWidth
+              variant="contained"
+              size="large"
+              startIcon={orderLoading ? <CircularProgress size={20} style={{ color: 'white' }} /> : <MdLocalShipping />}
+              onClick={onPlaceOrder}
+              disabled={orderLoading || cart.length === 0}
+              className={styles.orderButton}
+            >
+              {orderLoading ? 'Joʻnatilmoqda...' : 'Buyurtma berish'}
+            </Button>
           </>
         )}
       </div>

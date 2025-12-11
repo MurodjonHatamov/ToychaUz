@@ -25,6 +25,10 @@ function Dashboard() {
     severity: 'success' // 'success', 'error', 'warning', 'info'
   });
 
+  const isProductInCart = (productId) => {
+    return cart.some(item => item.productId === productId);
+  };
+
   // 🎯 Toast notification ni yopish
   const handleCloseSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
@@ -300,6 +304,7 @@ logaut(response);
           <div className={styles.productsGrid}>
             {filteredProducts.map(product => (
               <ProductCard
+            isInCart={isProductInCart(product._id)}
                 key={product._id}
                 product={product}
                 onAddToCart={addToCart}

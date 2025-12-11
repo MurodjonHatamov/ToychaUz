@@ -42,6 +42,7 @@ function TopNavbar({ onMenuToggle, setOpenSidebar, openSidebar, handleLogout,  u
       msg => msg.status === 'new' && msg.from !== userType
     ).length;
   };
+  console.log(getTotalUnread());
   
   
 
