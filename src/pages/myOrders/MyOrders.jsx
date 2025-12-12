@@ -419,6 +419,7 @@ function MyOrders() {
               <MenuItem value="new">Yangi</MenuItem>
               <MenuItem value="accepted">Qabul qilingan</MenuItem>
               <MenuItem value="delivered">Yetkazilgan</MenuItem>
+              <MenuItem value="rejected">Bekor qilingan</MenuItem>
             </Select>
           </FormControl>
 

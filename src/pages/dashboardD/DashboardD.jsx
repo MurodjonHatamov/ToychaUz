@@ -12,6 +12,7 @@ import {
 import styles from "./DashboardD.module.css";
 import { logaut } from "../logaut";
 import { baseURL } from "../config";
+import EditOrderModal from "../../components/editOrderModal/EditOrderModal";
 
 function DashboardD() {
   // ==================== STATE DEFINITIONS ====================
@@ -106,6 +107,9 @@ function DashboardD() {
           productMap[product._id] = product.name;
         });
         setProductNames(productMap);
+
+
+        
       }
     } catch (error) {
   
@@ -752,126 +756,21 @@ function DashboardD() {
 
       {/* DIALOG */}
       {orderDialogOpen && selectedOrder && (
-        <div
-          className={styles.dialogOverlay}
-          onClick={() => setOrderDialogOpen(false)}
-        >
-          <div className={styles.dialog} onClick={(e) => e.stopPropagation()}>
-            <div className={styles.dialogHeader}>
-              <h2>Buyurtma Tafsilotlari</h2>
-              <button
-                className={styles.closeBtn}
-                onClick={() => setOrderDialogOpen(false)}
-              >
-                ×
-              </button>
-            </div>
-
-            <div className={styles.dialogContent}>
-              {loading.details ? (
-                <div className={styles.loading}>
-                  <FaSpinner className={styles.spinner} />
-                  <span>Ma'lumotlar yuklanmoqda...</span>
-                </div>
-              ) : (
-                <div>
-                  <div className={styles.section}>
-                    <h3 className={styles.sectionTitle}>Umumiy ma'lumotlar</h3>
-                    <div className={styles.detailGrid}>
-                      <div className={styles.detailItem}>
-                        <label>Buyurtma ID:</label>
-                        <div className={styles.detailValue}>
-                          {selectedOrder._id}
-                        </div>
-                      </div>
-                      <div className={styles.detailItem}>
-                        <label>Market:</label>
-                        <div className={styles.detailValue}>
-                          {getMarketName(selectedOrder.marketId)}
-                        </div>
-                      </div>
-                      <div className={styles.detailItem}>
-                        <label>Holati:</label>
-                        <div
-                          className={styles.statusBadgeLarge}
-                          style={{
-                            backgroundColor: getStatusColor(
-                              selectedOrder.status
-                            ),
-                          }}
-                        >
-                          {getStatusText(selectedOrder.status)}
-                        </div>
-                      </div>
-                      <div className={styles.detailItem}>
-                        <label>Sana va Vaqt:</label>
-                        <div className={styles.detailValue}>
-                          {formatDateTime(selectedOrder.createdAt)}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className={styles.section}>
-                    <h3 className={styles.sectionTitle}>
-                      Mahsulotlar ({selectedOrder.products?.length || 0})
-                    </h3>
-                    <div className={styles.productsTable}>
-                      {selectedOrder.products?.map((product, index) => (
-                        <div key={index} className={styles.productRowDetail}>
-                          <div className={styles.productName}>
-                            {getProductName(product.productId)}
-                          </div>
-                          <div className={styles.productQuantity}>
-                            {product.quantity} ta
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div className={styles.dialogActions}>
-              <button
-                className={styles.closeDialogBtn}
-                onClick={() => setOrderDialogOpen(false)}
-              >
-                Yopish
-              </button>
-
-              {selectedOrder.status === "new" && (
-                <>
-                  <button
-                    className={styles.acceptBtn}
-                    onClick={() => acceptOrder(selectedOrder._id)}
-                  >
-                    <FaCheckCircle className={styles.actionIcon} />
-                    Qabul qilish
-                  </button>
-                  <button
-                    className={styles.rejectBtn}
-                    onClick={() => rejectOrder(selectedOrder._id)}
-                  >
-                    <FaTimesCircle className={styles.actionIcon} />
-                    Bekor qilish
-                  </button>
-                </>
-              )}
-
-              {selectedOrder.status === "accepted" && (
-                <button
-                  className={styles.deliverBtn}
-                  onClick={() => deliverOrder(selectedOrder._id)}
-                >
-                  <FaCheckCircle className={styles.actionIcon} />
-                  Yetkazish
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
+      <EditOrderModal setOrderDialogOpen={setOrderDialogOpen}
+      selectedOrder={selectedOrder}
+      loading={loading}
+      getMarketName={getMarketName}
+      getStatusColor={getStatusColor}
+      getStatusText={getStatusText}
+      formatDateTime={formatDateTime}
+      getProductName={getProductName}
+      acceptOrder={acceptOrder}
+      rejectOrder={rejectOrder}
+      deliverOrder={deliverOrder}
+      fetchOrders={fetchOrders}
+      products={products}
+      setSnackbar={setSnackbar}
+      />
       )}
 
       <Snackbar

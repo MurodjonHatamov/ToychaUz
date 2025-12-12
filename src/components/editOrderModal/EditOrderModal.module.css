@@ -1,0 +1,516 @@
+/* Modal asosiy stillari */
+.dialogOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.3s ease;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  .dialog {
+    background-color: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 700px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    animation: dialogAppear 0.3s ease-out;
+    overflow: hidden;
+  }
+  
+  @keyframes dialogAppear {
+    from {
+      opacity: 0;
+      transform: scale(0.9) translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+  
+  /* Sarlavha */
+  .dialogHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+    background-color: var(--surface);
+  }
+  
+  .dialogHeader h2 {
+    margin: 0;
+    color: var(--text);
+    font-size: 1.3rem;
+    font-weight: 600;
+  }
+  
+  .closeBtn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--text-light);
+    cursor: pointer;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+  }
+  
+  .closeBtn:hover:not(:disabled) {
+    background-color: var(--item);
+    color: var(--text);
+  }
+  
+  .closeBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  /* Kontent qismi */
+  .dialogContent {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+    background-color: var(--surface);
+  }
+  
+  /* Bo'limlar */
+  .section {
+    margin-bottom: 24px;
+  }
+  
+  .sectionHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  
+  .sectionTitle {
+    color: var(--primary);
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  /* Umumiy ma'lumotlar grid */
+  .detailGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  
+  .detailItem {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .detailItem label {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  
+  .detailValue {
+    color: var(--text);
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+  
+  /* Status badge */
+  .statusBadgeLarge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-align: center;
+    display: inline-block;
+    max-width: 150px;
+  }
+  
+  /* Mahsulotlar jadvali */
+  .productsTable {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background-color: var(--surface);
+  }
+  
+  .productRowDetail {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  
+  .productRowDetail:hover {
+    background-color: var(--item);
+  }
+  
+  .productRowDetail:last-child {
+    border-bottom: none;
+  }
+  
+  .productName {
+    color: var(--text);
+    font-weight: 500;
+    font-size: 0.9rem;
+    flex: 1;
+  }
+  
+  .productQuantity {
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 0.9rem;
+    background-color: var(--item);
+    padding: 4px 12px;
+    border-radius: 4px;
+    min-width: 80px;
+    text-align: center;
+  }
+  
+  /* Tahrirlash jadvali */
+  .productsEditTable {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    background-color: var(--surface);
+  }
+  
+  .productEditRow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    background-color: var(--surface);
+  }
+  
+  .productEditRow:hover {
+    background-color: var(--item);
+  }
+  
+  .productEditRow:last-child {
+    border-bottom: none;
+  }
+  
+  /* Mahsulot tanlash */
+  .productSelect {
+    flex: 1;
+    padding: 8px 12px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+    color: var(--text);
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  
+  .productSelect:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+  
+  .productSelect:disabled {
+    background-color: var(--background);
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  /* Miqdor boshqaruvi */
+  .quantityControl {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 150px;
+  }
+  
+  .quantityInput {
+    width: 70px;
+    padding: 8px 12px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--surface);
+    color: var(--text);
+    font-size: 0.9rem;
+    text-align: center;
+  }
+  
+  .quantityInput:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+  
+  .quantityInput:disabled {
+    background-color: var(--background);
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  .unitLabel {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    min-width: 60px;
+  }
+  
+  /* Qo'shish tugmasi */
+  .addProductBtn {
+    padding: 8px 16px;
+    background-color: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-left: 12px;
+  }
+  
+  .addProductBtn:hover:not(:disabled) {
+    background-color: var(--primary-dark);
+  }
+  
+  .addProductBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  /* O'chirish tugmasi */
+  .removeBtn {
+    background: none;
+    border: 1px solid var(--error);
+    color: var(--error);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  
+  .removeBtn:hover:not(:disabled) {
+    background-color: var(--error);
+    color: white;
+  }
+  
+  .removeBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  /* Action tugmalari */
+  .dialogActions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    padding: 20px;
+    border-top: 1px solid var(--border);
+    background-color: var(--surface);
+    flex-wrap: wrap;
+  }
+  
+  /* Umumiy tugma stillari */
+  .dialogActions button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: var(--radius);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+  }
+  
+  .dialogActions button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  /* Har bir tugma uchun alohida ranglar */
+  .cancelBtn {
+    background-color: var(--item);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  
+  .cancelBtn:hover:not(:disabled) {
+    background-color: var(--border);
+  }
+  
+  .saveBtn {
+    background-color: var(--success);
+    color: white;
+  }
+  
+  .saveBtn:hover:not(:disabled) {
+    background-color: #3d8b40;
+  }
+  
+  .deleteBtn {
+    background-color: var(--error);
+    color: white;
+  }
+  
+  .deleteBtn:hover:not(:disabled) {
+    background-color: #d32f2f;
+  }
+  
+  .editBtn {
+    background-color: var(--primary);
+    color: white;
+  }
+  
+  .editBtn:hover:not(:disabled) {
+    background-color: var(--primary-dark);
+  }
+  
+  .acceptBtn {
+    background-color: var(--success);
+    color: white;
+  }
+  
+  .acceptBtn:hover:not(:disabled) {
+    background-color: #3d8b40;
+  }
+  
+  .rejectBtn {
+    background-color: var(--warning);
+    color: white;
+  }
+  
+  .rejectBtn:hover:not(:disabled) {
+    background-color: #e68900;
+  }
+  
+  .deliverBtn {
+    background-color: var(--primary);
+    color: white;
+  }
+  
+  .deliverBtn:hover:not(:disabled) {
+    background-color: var(--primary-dark);
+  }
+  
+  /* Action ikonkalari */
+  .actionIcon {
+    font-size: 0.9rem;
+  }
+  
+  /* Loading spinner */
+  .spinner {
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    color: var(--text-light);
+    padding: 40px 20px;
+    text-align: center;
+  }
+  
+  /* Responsive dizayn */
+  @media (max-width: 768px) {
+    .dialog {
+      margin: 10px;
+      max-height: calc(100vh - 20px);
+    }
+    
+    .detailGrid {
+      grid-template-columns: 1fr;
+    }
+    
+    .productEditRow {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 8px;
+    }
+    
+    .quantityControl {
+      width: 100%;
+    }
+    
+    .dialogActions {
+      flex-direction: column;
+    }
+    
+    .dialogActions button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .dialogHeader {
+      padding: 15px;
+    }
+    
+    .dialogContent {
+      padding: 15px;
+    }
+    
+    .sectionTitle {
+      font-size: 1rem;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    
+    .addProductBtn {
+      margin-left: 0;
+      margin-top: 8px;
+    }
+  }
+  
+  /* Scrollbar */
+  .dialogContent::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .dialogContent::-webkit-scrollbar-track {
+    background: var(--background);
+  }
+  
+  .dialogContent::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 3px;
+  }
