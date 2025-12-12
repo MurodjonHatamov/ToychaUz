@@ -681,7 +681,7 @@ function DashboardD() {
               <thead>
                 <tr>
                   <th className={styles.productHeader}>
-                    Mahsulot NOMi
+                    Mahsulot nomi
                   </th>
                   {orderKeys.map((orderKey) => {
                     const order = orderColumns[orderKey]?.order;

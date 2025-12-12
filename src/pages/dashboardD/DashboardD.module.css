@@ -164,7 +164,7 @@
   position: sticky;
   left: 0;
   z-index: 10;
-  font-size: 0.8rem;
+  font-size: 1rem;
   border-right: 2px solid var(--border);
 }
 
@@ -191,7 +191,7 @@
 
 .orderTitle {
   font-weight: 600;
-  font-size: 0.8rem;
+  font-size: 1rem;
   line-height: 1.2;
 }
 
@@ -211,6 +211,8 @@
   min-width: 80px;
   position: sticky;
   right: 0;
+  font-size: 1rem;
+
   z-index: 10;
   border-left: 2px solid var(--border);
 }
@@ -225,7 +227,8 @@
   z-index: 5;
   color: var(--text);
   border-right: 2px solid var(--border);
-  font-size: 0.75rem;
+  font-size: 1rem;
+
 
 }
 
@@ -234,7 +237,8 @@
   font-weight: 500;
   color: var(--text);
 
-  font-size: 0.75rem;
+  font-size: 1rem;
+
 }
 
 /* Jadval qatorlari uchun alternativ ranglar - productRow klasiga ta'sir qilish */
@@ -316,7 +320,8 @@
   right: 0;
   z-index: 5;
   border-left: 2px solid var(--border);
-  font-size: 0.75rem;
+font-size: 1rem;
+
 }
 
 
@@ -539,7 +544,7 @@
 .productName {
   color: var(--text);
   font-weight: 500;
-  font-size: 0.9rem;
+  font-size: 1rem;
   flex: 1;
 }
 

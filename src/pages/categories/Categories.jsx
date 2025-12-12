@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  TextField, 
-  Button, 
-  Snackbar, 
+import {
+  Button,
+  Snackbar,
   Alert,
   Dialog,
   DialogTitle,
@@ -16,43 +15,34 @@ import {
   TableRow,
   Paper,
   IconButton,
-  MenuItem,
-  Select,
-  InputLabel,
-  FormControl
+  TextField
 } from '@mui/material';
-import { 
-  FaPlus, 
-  FaEdit, 
-  FaTrash, 
-  FaBox, 
+import {
+  FaPlus,
+  FaEdit,
+  FaTrash,
+  FaFolder,
   FaSpinner,
   FaSearch,
-  FaWeight,
-  FaRuler,
-  FaCube,
-  FaWineBottle,
-  FaFolder
+  FaCalendarAlt,
+  FaTags
 } from 'react-icons/fa';
-import styles from './ProductsD.module.css';
-import { logaut } from '../logaut';
-import { baseURL } from '../config';
+import styles from './Categories.module.css';
+import { logaut } from '../../pages/logaut';
+import { baseURL } from '../../pages/config';
 
-function ProductsD() {
+function Categories() {
   // ==================== STATE DEFINITIONS ====================
   
-  const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [filteredCategories, setFilteredCategories] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState(null);
+  const [editingCategory, setEditingCategory] = useState(null);
   
   const [formData, setFormData] = useState({
-    name: '',
-    unit: 'piece',
-    category: ''
+    name: ''
   });
   
   const [snackbar, setSnackbar] = useState({
@@ -62,49 +52,16 @@ function ProductsD() {
   });
   
   const [loading, setLoading] = useState({
-    products: true,
     categories: true,
     submit: false,
     delete: false
   });
 
-  // O'lchov birliklari
-  const unitOptions = [
-    { value: 'piece', label: 'Dona', icon: <FaCube /> },
-    { value: 'liter', label: 'Litr', icon: <FaWineBottle /> },
-    { value: 'kg', label: 'Kilogram', icon: <FaWeight /> },
-    { value: 'm', label: 'Metr', icon: <FaRuler /> }
-  ];
+  const [formErrors, setFormErrors] = useState({
+    name: ''
+  });
 
   // ==================== API FUNCTIONS ====================
-
-  const fetchProducts = async () => {
-    try {
-      setLoading(prev => ({ ...prev, products: true }));
-      
-      const response = await fetch(`${baseURL}/products`, {
-        method: 'GET',
-        headers: { 
-          'accept': '*/*',
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include'
-      });
-      logaut(response);
-      if (response.ok) {
-        const productsData = await response.json();
-        setProducts(productsData);
-        setFilteredProducts(productsData);
-      } else {
-        throw new Error(`Server xatosi: ${response.status}`);
-      }
-    } catch (error) {
-      console.error('Fetch products error:', error);
-      showSnackbar('Mahsulotlarni yuklab boʻlmadi', 'error');
-    } finally {
-      setLoading(prev => ({ ...prev, products: false }));
-    }
-  };
 
   const fetchCategories = async () => {
     try {
@@ -118,11 +75,13 @@ function ProductsD() {
         },
         credentials: 'include'
       });
+      
       logaut(response);
       
       if (response.ok) {
         const categoriesData = await response.json();
         setCategories(categoriesData);
+        setFilteredCategories(categoriesData);
       } else {
         throw new Error(`Server xatosi: ${response.status}`);
       }
@@ -134,25 +93,27 @@ function ProductsD() {
     }
   };
 
-  const createProduct = async (productData) => {
+  const createCategory = async (categoryData) => {
     try {
       setLoading(prev => ({ ...prev, submit: true }));
       
-      const response = await fetch(`${baseURL}/products`, {
+      const response = await fetch(`${baseURL}/product-category`, {
         method: 'POST',
         headers: { 
           'accept': '*/*',
           'Content-Type': 'application/json'
         },
         credentials: 'include',
-        body: JSON.stringify(productData)
+        body: JSON.stringify(categoryData)
       });
-      
+
       logaut(response);
-      
+
       if (response.ok) {
-        showSnackbar('✅ Mahsulot muvaffaqiyatli qoʻshildi', 'success');
-        fetchProducts();
+        const newCategory = await response.json();
+        showSnackbar('✅ Kategoriya muvaffaqiyatli qoʻshildi', 'success');
+        setCategories(prev => [...prev, newCategory]);
+        setFilteredCategories(prev => [...prev, newCategory]);
         resetForm();
         setDialogOpen(false);
       } else {
@@ -160,32 +121,38 @@ function ProductsD() {
         throw new Error(errorData.message || `Server xatosi: ${response.status}`);
       }
     } catch (error) {
-      console.error('Create product error:', error);
+      console.error('Create category error:', error);
       showSnackbar(`❌ ${error.message}`, 'error');
     } finally {
       setLoading(prev => ({ ...prev, submit: false }));
     }
   };
 
-  const updateProduct = async (productId, productData) => {
+  const updateCategory = async (categoryId, categoryData) => {
     try {
       setLoading(prev => ({ ...prev, submit: true }));
       
-      const response = await fetch(`${baseURL}/products/${productId}`, {
+      const response = await fetch(`${baseURL}/product-category/${categoryId}`, {
         method: 'PATCH',
         headers: { 
           'accept': '*/*',
           'Content-Type': 'application/json'
         },
         credentials: 'include',
-        body: JSON.stringify(productData)
+        body: JSON.stringify(categoryData)
       });
-      
+
       logaut(response);
-      
+
       if (response.ok) {
-        showSnackbar('✅ Mahsulot maʼlumotlari yangilandi', 'success');
-        fetchProducts();
+        const updatedCategory = await response.json();
+        showSnackbar('✅ Kategoriya muvaffaqiyatli yangilandi', 'success');
+        setCategories(prev => prev.map(cat => 
+          cat._id === updatedCategory._id ? updatedCategory : cat
+        ));
+        setFilteredCategories(prev => prev.map(cat => 
+          cat._id === updatedCategory._id ? updatedCategory : cat
+        ));
         resetForm();
         setDialogOpen(false);
       } else {
@@ -193,18 +160,18 @@ function ProductsD() {
         throw new Error(errorData.message || `Server xatosi: ${response.status}`);
       }
     } catch (error) {
-      console.error('Update product error:', error);
+      console.error('Update category error:', error);
       showSnackbar(`❌ ${error.message}`, 'error');
     } finally {
       setLoading(prev => ({ ...prev, submit: false }));
     }
   };
 
-  const deleteProduct = async (productId) => {
+  const deleteCategory = async (categoryId) => {
     try {
       setLoading(prev => ({ ...prev, delete: true }));
       
-      const response = await fetch(`${baseURL}/products/${productId}`, {
+      const response = await fetch(`${baseURL}/product-category/${categoryId}`, {
         method: 'DELETE',
         headers: { 
           'accept': '*/*',
@@ -212,24 +179,46 @@ function ProductsD() {
         },
         credentials: 'include'
       });
-      
+
       logaut(response);
-      
+
       if (response.ok) {
-        showSnackbar('✅ Mahsulot muvaffaqiyatli oʻchirildi', 'success');
-        fetchProducts();
+        showSnackbar('✅ Kategoriya muvaffaqiyatli oʻchirildi', 'success');
+        setCategories(prev => prev.filter(cat => cat._id !== categoryId));
+        setFilteredCategories(prev => prev.filter(cat => cat._id !== categoryId));
         setDeleteDialogOpen(false);
-        setEditingProduct(null);
+        setEditingCategory(null);
       } else {
         const errorData = await response.json();
         throw new Error(errorData.message || `Server xatosi: ${response.status}`);
       }
     } catch (error) {
-      console.error('Delete product error:', error);
+      console.error('Delete category error:', error);
       showSnackbar(`❌ ${error.message}`, 'error');
     } finally {
       setLoading(prev => ({ ...prev, delete: false }));
     }
+  };
+
+  // ==================== FORM VALIDATION ====================
+
+  const validateForm = () => {
+    const errors = {
+      name: ''
+    };
+    let isValid = true;
+
+    // Name validation
+    if (!formData.name.trim()) {
+      errors.name = 'Kategoriya nomi majburiy';
+      isValid = false;
+    } else if (formData.name.length < 2) {
+      errors.name = 'Kategoriya nomi kamida 2 ta belgidan iborat boʻlishi kerak';
+      isValid = false;
+    }
+
+    setFormErrors(errors);
+    return isValid;
   };
 
   // ==================== FORM HANDLERS ====================
@@ -240,56 +229,77 @@ function ProductsD() {
       ...prev,
       [name]: value
     }));
+    // Clear error when user starts typing
+    if (formErrors[name]) {
+      setFormErrors(prev => ({
+        ...prev,
+        [name]: ''
+      }));
+    }
   };
 
   const resetForm = () => {
     setFormData({
-      name: '',
-      unit: 'piece',
-      category: ''
+      name: ''
     });
-    setEditingProduct(null);
+    setFormErrors({
+      name: ''
+    });
+    setEditingCategory(null);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    if (!formData.name || !formData.unit) {
-      showSnackbar('Iltimos, barcha majburiy maydonlarni toʻldiring', 'warning');
+    if (!validateForm()) {
+      showSnackbar('Iltimos, barcha maydonlarni toʻgʻri toʻldiring', 'warning');
       return;
     }
 
-    const submitData = {
-      name: formData.name,
-      unit: formData.unit,
-      category: formData.category || undefined
-    };
-
-    if (editingProduct) {
-      updateProduct(editingProduct._id, submitData);
+    if (editingCategory) {
+      updateCategory(editingCategory._id, formData);
     } else {
-      createProduct(submitData);
+      createCategory(formData);
     }
   };
 
-  const handleEdit = (product) => {
-    setEditingProduct(product);
+  const handleEdit = (category) => {
+    setEditingCategory(category);
     setFormData({
-      name: product.name,
-      unit: product.unit,
-      category: product.category || ''
+      name: category.name
     });
     setDialogOpen(true);
   };
 
-  const handleDelete = (product) => {
-    setEditingProduct(product);
+  const handleDelete = (category) => {
+    setEditingCategory(category);
     setDeleteDialogOpen(true);
   };
 
   const handleAddNew = () => {
     resetForm();
     setDialogOpen(true);
+  };
+
+  // ==================== SEARCH & FILTER ====================
+
+  const handleSearch = (e) => {
+    const term = e.target.value.toLowerCase();
+    setSearchTerm(term);
+    
+    if (term === '') {
+      setFilteredCategories(categories);
+    } else {
+      const filtered = categories.filter(category =>
+        category.name.toLowerCase().includes(term)
+      );
+      setFilteredCategories(filtered);
+    }
+  };
+
+  const clearSearch = () => {
+    setSearchTerm('');
+    setFilteredCategories(categories);
   };
 
   // ==================== HELPER FUNCTIONS ====================
@@ -306,69 +316,30 @@ function ProductsD() {
     return new Date(dateString).toLocaleDateString('uz-UZ', {
       year: 'numeric',
       month: '2-digit',
-      day: '2-digit'
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit'
     });
-  };
-
-  const getUnitIcon = (unit) => {
-    const unitOption = unitOptions.find(opt => opt.value === unit);
-    return unitOption ? unitOption.icon : <FaCube />;
-  };
-
-  const getUnitLabel = (unit) => {
-    const unitOption = unitOptions.find(opt => opt.value === unit);
-    return unitOption ? unitOption.label : unit;
-  };
-
-  const getCategoryName = (categoryId) => {
-    if (!categoryId) return 'Kategoriya tanlanmagan';
-    const category = categories.find(cat => cat._id === categoryId);
-    return category ? category.name : 'Noma\'lum kategoriya';
-  };
-
-  // ==================== SEARCH & FILTER ====================
-
-  const handleSearch = (e) => {
-    const term = e.target.value.toLowerCase();
-    setSearchTerm(term);
-    
-    if (term === '') {
-      setFilteredProducts(products);
-    } else {
-      const filtered = products.filter(product => {
-        const productName = product.name.toLowerCase().includes(term);
-        const productUnit = getUnitLabel(product.unit).toLowerCase().includes(term);
-        const categoryName = getCategoryName(product.category).toLowerCase().includes(term);
-        return productName || productUnit || categoryName;
-      });
-      setFilteredProducts(filtered);
-    }
-  };
-
-  const clearSearch = () => {
-    setSearchTerm('');
-    setFilteredProducts(products);
   };
 
   // ==================== USE EFFECT HOOKS ====================
 
   useEffect(() => {
-    fetchProducts();
     fetchCategories();
   }, []);
 
   // ==================== RENDER ====================
 
   return (
-    <div className={styles.productsPage}>
+    <div className={styles.categoriesPage}>
       {/* SARLAVHA VA AKTsiYALAR */}
       <div className={styles.headerSection}>
         <div className={styles.header}>
           <div className={styles.title}>
-            <FaBox className={styles.titleIcon} />
+            <FaFolder className={styles.titleIcon} />
             <div>
-              <h1>Mahsulotlar Boshqaruvi</h1>
-              <p className={styles.subtitle}>Mahsulotlarni qoʻshish, tahrirlash va oʻchirish</p>
+              <h1>Mahsulot Kategoriyalari</h1>
+              <p className={styles.subtitle}>Kategoriyalarni qoʻshish, tahrirlash va oʻchirish</p>
             </div>
           </div>
           <Button
@@ -378,7 +349,7 @@ function ProductsD() {
             className={styles.addButton}
             disableElevation
           >
-            Yangi Mahsulot
+            Yangi Kategoriya
           </Button>
         </div>
 
@@ -388,7 +359,7 @@ function ProductsD() {
             <FaSearch className={styles.searchIcon} />
             <TextField
               variant="outlined"
-              placeholder="Mahsulot nomi, kategoriya yoki o'lchov birligi boʻyicha qidirish..."
+              placeholder="Kategoriya nomi boʻyicha qidirish..."
               value={searchTerm}
               onChange={handleSearch}
               className={styles.searchInput}
@@ -411,83 +382,81 @@ function ProductsD() {
           <div className={styles.statsBox}>
             <div className={styles.statItem}>
               <span className={styles.statLabel}>Jami:</span>
-              <span className={styles.statValue}>{filteredProducts.length} ta</span>
+              <span className={styles.statValue}>{filteredCategories.length} ta</span>
             </div>
             <div className={styles.statDivider}></div>
             <div className={styles.statItem}>
-              <span className={styles.statLabel}>Kategoriyalar:</span>
-              <span className={styles.statValue}>{categories.length} ta</span>
+              <span className={styles.statLabel}>Koʻrsatilmoqda:</span>
+              <span className={styles.statValue}>{filteredCategories.length}/{categories.length}</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* MAHSULOTLAR JADVALI */}
+      {/* KATEGORIYALAR JADVALI */}
       <div className={styles.tableSection}>
-        {loading.products || loading.categories ? (
+        {loading.categories ? (
           <div className={styles.loading}>
             <FaSpinner className={styles.spinner} />
-            <span>Ma'lumotlar yuklanmoqda...</span>
+            <span>Kategoriyalar yuklanmoqda...</span>
           </div>
-        ) : filteredProducts.length > 0 ? (
+        ) : filteredCategories.length > 0 ? (
           <TableContainer component={Paper} className={styles.tableContainer}>
             <Table className={styles.table}>
               <TableHead className={styles.tableHead}>
                 <TableRow>
-                  <TableCell className={styles.tableHeaderCell}>Mahsulot Nomi</TableCell>
-                  <TableCell className={styles.tableHeaderCell}>Kategoriya</TableCell>
-                  <TableCell className={styles.tableHeaderCell}>Oʻlchov Birligi</TableCell>
-                  <TableCell className={styles.tableHeaderCell}>Qoʻshilgan Sana</TableCell>
+                  <TableCell className={styles.tableHeaderCell}>Kategoriya Nomi</TableCell>
+                  <TableCell className={styles.tableHeaderCell}>
+                    <div className={styles.dateHeader}>
+                      <FaCalendarAlt className={styles.dateIcon} />
+                      Yaratilgan Sana
+                    </div>
+                  </TableCell>
+                  <TableCell className={styles.tableHeaderCell}>
+                    <div className={styles.dateHeader}>
+                      <FaCalendarAlt className={styles.dateIcon} />
+                      Yangilangan Sana
+                    </div>
+                  </TableCell>
                   <TableCell className={styles.tableHeaderCell}>Harakatlar</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {filteredProducts.map((product) => (
-                  <TableRow key={product._id} className={styles.tableRow}>
+                {filteredCategories.map((category) => (
+                  <TableRow key={category._id} className={styles.tableRow}>
                     <TableCell className={styles.tableCell}>
-                      <div className={styles.productNameCell}>
-                        <FaBox className={styles.productIcon} />
-                        <span className={styles.productName}>{product.name}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className={styles.tableCell}>
-                      <div className={styles.categoryCell}>
-                        <FaFolder className={styles.categoryIcon} />
-                        <span className={styles.categoryText}>
-                          {getCategoryName(product.category)}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell className={styles.tableCell}>
-                      <div className={styles.unitCell}>
-                        {getUnitIcon(product.unit)}
-                        <span className={styles.unitText}>
-                          {getUnitLabel(product.unit)}
-                        </span>
+                      <div className={styles.categoryNameCell}>
+                        <FaTags className={styles.categoryIcon} />
+                        <span className={styles.categoryName}>{category.name}</span>
                       </div>
                     </TableCell>
                     <TableCell className={styles.tableCell}>
                       <span className={styles.dateText}>
-                        {formatDate(product.createdAt)}
+                        {formatDate(category.createdAt)}
+                      </span>
+                    </TableCell>
+                    <TableCell className={styles.tableCell}>
+                      <span className={styles.dateText}>
+                        {formatDate(category.updatedAt)}
                       </span>
                     </TableCell>
                     <TableCell className={styles.tableCell}>
                       <div className={styles.actionButtons}>
                         <IconButton
-                          onClick={() => handleEdit(product)}
+                          onClick={() => handleEdit(category)}
                           className={styles.editButton}
                           title="Tahrirlash"
                           size="small"
                         >
-                          <FaEdit className={styles.FaEdit}/>
+                          <FaEdit />
                         </IconButton>
                         <IconButton
-                          onClick={() => handleDelete(product)}
+                          onClick={() => handleDelete(category)}
                           className={styles.deleteButton}
                           title="Oʻchirish"
                           size="small"
                         >
-                          <FaTrash  className={styles.FaTrash}/>
+                          <FaTrash />
                         </IconButton>
                       </div>
                     </TableCell>
@@ -498,9 +467,9 @@ function ProductsD() {
           </TableContainer>
         ) : (
           <div className={styles.noData}>
-            <FaBox className={styles.noDataIcon} />
+            <FaFolder className={styles.noDataIcon} />
             <div className={styles.noDataText}>
-              {searchTerm ? 'Qidiruv boʻyicha mahsulotlar topilmadi' : 'Hech qanday mahsulot topilmadi'}
+              {searchTerm ? 'Qidiruv boʻyicha kategoriyalar topilmadi' : 'Hech qanday kategoriya topilmadi'}
             </div>
             {searchTerm && (
               <Button
@@ -518,14 +487,14 @@ function ProductsD() {
                 className={styles.addFirstButton}
                 startIcon={<FaPlus />}
               >
-                Birinchi Mahsulotni Qoʻshish
+                Birinchi Kategoriyani Qoʻshish
               </Button>
             )}
           </div>
         )}
       </div>
 
-      {/* MAHSULOT QO'SHISH/TAHRIRLASH MODALI */}
+      {/* KATEGORIYA QO'SHISH/TAHRIRLASH MODALI */}
       <Dialog
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
@@ -533,8 +502,8 @@ function ProductsD() {
         fullWidth
       >
         <DialogTitle className={styles.dialogTitle}>
-          <FaBox className={styles.dialogIcon} />
-          {editingProduct ? 'Mahsulotni Tahrirlash' : 'Yangi Mahsulot Qoʻshish'}
+          <FaFolder className={styles.dialogIcon} />
+          {editingCategory ? 'Kategoriyani Tahrirlash' : 'Yangi Kategoriya Qoʻshish'}
         </DialogTitle>
         
         <form onSubmit={handleSubmit}>
@@ -542,57 +511,17 @@ function ProductsD() {
             <div className={styles.formGrid}>
               <TextField
                 fullWidth
-                label="Mahsulot Nomi"
+                label="Kategoriya Nomi"
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
                 required
                 className={styles.formField}
-                placeholder="Masalan: Coca-Cola 1.5L"
+                placeholder="Masalan: Sabzavotlar"
+                error={!!formErrors.name}
+                helperText={formErrors.name}
                 autoFocus
               />
-
-              <FormControl fullWidth className={styles.formField}>
-                <InputLabel>Kategoriya (ixtiyoriy)</InputLabel>
-                <Select
-                  name="category"
-                  value={formData.category}
-                  onChange={handleInputChange}
-                  label="Kategoriya (ixtiyoriy)"
-                >
-                  <MenuItem value="">
-                    <em>Kategoriya tanlanmagan</em>
-                  </MenuItem>
-                  {categories.map((category) => (
-                    <MenuItem key={category._id} value={category._id}>
-                      <div className={styles.categoryMenuItem}>
-                        <FaFolder className={styles.categoryMenuIcon} />
-                        <span>{category.name}</span>
-                      </div>
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-
-              <TextField
-                select
-                fullWidth
-                label="Oʻlchov Birligi"
-                name="unit"
-                value={formData.unit}
-                onChange={handleInputChange}
-                required
-                className={styles.formField}
-              >
-                {unitOptions.map((option) => (
-                  <MenuItem key={option.value} value={option.value}>
-                    <div className={styles.unitMenuItem}>
-                      {option.icon}
-                      <span>{option.label}</span>
-                    </div>
-                  </MenuItem>
-                ))}
-              </TextField>
             </div>
           </DialogContent>
 
@@ -613,10 +542,10 @@ function ProductsD() {
               {loading.submit ? (
                 <>
                   <FaSpinner className={styles.buttonSpinner} />
-                  {editingProduct ? 'Saqlanmoqda...' : 'Qoʻshilmoqda...'}
+                  {editingCategory ? 'Saqlanmoqda...' : 'Qoʻshilmoqda...'}
                 </>
               ) : (
-                editingProduct ? 'Saqlash' : 'Qoʻshish'
+                editingCategory ? 'Saqlash' : 'Qoʻshish'
               )}
             </Button>
           </DialogActions>
@@ -632,30 +561,30 @@ function ProductsD() {
       >
         <DialogTitle className={styles.deleteDialogTitle}>
           <FaTrash className={styles.deleteDialogIcon} />
-          Mahsulotni Oʻchirish
+          Kategoriyani Oʻchirish
         </DialogTitle>
         
         <DialogContent className={styles.deleteDialogContent}>
           <div className={styles.deleteWarning}>
-            Quyidagi mahsulotni oʻchirishni tasdiqlaysizmi?
+            Quyidagi kategoriyani oʻchirishni tasdiqlaysizmi?
           </div>
           
-          {editingProduct && (
-            <div className={styles.productToDelete}>
-              <div className={styles.deleteProductIcon}>
-                <FaBox />
+          {editingCategory && (
+            <div className={styles.categoryToDelete}>
+              <div className={styles.deleteCategoryIcon}>
+                <FaFolder />
               </div>
-              <div className={styles.deleteProductName}>{editingProduct.name}</div>
-              <div className={styles.deleteProductDetails}>
-                <div>Kategoriya: {getCategoryName(editingProduct.category)}</div>
-                <div>Oʻlchov birligi: {getUnitLabel(editingProduct.unit)}</div>
-                <div>Qoʻshilgan: {formatDate(editingProduct.createdAt)}</div>
+              <div className={styles.deleteCategoryName}>{editingCategory.name}</div>
+              <div className={styles.deleteCategoryDates}>
+                <div>Yaratilgan: {formatDate(editingCategory.createdAt)}</div>
+                <div>Yangilangan: {formatDate(editingCategory.updatedAt)}</div>
               </div>
             </div>
           )}
 
           <div className={styles.deleteNote}>
-            ⚠️ Bu amalni ortga qaytarib boʻlmaydi!
+            ⚠️ Kategoriyani o‘chirsangiz, unga tegishli barcha mahsulotlar kategoriyasiz qoladi.
+            Bu amalni ortga qaytarib bo‘lmaydi.
           </div>
         </DialogContent>
 
@@ -668,7 +597,7 @@ function ProductsD() {
             Bekor qilish
           </Button>
           <Button
-            onClick={() => deleteProduct(editingProduct?._id)}
+            onClick={() => deleteCategory(editingCategory?._id)}
             variant="contained"
             color="error"
             disabled={loading.delete}
@@ -705,4 +634,4 @@ function ProductsD() {
   );
 }
 
-export default ProductsD;
+export default Categories;

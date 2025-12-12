@@ -12,6 +12,7 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import { IoChatbubbleSharp, IoExitOutline } from "react-icons/io5";
 import { CiDark, CiSun } from "react-icons/ci";
+import { BiSolidCategory } from "react-icons/bi";
 
 export default function Sidebar({ openSidebar,   handleLogout,userType }) {
   const [darkMode, setDarkMode] = useState(true);
@@ -30,6 +31,7 @@ const getMenuItems = () => {
       { name: "Mahsulot chegarasi", path: "/product-limit", icon: <MdOutlineAssignment size={24} /> },
       { name: "Chat", path: "/chat", icon: <MdChat size={24} /> },
       { name: "Yetkazib beruvchilar", path: "/delivers", icon: <MdDeliveryDining size={24} /> },
+      { name: "Kategoriyalar", path: "/categories", icon: <BiSolidCategory        size={24} /> },
       { name: "Profil", path: "/profile", icon: <MdPerson size={24} /> },
     ];
   } else {

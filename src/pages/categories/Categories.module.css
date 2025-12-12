@@ -1,0 +1,618 @@
+/* Asosiy sahifa */
+.categoriesPage {
+    min-height: 100vh;
+    background-color: var(--background);
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  /* Sarlavha bo'limi */
+  .headerSection {
+    background-color: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  
+  .title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  
+  .title h1 {
+    margin: 0;
+    color: var(--text);
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+  
+  .subtitle {
+    margin: 4px 0 0 0;
+    color: var(--text-light);
+    font-size: 0.85rem;
+    font-weight: 400;
+  }
+  
+  .titleIcon {
+    color: var(--primary);
+    font-size: 1.8rem;
+  }
+  
+  .addButton {
+    background-color: var(--success);
+    color: white;
+    text-transform: none;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: var(--radius);
+    font-size: 0.9rem;
+  }
+  
+  .addButton:hover {
+    background-color: var(--success);
+    opacity: 0.9;
+  }
+  
+  /* Qidiruv bo'limi */
+  .searchSection {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .searchBox {
+    position: relative;
+    flex: 1;
+    max-width: 400px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  
+  .searchIcon {
+    color: var(--text-light);
+    font-size: 1rem;
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+  }
+  
+  .searchInput {
+    width: 100%;
+  }
+  
+  .searchInputField {
+    padding-left: 40px;
+    background-color: var(--surface);
+    border-radius: var(--radius);
+  }
+  
+  .clearSearchButton {
+    text-transform: none;
+    font-size: 0.8rem;
+    padding: 4px 12px;
+    min-width: auto;
+  }
+  
+  /* Statistika qutisi */
+  .statsBox {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background-color: var(--item);
+    padding: 8px 16px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+  
+  .statItem {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .statLabel {
+    color: var(--text-light);
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+  
+  .statValue {
+    color: var(--text);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  
+  .statDivider {
+    width: 1px;
+    height: 20px;
+    background-color: var(--border);
+  }
+  
+  /* Jadval bo'limi */
+  .tableSection {
+    background-color: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    min-height: 200px;
+  }
+  
+  .tableContainer {
+    border-radius: var(--radius);
+    box-shadow: none;
+    background-color: var(--surface);
+  }
+  
+  .table {
+    min-width: 600px;
+  }
+  
+  .tableHead {
+    background-color: var(--primary);
+  }
+  
+  .tableHeaderCell {
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 16px;
+    border-bottom: none;
+  }
+  
+  .dateHeader {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .dateIcon {
+    font-size: 0.8rem;
+  }
+  
+  .tableRow {
+    transition: background-color 0.2s ease;
+  }
+  
+  .tableRow:nth-of-type(even) {
+    background-color: var(--item);
+  }
+  
+  .tableRow:hover {
+    background-color: rgba(184, 80, 66, 0.05);
+  }
+  
+  .tableCell {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+  }
+  
+  /* Jadval ichidagi elementlar */
+  .categoryNameCell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .categoryIcon {
+    color: var(--secondary);
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+  
+  .categoryName {
+    color: var(--text);
+    font-weight: 500;
+  }
+  
+  .dateText {
+    color: var(--text-light);
+    font-size: 0.85rem;
+    font-family: 'Courier New', monospace;
+  }
+  
+  /* Harakatlar tugmalari */
+  .actionButtons {
+    display: flex;
+    gap: 4px;
+  }
+  
+  .editButton {
+    color: var(--primary);
+    padding: 6px;
+  }
+  
+  .editButton:hover {
+    background-color: rgba(184, 80, 66, 0.1);
+  }
+  
+  .deleteButton {
+    color: var(--error);
+    padding: 6px;
+  }
+  
+  .deleteButton:hover {
+    background-color: rgba(244, 67, 54, 0.1);
+  }
+  
+  /* Yuklanish va ma'lumot yo'q */
+  .loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    color: var(--text-light);
+    gap: 16px;
+    text-align: center;
+  }
+  
+  .spinner {
+    animation: spin 1s linear infinite;
+    font-size: 2rem;
+    color: var(--primary);
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .noData {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    color: var(--text-light);
+    gap: 20px;
+    text-align: center;
+  }
+  
+  .noDataIcon {
+    font-size: 4rem;
+    opacity: 0.5;
+    color: var(--primary);
+  }
+  
+  .noDataText {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text);
+  }
+  
+  .clearSearchButton {
+    text-transform: none;
+    border-radius: var(--radius);
+  }
+  
+  .addFirstButton {
+    text-transform: none;
+    border-radius: var(--radius);
+    background-color: var(--primary);
+    color: white;
+    margin-top: 8px;
+  }
+  
+  .addFirstButton:hover {
+    background-color: var(--primary-dark);
+  }
+  
+  /* Modal stillari */
+  .dialogTitle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text);
+    font-weight: 600;
+    padding: 20px 24px 16px 24px;
+  }
+  
+  .dialogIcon {
+    color: var(--primary);
+    font-size: 1.3rem;
+  }
+  
+  .dialogContent {
+    padding: 0 24px 8px 24px;
+  }
+  
+  .formGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 8px;
+  }
+  
+  /* Form field styles */
+  .formField {
+    background-color: var(--surface);
+  }
+  
+  .dialogActions {
+    padding: 16px 24px 20px 24px;
+    gap: 12px;
+  }
+  
+  .cancelButton {
+    color: var(--text);
+    border-color: var(--border);
+    text-transform: none;
+    font-weight: 500;
+    border-radius: var(--radius);
+    padding: 8px 20px;
+  }
+  
+  .submitButton {
+    background-color: var(--success);
+    color: white;
+    text-transform: none;
+    font-weight: 500;
+    border-radius: var(--radius);
+    padding: 8px 20px;
+    min-width: 100px;
+  }
+  
+  .submitButton:hover {
+    background-color: var(--success);
+    opacity: 0.9;
+  }
+  
+  .buttonSpinner {
+    animation: spin 1s linear infinite;
+    margin-right: 8px;
+  }
+  
+  /* O'chirish modali */
+  .deleteDialogTitle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--error);
+    font-weight: 600;
+    padding: 20px 24px 16px 24px;
+  }
+  
+  .deleteDialogIcon {
+    font-size: 1.3rem;
+  }
+  
+  .deleteDialogContent {
+    padding: 0 24px 8px 24px;
+  }
+  
+  .deleteWarning {
+    color: var(--text);
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  
+  .categoryToDelete {
+    background-color: var(--item);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+  
+  .deleteCategoryIcon {
+    font-size: 2rem;
+    color: var(--primary);
+    margin-bottom: 12px;
+  }
+  
+  .deleteCategoryName {
+    color: var(--text);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  
+  .deleteCategoryDates {
+    color: var(--text-light);
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+  
+  .deleteNote {
+    color: var(--warning);
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-align: center;
+    padding: 12px;
+    background-color: rgba(255, 152, 0, 0.1);
+    border-radius: var(--radius);
+    line-height: 1.4;
+  }
+  
+  .deleteDialogActions {
+    padding: 16px 24px 20px 24px;
+    gap: 12px;
+  }
+  
+  .cancelDeleteButton {
+    color: var(--text);
+    border-color: var(--border);
+    text-transform: none;
+    font-weight: 500;
+    border-radius: var(--radius);
+    padding: 8px 20px;
+  }
+  
+  .confirmDeleteButton {
+    background-color: var(--error);
+    color: white;
+    text-transform: none;
+    font-weight: 500;
+    border-radius: var(--radius);
+    padding: 8px 20px;
+    min-width: 100px;
+  }
+  
+  .confirmDeleteButton:hover {
+    background-color: var(--error);
+    opacity: 0.9;
+  }
+  
+  /* Responsive dizayn */
+  @media (max-width: 768px) {
+    .categoriesPage {
+      padding: 16px;
+    }
+    
+    .header {
+      flex-direction: column;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    
+    .title h1 {
+      font-size: 1.3rem;
+    }
+    
+    .searchSection {
+      flex-direction: column;
+      gap: 12px;
+      align-items: stretch;
+    }
+    
+    .searchBox {
+      max-width: none;
+    }
+    
+    .statsBox {
+      justify-content: center;
+    }
+    
+    .tableContainer {
+      overflow-x: auto;
+      border-radius: var(--radius);
+    }
+    
+    .table {
+      min-width: 500px;
+    }
+    
+    .tableHeaderCell,
+    .tableCell {
+      padding: 12px 8px;
+      font-size: 0.85rem;
+    }
+    
+    .dialogActions,
+    .deleteDialogActions {
+      flex-direction: column;
+    }
+    
+    .cancelButton,
+    .submitButton,
+    .cancelDeleteButton,
+    .confirmDeleteButton {
+      width: 100%;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .categoriesPage {
+      padding: 12px;
+    }
+    
+    .headerSection {
+      padding: 16px;
+    }
+    
+    .title h1 {
+      font-size: 1.2rem;
+    }
+    
+    .addButton {
+      width: 100%;
+      justify-content: center;
+    }
+    
+    .tableHeaderCell,
+    .tableCell {
+      padding: 8px 6px;
+      font-size: 0.8rem;
+    }
+    
+    .actionButtons {
+      flex-direction: column;
+      gap: 2px;
+    }
+    
+    .editButton,
+    .deleteButton {
+      padding: 4px;
+    }
+  }
+  
+  /* MUI component overrides */
+  :global(.MuiPaper-root) {
+    background-color: var(--surface);
+    color: var(--text);
+  }
+  
+  :global(.MuiDialog-paper) {
+    background-color: var(--surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+  
+  :global(.MuiTableContainer-root) {
+    border-radius: var(--radius);
+  }
+  
+  :global(.MuiTableCell-root) {
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+  
+  :global(.MuiTableHead-root .MuiTableCell-root) {
+    background-color: var(--primary);
+    color: white;
+    font-weight: 600;
+  }
+  
+  :global(.MuiButton-root) {
+    text-transform: none;
+    border-radius: var(--radius);
+  }
+  
+  :global(.MuiInputBase-input) {
+    color: var(--text);
+  }
+  
+  :global(.MuiInputLabel-root) {
+    color: var(--text-light);
+  }
+  
+  :global(.MuiOutlinedInput-notchedOutline) {
+    border-color: var(--border);
+  }
+  
+  :global(.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline) {
+    border-color: var(--primary);
+  }
+  
+  :global(.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline) {
+    border-color: var(--primary);
+  }

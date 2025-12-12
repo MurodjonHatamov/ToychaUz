@@ -22,6 +22,7 @@ import ChatD from "./pages/chatD/ChatD";
 import Deliver from "./pages/deliver/Deliver";
 import ProductLimitD from "./pages/productLimit/ProductLimitD";
 import { baseURL } from "./pages/config";
+import Categories from "./pages/categories/Categories";
 
 // ✅ YANGILANGAN: logout handler
 const handleLogout = async () => {
@@ -328,7 +329,14 @@ const AppContent = ({ openSidebar, setOpenSidebar, setNotifications, notificatio
                 </RoleProtectedRoute>
               }
             />
-
+   <Route
+              path="/categories"
+              element={
+                <RoleProtectedRoute allowedRoles={["deliver"]}>
+                  <Categories/>
+                </RoleProtectedRoute>
+              }
+            />
             <Route
               path="/product-limit"
               element={
