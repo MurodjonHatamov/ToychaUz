@@ -18,8 +18,7 @@ export default function Sidebar({ openSidebar,   handleLogout,userType }) {
   const [darkMode, setDarkMode] = useState(true);
   const location = useLocation();
 
-console.log(openSidebar);
-
+  
 
 
 
@@ -75,12 +74,7 @@ const menuItems=getMenuItems();
   };
 
   const getSidebarClass = () => {
-    if (userType==='deliver') {
-      return openSidebar ?styles.sidebarHidden :styles.sidebar  ;
-    }
- else{
-  return openSidebar ? styles.sidebar : styles.sidebarHidden;
- }
+    return openSidebar ? styles.sidebar : styles.sidebarHidden;
   };
 
   return (
