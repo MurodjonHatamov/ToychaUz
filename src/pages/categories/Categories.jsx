@@ -339,7 +339,7 @@ function Categories() {
             <FaFolder className={styles.titleIcon} />
             <div>
               <h1>Mahsulot Kategoriyalari</h1>
-              <p className={styles.subtitle}>Kategoriyalarni qoʻshish, tahrirlash va oʻchirish</p>
+         
             </div>
           </div>
           <Button
@@ -369,15 +369,7 @@ function Categories() {
                 className: styles.searchInputField
               }}
             />
-            {searchTerm && (
-              <Button
-                size="small"
-                onClick={clearSearch}
-                className={styles.clearSearchButton}
-              >
-                Tozalash
-              </Button>
-            )}
+    
           </div>
           <div className={styles.statsBox}>
             <div className={styles.statItem}>
@@ -575,10 +567,7 @@ function Categories() {
                 <FaFolder />
               </div>
               <div className={styles.deleteCategoryName}>{editingCategory.name}</div>
-              <div className={styles.deleteCategoryDates}>
-                <div>Yaratilgan: {formatDate(editingCategory.createdAt)}</div>
-                <div>Yangilangan: {formatDate(editingCategory.updatedAt)}</div>
-              </div>
+            
             </div>
           )}
 

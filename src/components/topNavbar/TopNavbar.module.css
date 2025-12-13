@@ -91,6 +91,11 @@
     color: var(--text) !important;
 }
 
+.menuButtonIconDeliver{
+    display: none !important;
+    color: var(--text-light) !important;
+}
+
 .title {
     font-size: 1.25rem;
     font-weight: 600;
@@ -135,6 +140,9 @@
 
 /* Responsive design */
 @media (max-width: 1024px) {
+    .menuButtonIconDeliver{
+        display: block !important;
+    }
     .navbar {
         left: 0;
     }

@@ -522,7 +522,7 @@ function Deliver() {
                 required={!editingDeliver}
                 className={styles.formField}
                 placeholder={editingDeliver ? "Faqat o'zgartirmoqchi bo'lsangiz" : "Deliver uchun parol"}
-                helperText={editingDeliver ? "Agar parolni o'zgartirmasangiz, bo'sh qoldiring" : ""}
+            
               />
 
               <TextField

@@ -368,7 +368,7 @@ function ProductsD() {
             <FaBox className={styles.titleIcon} />
             <div>
               <h1>Mahsulotlar Boshqaruvi</h1>
-              <p className={styles.subtitle}>Mahsulotlarni qoʻshish, tahrirlash va oʻchirish</p>
+              
             </div>
           </div>
           <Button
@@ -398,15 +398,7 @@ function ProductsD() {
                 className: styles.searchInputField
               }}
             />
-            {searchTerm && (
-              <Button
-                size="small"
-                onClick={clearSearch}
-                className={styles.clearSearchButton}
-              >
-                Tozalash
-              </Button>
-            )}
+         
           </div>
           <div className={styles.statsBox}>
             <div className={styles.statItem}>

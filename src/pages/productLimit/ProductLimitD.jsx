@@ -774,11 +774,7 @@ function ProductLimitD() {
                     : 'Masalan: 200'
                 }
                 inputProps={{ min: 1 }}
-                helperText={
-                  formData.productId 
-                    ? `Oʻlchov birligi: ${getUnitDisplayName(getProductUnit(formData.productId))}`
-                    : 'Iltimos, avval mahsulot tanlang'
-                }
+            
               />
 
               <TextField
@@ -792,11 +788,7 @@ function ProductLimitD() {
                 className={styles.formField}
                 placeholder="Masalan: 7"
                 inputProps={{ min: 1 }}
-                helperText={
-                  formData.days 
-                    ? `${formData.days} kun = ${calculateEndDate(new Date(), parseInt(formData.days)).split(',')[0]} gacha`
-                    : 'Limit necha kun davomida amal qiladi'
-                }
+               
               />
             </div>
 

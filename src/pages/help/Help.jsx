@@ -120,9 +120,6 @@ function Help() {
   const templateQuestions = [
     "Buyurtma qachon yetib keladi?",
     "Mahsulot mavjudmi?",
-    "To'lov usullari qanday?",
-    "Yetkazib berish muddati qancha?",
-    "Mahsulotni qaytarish mumkinmi?"
   ];
 
   // Komponent yuklanganda chat tarixini olish

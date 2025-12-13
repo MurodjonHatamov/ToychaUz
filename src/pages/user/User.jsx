@@ -5,7 +5,8 @@ import {
   FaUser, 
   FaCalendar,
   FaIdCard,
-  FaCheckCircle
+  FaCheckCircle,
+  FaTruck
 } from 'react-icons/fa';
 import styles from './User.module.css';
 import { useNavigate } from 'react-router-dom';
@@ -100,10 +101,12 @@ const url = userType === 'deliver'
       <div className={styles.passportCard}>
         {/* Passport Header */}
         <div className={styles.passportHeader}>
+
           <div className={styles.passportLogo}>
             <FaIdCard className={styles.logoIcon} />
-            <span>MARKET PROFILI</span>
+            <span>{userType==='deliver' ? "DELIVER PROFILI" :"MARKET PROFILI" }</span>
           </div>
+          
           <div className={styles.passportStatus}>
             <FaCheckCircle className={styles.statusIcon} />
             <span>FAOL</span>
@@ -114,17 +117,26 @@ const url = userType === 'deliver'
         <div className={styles.passportContent}>
           {/* Left Side - Avatar and Basic Info */}
           <div className={styles.leftSection}>
-            <div className={styles.avatarSection}>
-              <div className={styles.avatar}>
-                <FaStore />
-              </div>
-              <div className={styles.avatarLabel}>Market</div>
-            </div>
+{
+  userType ==='deliver' ?  <div className={styles.avatarSection}>
+  <div className={styles.avatar}>
+    <FaTruck />
+  </div>
+  <div className={styles.avatarLabel}>Deliver</div>
+</div> :  <div className={styles.avatarSection}>
+  <div className={styles.avatar}>
+    <FaStore />
+  </div>
+  <div className={styles.avatarLabel}>Market</div>
+</div>
+}
+
+          
             
             <div className={styles.basicInfo}>
               <div className={styles.infoItem}>
                 <span className={styles.infoLabel}>Hisob Turi:</span>
-                <span className={styles.infoValue}>MARKET</span>
+                <span className={styles.infoValue}>{userType==='deliver' ?'Deliver' : 'Market'}</span>
               </div>
               <div className={styles.infoItem}>
                 <span className={styles.infoLabel}>Platforma:</span>

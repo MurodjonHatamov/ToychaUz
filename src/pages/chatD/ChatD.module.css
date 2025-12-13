@@ -2,19 +2,25 @@
   
   /* Asosiy sahifa */
   .chatPage {
-    min-height: 100vh ;
+    position: absolute;
+    top: 70px; 
+    left: 280px; 
+    right: 0;
+    bottom: 0;
     background-color: var(--background) !important;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    overflow: hidden; 
   }
+  
   
   .chatContainer {
     display: flex !important;
-    height: 100vh !important;
+    height: 91vh !important;
   }
   
   /* CHAP PANEL - SIDEBAR */
   .sidebar {
-    width: 350px !important;
+    width: 350px !important;  
     background-color: var(--surface) !important;
     border-right: 1px solid var(--border) !important;
     display: flex !important;
@@ -608,3 +614,15 @@
       scroll-behavior: auto !important;
     }
   }
+  @media (max-width: 1024px) {
+    .chatPage {
+      top: 50px;   
+      left: 0;      
+      right: 0;
+      bottom: 80px; 
+      overflow: hidden;
+    }
+  
+  
+  }
+  

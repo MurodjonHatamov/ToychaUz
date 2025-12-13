@@ -36,12 +36,7 @@
   font-weight: 600 !important;
 }
 
-.subtitle {
-  margin: 4px 0 0 0 !important;
-  color: var(--text-light) !important;
-  font-size: 0.85rem !important;
-  font-weight: 400 !important;
-}
+
 
 .titleIcon {
   color: var(--primary) !important;
@@ -325,6 +320,9 @@
 }
 
 .clearSearchButton {
+  background-color: var(--primary) !important;
+  color: white !important;
+  border: 2px solid var(--primary ) !important;
   text-transform: none !important;
   border-radius: var(--radius) !important;
 }

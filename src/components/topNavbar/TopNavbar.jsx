@@ -118,7 +118,7 @@ function TopNavbar({ onMenuToggle, setOpenSidebar, openSidebar, handleLogout,  u
           </div>
           
           <IconButton  
-            className={styles.menuButtonIcon}
+            className={userType==='deliver' ?  styles.menuButtonIconDeliver: styles.menuButtonIcon}
             onClick={() => {
               setOpenSidebar(!openSidebar)
             }}

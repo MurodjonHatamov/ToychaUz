@@ -9,7 +9,7 @@
   /* Sarlavha bo'limi */
   .headerSection {
     background-color: var(--surface);
-    border-radius: var(--radius);
+    
     box-shadow: var(--shadow);
     padding: 20px;
     margin-bottom: 20px;
@@ -36,31 +36,24 @@
     font-weight: 600;
   }
   
-  .subtitle {
-    margin: 4px 0 0 0;
-    color: var(--text-light);
-    font-size: 0.85rem;
-    font-weight: 400;
-  }
-  
+
   .titleIcon {
     color: var(--primary);
     font-size: 1.8rem;
   }
   
   .addButton {
-    background-color: var(--success);
+    background-color: var(--success) !important;
     color: white;
     text-transform: none;
     font-weight: 500;
     padding: 8px 16px;
-    border-radius: var(--radius);
     font-size: 0.9rem;
   }
   
   .addButton:hover {
-    background-color: var(--success);
-    opacity: 0.9;
+    background-color: var(--success) !important;
+    opacity: 0.9 !important;
   }
   
   /* Qidiruv bo'limi */
@@ -97,11 +90,14 @@
   .searchInputField {
     padding-left: 40px;
     background-color: var(--surface);
-    border-radius: var(--radius);
+    
   }
   
   .clearSearchButton {
     text-transform: none;
+    border: 2px solid var(--primary) !important;
+    background-color: var(--primary) !important;
+    color: white !important ;
     font-size: 0.8rem;
     padding: 4px 12px;
     min-width: auto;
@@ -114,7 +110,7 @@
     gap: 16px;
     background-color: var(--item);
     padding: 8px 16px;
-    border-radius: var(--radius);
+    
     border: 1px solid var(--border);
   }
   
@@ -145,7 +141,7 @@
   /* Jadval bo'limi */
   .tableSection {
     background-color: var(--surface);
-    border-radius: var(--radius);
+    
     box-shadow: var(--shadow);
     border: 1px solid var(--border);
     overflow: hidden;
@@ -153,7 +149,7 @@
   }
   
   .tableContainer {
-    border-radius: var(--radius);
+    
     box-shadow: none;
     background-color: var(--surface);
   }
@@ -233,21 +229,21 @@
   }
   
   .editButton {
-    color: var(--primary);
+    color: var(--primary) !important;
     padding: 6px;
   }
   
   .editButton:hover {
-    background-color: rgba(184, 80, 66, 0.1);
+    background-color: rgba(184, 80, 66, 0.1) !important;
   }
   
   .deleteButton {
-    color: var(--error);
+    color: var(--error) !important;
     padding: 6px;
   }
   
   .deleteButton:hover {
-    background-color: rgba(244, 67, 54, 0.1);
+    background-color: rgba(244, 67, 54, 0.1) !important;
   }
   
   /* Yuklanish va ma'lumot yo'q */
@@ -295,15 +291,10 @@
     font-weight: 500;
     color: var(--text);
   }
-  
-  .clearSearchButton {
-    text-transform: none;
-    border-radius: var(--radius);
-  }
-  
+
   .addFirstButton {
     text-transform: none;
-    border-radius: var(--radius);
+    
     background-color: var(--primary);
     color: white;
     margin-top: 8px;
@@ -350,27 +341,27 @@
   }
   
   .cancelButton {
-    color: var(--text);
-    border-color: var(--border);
-    text-transform: none;
-    font-weight: 500;
-    border-radius: var(--radius);
-    padding: 8px 20px;
+    color: var(--text) !important;
+    border-color: var(--border) !important;
+    text-transform: none !important;
+    font-weight: 500 !important;
+    
+    padding: 8px 20px !important;
   }
   
   .submitButton {
-    background-color: var(--success);
-    color: white;
-    text-transform: none;
-    font-weight: 500;
-    border-radius: var(--radius);
-    padding: 8px 20px;
-    min-width: 100px;
+    background-color: var(--success) !important;
+    color: white !important;
+    text-transform: none !important;
+    font-weight: 500 !important;
+    
+    padding: 8px 20px !important;
+    min-width: 100px !important;
   }
   
   .submitButton:hover {
-    background-color: var(--success);
-    opacity: 0.9;
+    background-color: var(--success) !important;
+    opacity: 0.9 !important;
   }
   
   .buttonSpinner {
@@ -406,7 +397,7 @@
   
   .categoryToDelete {
     background-color: var(--item);
-    border-radius: var(--radius);
+    
     padding: 20px;
     margin-bottom: 20px;
     border: 1px solid var(--border);
@@ -439,7 +430,7 @@
     text-align: center;
     padding: 12px;
     background-color: rgba(255, 152, 0, 0.1);
-    border-radius: var(--radius);
+    
     line-height: 1.4;
   }
   
@@ -449,12 +440,12 @@
   }
   
   .cancelDeleteButton {
-    color: var(--text);
-    border-color: var(--border);
-    text-transform: none;
-    font-weight: 500;
-    border-radius: var(--radius);
-    padding: 8px 20px;
+    color: var(--text) !important;
+    border-color: var(--border) !important;
+    text-transform: none !important;
+    font-weight: 500 !important;
+    
+    padding: 8px 20px !important;
   }
   
   .confirmDeleteButton {
@@ -462,7 +453,7 @@
     color: white;
     text-transform: none;
     font-weight: 500;
-    border-radius: var(--radius);
+    
     padding: 8px 20px;
     min-width: 100px;
   }
@@ -504,7 +495,7 @@
     
     .tableContainer {
       overflow-x: auto;
-      border-radius: var(--radius);
+      
     }
     
     .table {
@@ -573,12 +564,12 @@
   
   :global(.MuiDialog-paper) {
     background-color: var(--surface);
-    border-radius: var(--radius);
+    
     border: 1px solid var(--border);
   }
   
   :global(.MuiTableContainer-root) {
-    border-radius: var(--radius);
+    
   }
   
   :global(.MuiTableCell-root) {
@@ -594,7 +585,7 @@
   
   :global(.MuiButton-root) {
     text-transform: none;
-    border-radius: var(--radius);
+    
   }
   
   :global(.MuiInputBase-input) {

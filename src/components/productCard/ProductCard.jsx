@@ -1,14 +1,60 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, IconButton } from '@mui/material';
 import { MdShoppingCart, MdAdd, MdRemove } from 'react-icons/md';
 import styles from './ProductCard.module.css';
+import { logaut } from '../../pages/logaut';
+import { baseURL } from '../../pages/config';
 
 function ProductCard({ product, onAddToCart, getUnitText,isInCart }) {
+  console.log(product);
+  const unitOptions = [
+    { value: 'piece', label: 'Dona' },
+    { value: 'liter', label: 'Litr' },
+    { value: 'kg', label: 'Kilogram'},
+    { value: 'm', label: 'Metr'}
+  ];
 
- 
+  
+  const [quantity, setQuantity] = useState("0");
+  const [limitProducts, setLimitProducts] = useState([]);
+
+  const getLimitProduct = async () => {
+    try {
+      const response = await fetch(`${baseURL}/product-limit/own`, {
+        method: 'GET',
+        headers: {
+          accept: '*/*',
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
+  
+      logaut(response);
+  
+      if (!response.ok) {
+        throw new Error(`Server xatosi: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      setLimitProducts(data)
+      console.log(data);
+      
+    } catch (error) {
+      console.error(error);
+      showSnackbar(error.message, 'error');
+    }
+  };
+  
+  useEffect(() => {
+    getLimitProduct();
+  }, []);
+  
+
+  const productLimit = limitProducts.find(
+    (item) => item.productId === product?._id
+  );
   
   // quantity — string bo'ladi
-  const [quantity, setQuantity] = useState("0");
 
   const handleAddToCart = () => {
     const num = Number(quantity);
@@ -22,9 +68,23 @@ function ProductCard({ product, onAddToCart, getUnitText,isInCart }) {
     <div className={isInCart ?styles.isInCart :styles.productCard}>
 {isInCart && <div className={styles.inCartBadge}>Savatda</div>}
 
+
+{productLimit && (
+  <div className={styles.limit}>
+    <p>
+      {productLimit.days} kunlik limit: {productLimit.amount}{" "}
+      {unitOptions.find(item => item.value === product?.unit)?.label}.
+    </p>
+  </div>
+)}
+
+
+
+
       <div className={styles.productInfo}>
         <h3>{product.name}</h3>
         <p>Oʻlchov birligi: {getUnitText(product.unit)}</p>
+      
       </div>
 
       <div className={styles.quantitySection}>
