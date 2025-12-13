@@ -6,7 +6,7 @@ import styles from './TopNavbar.module.css';
 import { CiDark, CiLogout, CiSun } from 'react-icons/ci';
 import { logaut } from '../../pages/logaut';
 
-function TopNavbar({ onMenuToggle, setOpenSidebar, openSidebar, handleLogout,  userType }) {
+function TopNavbar({ onMenuToggle, setOpenSidebar, openSidebar, handleLogout,  userType,notifications}) {
   const [darkMode, setDarkMode] = useState(true);
   const [allMessages, setAllMessages] = useState([]);
  
@@ -33,25 +33,13 @@ function TopNavbar({ onMenuToggle, setOpenSidebar, openSidebar, handleLogout,  u
     }
   };
   
-  // Chat tarixini olish
-  const getTotalUnread = () => {
-    if (userType !== "deliver") return 0;
-    if (!Array.isArray(allMessages)) return 0;
-  
-    return allMessages.filter(
-      msg => msg.status === 'new' && msg.from !== userType
-    ).length;
-  };
-  console.log(getTotalUnread());
-  
-  
+
 
   const handleNotificationClick = () => {
     navigate('/chat');
   };
 
   useEffect(() => {
-  
       fetchAllMessages();
     
     
@@ -82,7 +70,7 @@ function TopNavbar({ onMenuToggle, setOpenSidebar, openSidebar, handleLogout,  u
             onClick={handleNotificationClick}
           >
             <Badge 
-              badgeContent={getTotalUnread()} 
+              badgeContent={notifications} 
               color="error"
               max={99}
             >

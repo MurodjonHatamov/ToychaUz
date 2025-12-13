@@ -263,11 +263,17 @@ logaut(response);
 
     return marketMessages.length;
   };
+
+
+
+
   const getTotalUnread = () => {
     return allMessages.filter(
       (msg) => msg.status === "new" && msg.from !== "deliver" // market tomonidan yuborilgan xabarlar
     ).length;
   };
+
+  
 
   // ==================== USE EFFECT HOOKS ====================
 
@@ -294,7 +300,7 @@ logaut(response);
         fetchMarketChat(selectedMarket._id);
         fetchAllMessages();
       }
-    }, 30000);
+    }, 300000);
 
     return () => clearInterval(interval);
   }, [selectedMarket]);

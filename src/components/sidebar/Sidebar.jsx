@@ -14,11 +14,11 @@ import { IoChatbubbleSharp, IoExitOutline } from "react-icons/io5";
 import { CiDark, CiSun } from "react-icons/ci";
 import { BiSolidCategory } from "react-icons/bi";
 
-export default function Sidebar({ openSidebar,   handleLogout,userType }) {
+export default function Sidebar({ openSidebar,   handleLogout,userType,notifications }) {
   const [darkMode, setDarkMode] = useState(true);
   const location = useLocation();
 
-  
+
 
 
 
@@ -29,7 +29,7 @@ const getMenuItems = () => {
       { name: "Bozorlar", path: "/markets", icon: <MdStore size={24} /> },
       { name: "Mahsulotlar", path: "/products", icon: <MdInventory size={24} /> },
       { name: "Mahsulot chegarasi", path: "/product-limit", icon: <MdOutlineAssignment size={24} /> },
-      { name: "Chat", path: "/chat", icon: <MdChat size={24} /> },
+      { name: "Chat", path: "/chat", icon: <MdChat size={24} />,badge:notifications },
       { name: "Yetkazib beruvchilar", path: "/delivers", icon: <MdDeliveryDining size={24} /> },
       { name: "Kategoriyalar", path: "/categories", icon: <BiSolidCategory        size={24} /> },
       { name: "Profil", path: "/profile", icon: <MdPerson size={24} /> },
@@ -116,6 +116,11 @@ const menuItems=getMenuItems();
           >
             <ListItemIcon className={getMenuIconClass(item.path)}>
               {item.icon}
+
+              {
+                item.badge>0 && <span className={styles.badge}>{item?.badge}</span>
+              }
+           
             </ListItemIcon>
             <ListItemText 
               primary={item.name} 

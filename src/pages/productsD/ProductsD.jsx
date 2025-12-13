@@ -48,6 +48,7 @@ function ProductsD() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
+  console.log(categories);
   
   const [formData, setFormData] = useState({
     name: '',
@@ -400,6 +401,27 @@ function ProductsD() {
             />
          
           </div>
+          <FormControl  className={styles.formField}>
+                <InputLabel>Kategoriya (ixtiyoriy)</InputLabel>
+                <Select
+                  name="category"
+                  value={formData.category}
+                  onChange={handleInputChange}
+                  label="Kategoriya (ixtiyoriy)"
+                >
+                  <MenuItem value="">
+                    <em>Kategoriya tanlanmagan</em>
+                  </MenuItem>
+                  {categories.map((category) => (
+                    <MenuItem key={category._id} value={category._id}>
+                      <div className={styles.categoryMenuItem}>
+                        <FaFolder className={styles.categoryMenuIcon} />
+                        <span>{category.name}</span>
+                      </div>
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
           <div className={styles.statsBox}>
             <div className={styles.statItem}>
               <span className={styles.statLabel}>Jami:</span>

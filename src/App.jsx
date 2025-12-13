@@ -229,6 +229,7 @@ const AppContent = ({ openSidebar, setOpenSidebar, setNotifications, notificatio
           openSidebar={openSidebar}
           handleLogout={handleLogout}
           userType={userType}
+          notifications={notifications}
         />
       )}
 
@@ -360,8 +361,22 @@ const AppContent = ({ openSidebar, setOpenSidebar, setNotifications, notificatio
 
 function App() {
   const [openSidebar, setOpenSidebar] = useState(true);
-  const [notifications, setNotifications] = useState(null);
+  const [notifications, setNotifications] = useState(0);
+  const [notificationsTrue, setNotificationsTrue] = useState(0);
 
+
+  useEffect(() => {
+    const fetchUnreadCount = async () => {
+      const res = await fetch(`${baseURL}/deliver/messages`, { credentials: 'include' });
+      if (res.ok) {
+        const data = await res.json();
+        const count = data.filter(msg => msg.status === 'new' && msg.from !== 'deliver').length;
+        setNotifications(count);
+      }
+    };
+    fetchUnreadCount();
+  }, []);
+  
   return (
     <BrowserRouter>
       <AppContent 
