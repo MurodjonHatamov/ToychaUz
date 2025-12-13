@@ -26,7 +26,7 @@ const getMenuItems = () => {
   if (userType === "deliver") {
     return [
       { name: "Buyurtmalar", path: "/", icon: <MdListAlt size={24} /> },
-      { name: "Bozorlar", path: "/markets", icon: <MdStore size={24} /> },
+      { name: "MTT lar", path: "/markets", icon: <MdStore size={24} /> },
       { name: "Mahsulotlar", path: "/products", icon: <MdInventory size={24} /> },
       { name: "Mahsulot chegarasi", path: "/product-limit", icon: <MdOutlineAssignment size={24} /> },
       { name: "Chat", path: "/chat", icon: <MdChat size={24} />,badge:notifications },

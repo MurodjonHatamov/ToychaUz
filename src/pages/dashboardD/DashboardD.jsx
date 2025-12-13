@@ -21,8 +21,11 @@ function DashboardD() {
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]); // ✅ Yangi: kategoriyalar
+  const [selectedCategory, setSelectedCategory] = useState("all"); // ✅ Yangi: tanlangan kategoriya
   const [marketNames, setMarketNames] = useState({});
   const [productNames, setProductNames] = useState({});
+  const [categoryNames, setCategoryNames] = useState({}); // ✅ Yangi: kategoriya nomlari
 
   const [pagination, setPagination] = useState({
     page: 1,
@@ -31,11 +34,12 @@ function DashboardD() {
     totalPages: 0,
   });
 
-  // ✅ VAQTNI QO'SHGAN FILTRLAR
+  // ✅ VAQT VA KATEGORIYA FILTRLARI
   const [filters, setFilters] = useState({
     status: "all",
-    from: "", // Endi datetime-local uchun
-    to: "", // Endi datetime-local uchun
+    from: "",
+    to: "",
+    categoryId: "all", // ✅ Yangi: kategoriya filteri
   });
 
   const [loading, setLoading] = useState({
@@ -44,6 +48,7 @@ function DashboardD() {
     export: false,
     details: false,
     products: true,
+    categories: true, // ✅ Yangi: kategoriyalar yuklanmoqda
   });
 
   const [snackbar, setSnackbar] = useState({
@@ -79,10 +84,41 @@ function DashboardD() {
         setMarketNames(marketMap);
       }
     } catch (error) {
-    
       showSnackbar("Marketlarni yuklab boʻlmadi", "error");
     } finally {
       setLoading((prev) => ({ ...prev, markets: false }));
+    }
+  };
+
+  // ✅ YANGI: KATEGORIYALARNI OLISH FUNKSIYASI
+  const fetchCategories = async () => {
+    try {
+      setLoading((prev) => ({ ...prev, categories: true }));
+      const response = await fetch(`${baseURL}/product-category`, {
+        method: "GET",
+        headers: {
+          accept: "*/*",
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+      logaut(response);
+
+      if (response.ok) {
+        const categoriesData = await response.json();
+        setCategories(categoriesData);
+        
+        // Kategoriya nomlari map'ini yaratish
+        const categoryMap = {};
+        categoriesData.forEach((category) => {
+          categoryMap[category._id] = category.name;
+        });
+        setCategoryNames(categoryMap);
+      }
+    } catch (error) {
+      showSnackbar("Kategoriyalarni yuklab boʻlmadi", "error");
+    } finally {
+      setLoading((prev) => ({ ...prev, categories: false }));
     }
   };
 
@@ -107,19 +143,15 @@ function DashboardD() {
           productMap[product._id] = product.name;
         });
         setProductNames(productMap);
-
-
-        
       }
     } catch (error) {
-  
       showSnackbar("Mahsulotlarni yuklab boʻlmadi", "error");
     } finally {
       setLoading((prev) => ({ ...prev, products: false }));
     }
   };
 
-  // ✅ VAQT BILAN QIDIRISH FUNKSIYASI
+  // ✅ KATEGORIYA FILTRI BILAN QIDIRISH FUNKSIYASI
   const fetchOrders = async (page = 1, limit = 10) => {
     try {
       setLoading((prev) => ({ ...prev, orders: true }));
@@ -132,6 +164,11 @@ function DashboardD() {
 
       if (filters.status && filters.status !== "all") {
         queryParams.append("status", filters.status);
+      }
+
+      // ✅ Kategoriya filteri qo'shildi
+      if (filters.categoryId && filters.categoryId !== "all") {
+        queryParams.append("categoryId", filters.categoryId);
       }
 
       // ✅ Datetime-local formatni ISO formatga o'zgartirish
@@ -163,8 +200,6 @@ function DashboardD() {
 
       if (response.ok) {
         const data = await response.json();
-  
-
         setOrders(data.data || []);
 
         const total = data.total || 0;
@@ -181,7 +216,6 @@ function DashboardD() {
         throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
-    
       showSnackbar("Buyurtmalarni yuklab boʻlmadi", "error");
     } finally {
       setLoading((prev) => ({ ...prev, orders: false }));
@@ -212,7 +246,6 @@ function DashboardD() {
         throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
-  
       showSnackbar("Buyurtma ma'lumotlarini olish mumkin emas", "error");
     } finally {
       setLoading((prev) => ({ ...prev, details: false }));
@@ -251,12 +284,21 @@ function DashboardD() {
     return productName || "Noma'lum mahsulot";
   };
 
+  // ✅ KATEGORIYA NOMINI OLISH
+  const getCategoryName = (categoryId) => {
+    if (!categoryId) return "Noma'lum kategoriya";
+    if (typeof categoryId === "object" && categoryId.name) {
+      return categoryId.name;
+    }
+    const categoryName = categoryNames[categoryId];
+    return categoryName || "Noma'lum kategoriya";
+  };
+
   // ✅ SANA VA VAQTNI FORMATLASH FUNKSIYASI
   const formatDateTime = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
     
-    // Format: MM/DD/YYYY HH:mm
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
     const year = date.getFullYear();
@@ -289,7 +331,6 @@ function DashboardD() {
         throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
-    
       showSnackbar("Buyurtmani qabul qilib boʻlmadi", "error");
     }
   };
@@ -317,7 +358,6 @@ function DashboardD() {
         throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
-     
       showSnackbar("Buyurtmani yetkazib berib boʻlmadi", "error");
     }
   };
@@ -350,11 +390,11 @@ function DashboardD() {
         throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
-   
       showSnackbar("Buyurtmani bekor qilib boʻlmadi", "error");
     }
   };
 
+  // ✅ KATEGORIYA FILTRI BILAN EXPORT QILISH
   const exportToExcel = async () => {
     try {
       setLoading((prev) => ({ ...prev, export: true }));
@@ -366,6 +406,9 @@ function DashboardD() {
       }
       if (filters.status && filters.status !== "all") {
         queryParams.append("status", filters.status);
+      }
+      if (filters.categoryId && filters.categoryId !== "all") {
+        queryParams.append("categoryId", filters.categoryId);
       }
       if (filters.from) {
         const fromDate = new Date(filters.from);
@@ -411,11 +454,9 @@ function DashboardD() {
         showSnackbar("Excel fayl muvaffaqiyatli yuklab olindi", "success");
       } else {
         const errorText = await response.text();
-     
         throw new Error(`Server xatosi: ${response.status} - ${errorText}`);
       }
     } catch (error) {
-
       showSnackbar(`Export qilib boʻlmadi: ${error.message}`, "error");
     } finally {
       setLoading((prev) => ({ ...prev, export: false }));
@@ -430,10 +471,8 @@ function DashboardD() {
 
     orders.forEach((order) => {
       const marketName = getMarketName(order.marketId);
-      // ✅ SANA VA VAQTNI FORMATLASH
       const dateTime = formatDateTime(order.createdAt);
       const status = order.status;
-      // ✅ Market nomi + sana va vaqt
       const orderKey = `${marketName} (${dateTime})`;
 
       orderColumns[orderKey] = {
@@ -532,6 +571,7 @@ function DashboardD() {
   useEffect(() => {
     fetchMarkets();
     fetchProducts();
+    fetchCategories(); // ✅ Kategoriyalarni yuklash
   }, []);
 
   useEffect(() => {
@@ -549,7 +589,7 @@ function DashboardD() {
 
   return (
     <div className={styles.dashboard}>
-      {/* FILTR PANELI - datetime-local bilan */}
+      {/* FILTR PANELI - datetime-local va kategoriya bilan */}
       <div className={styles.filterPanel}>
         <div className={styles.filterControls}>
           <div className={styles.filterGroup}>
@@ -582,6 +622,26 @@ function DashboardD() {
               <option value="accepted">Qabul qilindi</option>
               <option value="delivered">Yetkazib berildi</option>
               <option value="rejected">Rad etildi</option>
+            </select>
+          </div>
+
+          {/* ✅ YANGI: KATEGORIYA FILTRI */}
+          <div className={styles.filterGroup}>
+            <label className={styles.filterLabel}>Kategoriya</label>
+            <select
+              className={styles.filterSelect}
+              value={filters.categoryId}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, categoryId: e.target.value }))
+              }
+              disabled={loading.categories}
+            >
+              <option value="all">Barcha Kategoriyalar</option>
+              {categories.map((category) => (
+                <option key={category._id} value={category._id}>
+                  {category.name}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -668,7 +728,7 @@ function DashboardD() {
         </div>
       )}
 
-      {/* EXCEL JADVALI - ✅ Sana va vaqt bilan */}
+      {/* EXCEL JADVALI */}
       <div className={styles.excelTablePanel}>
         {loading.orders ? (
           <div className={styles.loading}>
@@ -703,7 +763,6 @@ function DashboardD() {
                       >
                         <div className={styles.orderHeaderContent}>
                           <div className={styles.orderTitle}>
-                            {/* ✅ Sana va vaqtni alohida qatorlarda ko'rsatish */}
                             <div className={styles.marketName}>
                               {orderColumns[orderKey]?.marketName}
                             </div>

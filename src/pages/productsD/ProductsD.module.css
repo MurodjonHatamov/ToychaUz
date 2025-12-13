@@ -36,8 +36,6 @@
   font-weight: 600 !important;
 }
 
-
-
 .titleIcon {
   color: var(--primary) !important;
   font-size: 1.8rem !important;
@@ -58,21 +56,25 @@
   opacity: 0.9 !important;
 }
 
-/* Qidiruv bo'limi */
-.searchSection {
+/* Filtrlash paneli */
+.filterPanel {
   display: flex !important;
-  justify-content: space-between !important;
-  align-items: center !important;
+  flex-direction: column !important;
   gap: 16px !important;
 }
 
+.filterControls {
+  display: flex !important;
+  align-items: flex-end !important;
+  gap: 16px !important;
+  flex-wrap: wrap !important;
+}
+
+/* Qidiruv bo'limi */
 .searchBox {
   position: relative !important;
-  flex: 1 !important;
+  min-width: 400px !important;
   max-width: 400px !important;
-  display: flex !important;
-  gap: 8px !important;
-  align-items: center !important;
 }
 
 .searchIcon {
@@ -95,47 +97,24 @@
   border-radius: var(--radius) !important;
 }
 
-.clearSearchButton {
-  text-transform: none !important;
-  font-size: 0.8rem !important;
-  padding: 4px 12px !important;
-  min-width: auto !important;
+/* Kategoriya filtri */
+.categoryFilter {
+  min-width: 300px !important;
 }
 
-/* Statistika qutisi */
-.statsBox {
-  display: flex !important;
-  align-items: center !important;
-  gap: 16px !important;
-  background-color: var(--item) !important;
-  padding: 8px 16px !important;
-  border-radius: var(--radius) !important;
-  border: 1px solid var(--border) !important;
-}
-
-.statItem {
+.filterLabel {
   display: flex !important;
   align-items: center !important;
   gap: 6px !important;
-}
-
-.statLabel {
   color: var(--text-light) !important;
-  font-size: 0.85rem !important;
-  font-weight: 500 !important;
 }
 
-.statValue {
-  color: var(--text) !important;
+.filterIcon {
   font-size: 0.9rem !important;
-  font-weight: 600 !important;
 }
 
-.statDivider {
-  width: 1px !important;
-  height: 20px !important;
-  background-color: var(--border) !important;
-}
+
+
 
 /* Jadval bo'limi */
 .tableSection {

@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  TextField, 
-  Button, 
-  Snackbar, 
+import React, { useState, useEffect } from "react";
+import {
+  TextField,
+  Button,
+  Snackbar,
   Alert,
   Dialog,
   DialogTitle,
@@ -19,77 +19,81 @@ import {
   MenuItem,
   Select,
   InputLabel,
-  FormControl
-} from '@mui/material';
-import { 
-  FaPlus, 
-  FaEdit, 
-  FaTrash, 
-  FaBox, 
+  FormControl,
+  Tooltip,
+} from "@mui/material";
+import {
+  FaPlus,
+  FaEdit,
+  FaTrash,
+  FaBox,
   FaSpinner,
   FaSearch,
   FaWeight,
   FaRuler,
   FaCube,
   FaWineBottle,
-  FaFolder
-} from 'react-icons/fa';
-import styles from './ProductsD.module.css';
-import { logaut } from '../logaut';
-import { baseURL } from '../config';
+  FaFolder,
+  FaFilter,
+  FaTimes,
+} from "react-icons/fa";
+import styles from "./ProductsD.module.css";
+import { logaut } from "../logaut";
+import { baseURL } from "../config";
 
 function ProductsD() {
   // ==================== STATE DEFINITIONS ====================
-  
+
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
-  console.log(categories);
-  
+
   const [formData, setFormData] = useState({
-    name: '',
-    unit: 'piece',
-    category: ''
+    name: "",
+    unit: "piece",
+    category: "",
   });
-  
+
   const [snackbar, setSnackbar] = useState({
     open: false,
-    message: '',
-    severity: 'success'
+    message: "",
+    severity: "success",
   });
-  
+
   const [loading, setLoading] = useState({
     products: true,
     categories: true,
     submit: false,
-    delete: false
+    delete: false,
+    filter: false,
   });
 
   // O'lchov birliklari
   const unitOptions = [
-    { value: 'piece', label: 'Dona', icon: <FaCube /> },
-    { value: 'liter', label: 'Litr', icon: <FaWineBottle /> },
-    { value: 'kg', label: 'Kilogram', icon: <FaWeight /> },
-    { value: 'm', label: 'Metr', icon: <FaRuler /> }
+    { value: "piece", label: "Dona", icon: <FaCube /> },
+    { value: "liter", label: "Litr", icon: <FaWineBottle /> },
+    { value: "kg", label: "Kilogram", icon: <FaWeight /> },
+    { value: "m", label: "Metr", icon: <FaRuler /> },
   ];
 
   // ==================== API FUNCTIONS ====================
 
   const fetchProducts = async () => {
     try {
-      setLoading(prev => ({ ...prev, products: true }));
-      
+      setLoading((prev) => ({ ...prev, products: true }));
+
       const response = await fetch(`${baseURL}/products`, {
-        method: 'GET',
-        headers: { 
-          'accept': '*/*',
-          'Content-Type': 'application/json'
+        method: "GET",
+        headers: {
+          accept: "*/*",
+          "Content-Type": "application/json",
         },
-        credentials: 'include'
+        credentials: "include",
       });
       logaut(response);
       if (response.ok) {
@@ -100,27 +104,27 @@ function ProductsD() {
         throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
-      console.error('Fetch products error:', error);
-      showSnackbar('Mahsulotlarni yuklab boʻlmadi', 'error');
+      console.error("Fetch products error:", error);
+      showSnackbar("Mahsulotlarni yuklab boʻlmadi", "error");
     } finally {
-      setLoading(prev => ({ ...prev, products: false }));
+      setLoading((prev) => ({ ...prev, products: false }));
     }
   };
 
   const fetchCategories = async () => {
     try {
-      setLoading(prev => ({ ...prev, categories: true }));
-      
+      setLoading((prev) => ({ ...prev, categories: true }));
+
       const response = await fetch(`${baseURL}/product-category`, {
-        method: 'GET',
-        headers: { 
-          'accept': '*/*',
-          'Content-Type': 'application/json'
+        method: "GET",
+        headers: {
+          accept: "*/*",
+          "Content-Type": "application/json",
         },
-        credentials: 'include'
+        credentials: "include",
       });
       logaut(response);
-      
+
       if (response.ok) {
         const categoriesData = await response.json();
         setCategories(categoriesData);
@@ -128,108 +132,155 @@ function ProductsD() {
         throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
-      console.error('Fetch categories error:', error);
-      showSnackbar('Kategoriyalarni yuklab boʻlmadi', 'error');
+      console.error("Fetch categories error:", error);
+      showSnackbar("Kategoriyalarni yuklab boʻlmadi", "error");
     } finally {
-      setLoading(prev => ({ ...prev, categories: false }));
+      setLoading((prev) => ({ ...prev, categories: false }));
+    }
+  };
+
+  const fetchProductsByCategory = async (categoryId) => {
+    try {
+      setLoading((prev) => ({ ...prev, filter: true }));
+
+      const response = await fetch(
+        `${baseURL}/products/by-category/${categoryId}`,
+        {
+          method: "GET",
+          headers: {
+            accept: "*/*",
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        }
+      );
+
+      logaut(response);
+
+      if (response.ok) {
+        const productsData = await response.json();
+        setFilteredProducts(productsData);
+      } else {
+        throw new Error(`Server xatosi: ${response.status}`);
+      }
+    } catch (error) {
+      console.error("Fetch products by category error:", error);
+      showSnackbar(
+        "Mahsulotlarni kategoriya boʻyicha yuklab boʻlmadi",
+        "error"
+      );
+    } finally {
+      setLoading((prev) => ({ ...prev, filter: false }));
     }
   };
 
   const createProduct = async (productData) => {
     try {
-      setLoading(prev => ({ ...prev, submit: true }));
-      
+      setLoading((prev) => ({ ...prev, submit: true }));
+
       const response = await fetch(`${baseURL}/products`, {
-        method: 'POST',
-        headers: { 
-          'accept': '*/*',
-          'Content-Type': 'application/json'
+        method: "POST",
+        headers: {
+          accept: "*/*",
+          "Content-Type": "application/json",
         },
-        credentials: 'include',
-        body: JSON.stringify(productData)
+        credentials: "include",
+        body: JSON.stringify(productData),
       });
-      
+
       logaut(response);
-      
+
       if (response.ok) {
-        showSnackbar('✅ Mahsulot muvaffaqiyatli qoʻshildi', 'success');
+        showSnackbar("✅ Mahsulot muvaffaqiyatli qoʻshildi", "success");
         fetchProducts();
         resetForm();
         setDialogOpen(false);
       } else {
         const errorData = await response.json();
-        throw new Error(errorData.message || `Server xatosi: ${response.status}`);
+        throw new Error(
+          errorData.message || `Server xatosi: ${response.status}`
+        );
       }
     } catch (error) {
-      console.error('Create product error:', error);
-      showSnackbar(`❌ ${error.message}`, 'error');
+      console.error("Create product error:", error);
+      showSnackbar(`❌ ${error.message}`, "error");
     } finally {
-      setLoading(prev => ({ ...prev, submit: false }));
+      setLoading((prev) => ({ ...prev, submit: false }));
     }
   };
 
   const updateProduct = async (productId, productData) => {
     try {
-      setLoading(prev => ({ ...prev, submit: true }));
-      
+      setLoading((prev) => ({ ...prev, submit: true }));
+
       const response = await fetch(`${baseURL}/products/${productId}`, {
-        method: 'PATCH',
-        headers: { 
-          'accept': '*/*',
-          'Content-Type': 'application/json'
+        method: "PATCH",
+        headers: {
+          accept: "*/*",
+          "Content-Type": "application/json",
         },
-        credentials: 'include',
-        body: JSON.stringify(productData)
+        credentials: "include",
+        body: JSON.stringify(productData),
       });
-      
+
       logaut(response);
-      
+
       if (response.ok) {
-        showSnackbar('✅ Mahsulot maʼlumotlari yangilandi', 'success');
+        showSnackbar("✅ Mahsulot maʼlumotlari yangilandi", "success");
         fetchProducts();
         resetForm();
         setDialogOpen(false);
       } else {
         const errorData = await response.json();
-        throw new Error(errorData.message || `Server xatosi: ${response.status}`);
+        throw new Error(
+          errorData.message || `Server xatosi: ${response.status}`
+        );
       }
     } catch (error) {
-      console.error('Update product error:', error);
-      showSnackbar(`❌ ${error.message}`, 'error');
+      console.error("Update product error:", error);
+      showSnackbar(`❌ ${error.message}`, "error");
     } finally {
-      setLoading(prev => ({ ...prev, submit: false }));
+      setLoading((prev) => ({ ...prev, submit: false }));
     }
   };
 
   const deleteProduct = async (productId) => {
     try {
-      setLoading(prev => ({ ...prev, delete: true }));
-      
+      setLoading((prev) => ({ ...prev, delete: true }));
+
       const response = await fetch(`${baseURL}/products/${productId}`, {
-        method: 'DELETE',
-        headers: { 
-          'accept': '*/*',
-          'Content-Type': 'application/json'
+        method: "DELETE",
+        headers: {
+          accept: "*/*",
+          "Content-Type": "application/json",
         },
-        credentials: 'include'
+        credentials: "include",
       });
-      
+
       logaut(response);
-      
+
       if (response.ok) {
-        showSnackbar('✅ Mahsulot muvaffaqiyatli oʻchirildi', 'success');
+        showSnackbar("✅ Mahsulot muvaffaqiyatli oʻchirildi", "success");
         fetchProducts();
+        // Agar kategoriya filter aktiv bo'lsa, yangilash
+        if (selectedCategory) {
+          fetchProductsByCategory(selectedCategory);
+        } else {
+          fetchProducts();
+        }
         setDeleteDialogOpen(false);
         setEditingProduct(null);
       } else {
         const errorData = await response.json();
-        throw new Error(errorData.message || `Server xatosi: ${response.status}`);
+        throw new Error(
+          errorData.message || `Server xatosi: ${response.status}`
+        );
       }
     } catch (error) {
-      console.error('Delete product error:', error);
-      showSnackbar(`❌ ${error.message}`, 'error');
+      console.error("Delete product error:", error);
+      showSnackbar(`❌ ${error.message}`, "error");
     } finally {
-      setLoading(prev => ({ ...prev, delete: false }));
+      setLoading((prev) => ({ ...prev, delete: false }));
     }
   };
 
@@ -237,33 +288,36 @@ function ProductsD() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
   const resetForm = () => {
     setFormData({
-      name: '',
-      unit: 'piece',
-      category: ''
+      name: "",
+      unit: "piece",
+      category: "",
     });
     setEditingProduct(null);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     if (!formData.name || !formData.unit) {
-      showSnackbar('Iltimos, barcha majburiy maydonlarni toʻldiring', 'warning');
+      showSnackbar(
+        "Iltimos, barcha majburiy maydonlarni toʻldiring",
+        "warning"
+      );
       return;
     }
 
     const submitData = {
       name: formData.name,
       unit: formData.unit,
-      category: formData.category || undefined
+      category: formData.category || undefined,
     };
 
     if (editingProduct) {
@@ -278,7 +332,7 @@ function ProductsD() {
     setFormData({
       name: product.name,
       unit: product.unit,
-      category: product.category || ''
+      category: product.category || "",
     });
     setDialogOpen(true);
   };
@@ -293,62 +347,97 @@ function ProductsD() {
     setDialogOpen(true);
   };
 
-  // ==================== HELPER FUNCTIONS ====================
+  // ==================== FILTER FUNCTIONS ====================
 
-  const showSnackbar = (message, severity) => {
-    setSnackbar({
-      open: true,
-      message,
-      severity
-    });
+  const handleCategoryFilter = async (categoryId) => {
+    setSelectedCategory(categoryId);
+
+    if (!categoryId) {
+      // Barcha mahsulotlarni ko'rsatish
+      fetchProducts();
+      return;
+    }
+
+    // Kategoriya bo'yicha mahsulotlarni olish
+    fetchProductsByCategory(categoryId);
   };
-
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('uz-UZ', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit'
-    });
-  };
-
-  const getUnitIcon = (unit) => {
-    const unitOption = unitOptions.find(opt => opt.value === unit);
-    return unitOption ? unitOption.icon : <FaCube />;
-  };
-
-  const getUnitLabel = (unit) => {
-    const unitOption = unitOptions.find(opt => opt.value === unit);
-    return unitOption ? unitOption.label : unit;
-  };
-
-  const getCategoryName = (categoryId) => {
-    if (!categoryId) return 'Kategoriya tanlanmagan';
-    const category = categories.find(cat => cat._id === categoryId);
-    return category ? category.name : 'Noma\'lum kategoriya';
-  };
-
-  // ==================== SEARCH & FILTER ====================
 
   const handleSearch = (e) => {
     const term = e.target.value.toLowerCase();
     setSearchTerm(term);
-    
-    if (term === '') {
-      setFilteredProducts(products);
+
+    if (term === "") {
+      if (selectedCategory) {
+        // Faqat kategoriya filteri bo'yicha
+        const filtered = products.filter(
+          (product) => product.category === selectedCategory
+        );
+        setFilteredProducts(filtered);
+      } else {
+        setFilteredProducts(products);
+      }
     } else {
-      const filtered = products.filter(product => {
+      const filtered = products.filter((product) => {
         const productName = product.name.toLowerCase().includes(term);
-        const productUnit = getUnitLabel(product.unit).toLowerCase().includes(term);
-        const categoryName = getCategoryName(product.category).toLowerCase().includes(term);
+        const productUnit = getUnitLabel(product.unit)
+          .toLowerCase()
+          .includes(term);
+        const categoryName = getCategoryName(product.category)
+          .toLowerCase()
+          .includes(term);
+
+        // Agar kategoriya filter aktiv bo'lsa
+        if (selectedCategory) {
+          return (
+            product.category === selectedCategory &&
+            (productName || productUnit || categoryName)
+          );
+        }
+
         return productName || productUnit || categoryName;
       });
       setFilteredProducts(filtered);
     }
   };
 
-  const clearSearch = () => {
-    setSearchTerm('');
-    setFilteredProducts(products);
+  const clearAllFilters = () => {
+    setSearchTerm("");
+    setSelectedCategory("");
+    fetchProducts();
+  };
+
+  // ==================== HELPER FUNCTIONS ====================
+
+  const showSnackbar = (message, severity) => {
+    setSnackbar({
+      open: true,
+      message,
+      severity,
+    });
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString("uz-UZ", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+  };
+
+  const getUnitIcon = (unit) => {
+    const unitOption = unitOptions.find((opt) => opt.value === unit);
+    return unitOption ? unitOption.icon : <FaCube />;
+  };
+
+  const getUnitLabel = (unit) => {
+    const unitOption = unitOptions.find((opt) => opt.value === unit);
+    return unitOption ? unitOption.label : unit;
+  };
+
+  const getCategoryName = (categoryId) => {
+    if (!categoryId) return "Kategoriya tanlanmagan";
+    const category = categories.find((cat) => cat._id === categoryId);
+    return category ? category.name : "Noma'lum kategoriya";
   };
 
   // ==================== USE EFFECT HOOKS ====================
@@ -369,7 +458,6 @@ function ProductsD() {
             <FaBox className={styles.titleIcon} />
             <div>
               <h1>Mahsulotlar Boshqaruvi</h1>
-              
             </div>
           </div>
           <Button
@@ -383,62 +471,58 @@ function ProductsD() {
           </Button>
         </div>
 
-        {/* QIDIRUV */}
-        <div className={styles.searchSection}>
-          <div className={styles.searchBox}>
-            <FaSearch className={styles.searchIcon} />
-            <TextField
-              variant="outlined"
-              placeholder="Mahsulot nomi, kategoriya yoki o'lchov birligi boʻyicha qidirish..."
-              value={searchTerm}
-              onChange={handleSearch}
-              className={styles.searchInput}
-              size="small"
-              fullWidth
-              InputProps={{
-                className: styles.searchInputField
-              }}
-            />
-         
-          </div>
-          <FormControl  className={styles.formField}>
-                <InputLabel>Kategoriya (ixtiyoriy)</InputLabel>
-                <Select
-                  name="category"
-                  value={formData.category}
-                  onChange={handleInputChange}
-                  label="Kategoriya (ixtiyoriy)"
-                >
-                  <MenuItem value="">
-                    <em>Kategoriya tanlanmagan</em>
+        {/* FILTRLASH PANELI */}
+        <div className={styles.filterPanel}>
+          <div className={styles.filterControls}>
+            {/* QIDIRUV */}
+            <div className={styles.searchBox}>
+              <FaSearch className={styles.searchIcon} />
+              <TextField
+                variant="outlined"
+                placeholder="Mahsulot nomi yoki o'lchov birligi boʻyicha qidirish..."
+                value={searchTerm}
+                onChange={handleSearch}
+                className={styles.searchInput}
+                size="small"
+                fullWidth
+                InputProps={{
+                  className: styles.searchInputField,
+                }}
+              />
+            </div>
+
+            {/* KATEGORIYA FILTERI */}
+            <FormControl className={styles.categoryFilter}>
+              <InputLabel className={styles.filterLabel}>
+                <FaFilter className={styles.filterIcon} />
+                Kategoriya boʻyicha filtrlash
+              </InputLabel>
+              <Select
+                value={selectedCategory}
+                onChange={(e) => handleCategoryFilter(e.target.value)}
+                label="Kategoriya boʻyicha filtrlash"
+                size="small"
+              >
+                <MenuItem value="">
+                  <em>Barcha kategoriyalar</em>
+                </MenuItem>
+                {categories.map((category) => (
+                  <MenuItem key={category._id} value={category._id}>
+                    <div className={styles.categoryMenuItem}>
+                      <FaFolder className={styles.categoryMenuIcon} />
+                      <span>{category.name}</span>
+                    </div>
                   </MenuItem>
-                  {categories.map((category) => (
-                    <MenuItem key={category._id} value={category._id}>
-                      <div className={styles.categoryMenuItem}>
-                        <FaFolder className={styles.categoryMenuIcon} />
-                        <span>{category.name}</span>
-                      </div>
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-          <div className={styles.statsBox}>
-            <div className={styles.statItem}>
-              <span className={styles.statLabel}>Jami:</span>
-              <span className={styles.statValue}>{filteredProducts.length} ta</span>
-            </div>
-            <div className={styles.statDivider}></div>
-            <div className={styles.statItem}>
-              <span className={styles.statLabel}>Kategoriyalar:</span>
-              <span className={styles.statValue}>{categories.length} ta</span>
-            </div>
+                ))}
+              </Select>
+            </FormControl>
           </div>
         </div>
       </div>
 
       {/* MAHSULOTLAR JADVALI */}
       <div className={styles.tableSection}>
-        {loading.products || loading.categories ? (
+        {loading.products || loading.categories || loading.filter ? (
           <div className={styles.loading}>
             <FaSpinner className={styles.spinner} />
             <span>Ma'lumotlar yuklanmoqda...</span>
@@ -448,11 +532,21 @@ function ProductsD() {
             <Table className={styles.table}>
               <TableHead className={styles.tableHead}>
                 <TableRow>
-                  <TableCell className={styles.tableHeaderCell}>Mahsulot Nomi</TableCell>
-                  <TableCell className={styles.tableHeaderCell}>Kategoriya</TableCell>
-                  <TableCell className={styles.tableHeaderCell}>Oʻlchov Birligi</TableCell>
-                  <TableCell className={styles.tableHeaderCell}>Qoʻshilgan Sana</TableCell>
-                  <TableCell className={styles.tableHeaderCell}>Harakatlar</TableCell>
+                  <TableCell className={styles.tableHeaderCell}>
+                    Mahsulot Nomi
+                  </TableCell>
+                  <TableCell className={styles.tableHeaderCell}>
+                    Kategoriya
+                  </TableCell>
+                  <TableCell className={styles.tableHeaderCell}>
+                    Oʻlchov Birligi
+                  </TableCell>
+                  <TableCell className={styles.tableHeaderCell}>
+                    Qoʻshilgan Sana
+                  </TableCell>
+                  <TableCell className={styles.tableHeaderCell}>
+                    Harakatlar
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -461,7 +555,9 @@ function ProductsD() {
                     <TableCell className={styles.tableCell}>
                       <div className={styles.productNameCell}>
                         <FaBox className={styles.productIcon} />
-                        <span className={styles.productName}>{product.name}</span>
+                        <span className={styles.productName}>
+                          {product.name}
+                        </span>
                       </div>
                     </TableCell>
                     <TableCell className={styles.tableCell}>
@@ -493,7 +589,7 @@ function ProductsD() {
                           title="Tahrirlash"
                           size="small"
                         >
-                          <FaEdit className={styles.FaEdit}/>
+                          <FaEdit className={styles.FaEdit} />
                         </IconButton>
                         <IconButton
                           onClick={() => handleDelete(product)}
@@ -501,7 +597,7 @@ function ProductsD() {
                           title="Oʻchirish"
                           size="small"
                         >
-                          <FaTrash  className={styles.FaTrash}/>
+                          <FaTrash className={styles.FaTrash} />
                         </IconButton>
                       </div>
                     </TableCell>
@@ -514,18 +610,21 @@ function ProductsD() {
           <div className={styles.noData}>
             <FaBox className={styles.noDataIcon} />
             <div className={styles.noDataText}>
-              {searchTerm ? 'Qidiruv boʻyicha mahsulotlar topilmadi' : 'Hech qanday mahsulot topilmadi'}
+              {searchTerm || selectedCategory
+                ? "Filtrlar boʻyicha mahsulotlar topilmadi"
+                : "Hech qanday mahsulot topilmadi"}
             </div>
-            {searchTerm && (
+            {(searchTerm || selectedCategory) && (
               <Button
                 variant="outlined"
-                onClick={clearSearch}
+                onClick={clearAllFilters}
                 className={styles.clearSearchButton}
+                startIcon={<FaTimes />}
               >
-                Qidiruvni tozalash
+                Filtrlarni tozalash
               </Button>
             )}
-            {!searchTerm && (
+            {!searchTerm && !selectedCategory && (
               <Button
                 variant="contained"
                 onClick={handleAddNew}
@@ -548,9 +647,9 @@ function ProductsD() {
       >
         <DialogTitle className={styles.dialogTitle}>
           <FaBox className={styles.dialogIcon} />
-          {editingProduct ? 'Mahsulotni Tahrirlash' : 'Yangi Mahsulot Qoʻshish'}
+          {editingProduct ? "Mahsulotni Tahrirlash" : "Yangi Mahsulot Qoʻshish"}
         </DialogTitle>
-        
+
         <form onSubmit={handleSubmit}>
           <DialogContent className={styles.dialogContent}>
             <div className={styles.formGrid}>
@@ -627,10 +726,12 @@ function ProductsD() {
               {loading.submit ? (
                 <>
                   <FaSpinner className={styles.buttonSpinner} />
-                  {editingProduct ? 'Saqlanmoqda...' : 'Qoʻshilmoqda...'}
+                  {editingProduct ? "Saqlanmoqda..." : "Qoʻshilmoqda..."}
                 </>
+              ) : editingProduct ? (
+                "Saqlash"
               ) : (
-                editingProduct ? 'Saqlash' : 'Qoʻshish'
+                "Qoʻshish"
               )}
             </Button>
           </DialogActions>
@@ -648,20 +749,24 @@ function ProductsD() {
           <FaTrash className={styles.deleteDialogIcon} />
           Mahsulotni Oʻchirish
         </DialogTitle>
-        
+
         <DialogContent className={styles.deleteDialogContent}>
           <div className={styles.deleteWarning}>
             Quyidagi mahsulotni oʻchirishni tasdiqlaysizmi?
           </div>
-          
+
           {editingProduct && (
             <div className={styles.productToDelete}>
               <div className={styles.deleteProductIcon}>
                 <FaBox />
               </div>
-              <div className={styles.deleteProductName}>{editingProduct.name}</div>
+              <div className={styles.deleteProductName}>
+                {editingProduct.name}
+              </div>
               <div className={styles.deleteProductDetails}>
-                <div>Kategoriya: {getCategoryName(editingProduct.category)}</div>
+                <div>
+                  Kategoriya: {getCategoryName(editingProduct.category)}
+                </div>
                 <div>Oʻlchov birligi: {getUnitLabel(editingProduct.unit)}</div>
                 <div>Qoʻshilgan: {formatDate(editingProduct.createdAt)}</div>
               </div>
@@ -694,7 +799,7 @@ function ProductsD() {
                 Oʻchirilmoqda...
               </>
             ) : (
-              'Oʻchirish'
+              "Oʻchirish"
             )}
           </Button>
         </DialogActions>
@@ -704,13 +809,13 @@ function ProductsD() {
       <Snackbar
         open={snackbar.open}
         autoHideDuration={4000}
-        onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
       >
-        <Alert 
+        <Alert
           severity={snackbar.severity}
-          onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
-          sx={{ width: '100%' }}
+          onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
+          sx={{ width: "100%" }}
         >
           {snackbar.message}
         </Alert>
