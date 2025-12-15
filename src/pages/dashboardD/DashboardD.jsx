@@ -4,8 +4,6 @@ import {
   FaDownload,
   FaSpinner,
   FaExclamationTriangle,
-  FaCheckCircle,
-  FaTimesCircle,
   FaChevronLeft,
   FaChevronRight,
 } from "react-icons/fa";
@@ -21,11 +19,10 @@ function DashboardD() {
   const [orders, setOrders] = useState([]);
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]); // ✅ Yangi: kategoriyalar
-  const [selectedCategory, setSelectedCategory] = useState("all"); // ✅ Yangi: tanlangan kategoriya
+  const [categories, setCategories] = useState([]);
   const [marketNames, setMarketNames] = useState({});
   const [productNames, setProductNames] = useState({});
-  const [categoryNames, setCategoryNames] = useState({}); // ✅ Yangi: kategoriya nomlari
+  const [productUnits, setProductUnits] = useState({}); // ✅ Mahsulot birliklari
 
   const [pagination, setPagination] = useState({
     page: 1,
@@ -34,12 +31,11 @@ function DashboardD() {
     totalPages: 0,
   });
 
-  // ✅ VAQT VA KATEGORIYA FILTRLARI
   const [filters, setFilters] = useState({
     status: "all",
     from: "",
     to: "",
-    categoryId: "all", // ✅ Yangi: kategoriya filteri
+    categoryId: "",
   });
 
   const [loading, setLoading] = useState({
@@ -48,7 +44,7 @@ function DashboardD() {
     export: false,
     details: false,
     products: true,
-    categories: true, // ✅ Yangi: kategoriyalar yuklanmoqda
+    categories: true,
   });
 
   const [snackbar, setSnackbar] = useState({
@@ -90,7 +86,6 @@ function DashboardD() {
     }
   };
 
-  // ✅ YANGI: KATEGORIYALARNI OLISH FUNKSIYASI
   const fetchCategories = async () => {
     try {
       setLoading((prev) => ({ ...prev, categories: true }));
@@ -107,13 +102,6 @@ function DashboardD() {
       if (response.ok) {
         const categoriesData = await response.json();
         setCategories(categoriesData);
-        
-        // Kategoriya nomlari map'ini yaratish
-        const categoryMap = {};
-        categoriesData.forEach((category) => {
-          categoryMap[category._id] = category.name;
-        });
-        setCategoryNames(categoryMap);
       }
     } catch (error) {
       showSnackbar("Kategoriyalarni yuklab boʻlmadi", "error");
@@ -139,10 +127,13 @@ function DashboardD() {
         const productsData = await response.json();
         setProducts(productsData);
         const productMap = {};
+        const unitMap = {}; // ✅ Birliklar map'ini yaratish
         productsData.forEach((product) => {
           productMap[product._id] = product.name;
+          unitMap[product._id] = product.unit; // ✅ Birlikni saqlash
         });
         setProductNames(productMap);
+        setProductUnits(unitMap); // ✅ Birliklarni state'ga saqlash
       }
     } catch (error) {
       showSnackbar("Mahsulotlarni yuklab boʻlmadi", "error");
@@ -151,7 +142,6 @@ function DashboardD() {
     }
   };
 
-  // ✅ KATEGORIYA FILTRI BILAN QIDIRISH FUNKSIYASI
   const fetchOrders = async (page = 1, limit = 10) => {
     try {
       setLoading((prev) => ({ ...prev, orders: true }));
@@ -166,12 +156,10 @@ function DashboardD() {
         queryParams.append("status", filters.status);
       }
 
-      // ✅ Kategoriya filteri qo'shildi
       if (filters.categoryId && filters.categoryId !== "all") {
         queryParams.append("categoryId", filters.categoryId);
       }
 
-      // ✅ Datetime-local formatni ISO formatga o'zgartirish
       if (filters.from) {
         const fromDate = new Date(filters.from);
         queryParams.append("from", fromDate.toISOString());
@@ -212,8 +200,6 @@ function DashboardD() {
           total: total,
           totalPages: Math.ceil(total / lim),
         });
-      } else {
-        throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
       showSnackbar("Buyurtmalarni yuklab boʻlmadi", "error");
@@ -242,26 +228,12 @@ function DashboardD() {
         const order = await response.json();
         setSelectedOrder(order);
         setOrderDialogOpen(true);
-      } else {
-        throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
       showSnackbar("Buyurtma ma'lumotlarini olish mumkin emas", "error");
     } finally {
       setLoading((prev) => ({ ...prev, details: false }));
     }
-  };
-
-  // ==================== PAGINATION FUNCTIONS ====================
-
-  const handlePageChange = (newPage) => {
-    if (newPage >= 1 && newPage <= pagination.totalPages) {
-      fetchOrders(newPage, pagination.limit);
-    }
-  };
-
-  const handleLimitChange = (newLimit) => {
-    fetchOrders(1, newLimit);
   };
 
   // ==================== HELPER FUNCTIONS ====================
@@ -284,27 +256,47 @@ function DashboardD() {
     return productName || "Noma'lum mahsulot";
   };
 
-  // ✅ KATEGORIYA NOMINI OLISH
-  const getCategoryName = (categoryId) => {
-    if (!categoryId) return "Noma'lum kategoriya";
-    if (typeof categoryId === "object" && categoryId.name) {
-      return categoryId.name;
-    }
-    const categoryName = categoryNames[categoryId];
-    return categoryName || "Noma'lum kategoriya";
+  // ✅ MAHSULOT BIRLIGINI OLISH
+  const getProductUnit = (productId) => {
+    if (!productId) return "";
+    
+    // Product ID obyekt bo'lishi mumkin
+    const actualProductId = typeof productId === 'object' ? productId._id : productId;
+    
+    // Birlik map'idan olish
+    const unit = productUnits[actualProductId];
+    if (!unit) return "";
+    
+    // O'lchov birligini formatlash
+    const unitMap = {
+      'piece': 'dona',
+      'kg': 'kg',
+      'liter': 'l',
+      'gram': 'gr',
+      'meter': 'm',
+      'unit': 'dona',
+      'litr': 'l',
+      'metr': 'm'
+    };
+    
+    return unitMap[unit] || unit || "";
   };
 
-  // ✅ SANA VA VAQTNI FORMATLASH FUNKSIYASI
+  // ✅ MAHSULOT ID'SINI NOM BO'YICHA TOPISH
+  const findProductIdByName = (productName) => {
+    return Object.keys(productNames).find(
+      key => productNames[key] === productName
+    );
+  };
+
   const formatDateTime = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
-    
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
     const year = date.getFullYear();
     const hours = date.getHours().toString().padStart(2, '0');
     const minutes = date.getMinutes().toString().padStart(2, '0');
-    
     return `(${month}/${day}/${year} ${hours}:${minutes})`;
   };
 
@@ -327,8 +319,6 @@ function DashboardD() {
         showSnackbar("Buyurtma muvaffaqiyatli qabul qilindi", "success");
         fetchOrders(pagination.page, pagination.limit);
         setOrderDialogOpen(false);
-      } else {
-        throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
       showSnackbar("Buyurtmani qabul qilib boʻlmadi", "error");
@@ -354,8 +344,6 @@ function DashboardD() {
         showSnackbar("Buyurtma muvaffaqiyatli yetkazib berildi", "success");
         fetchOrders(pagination.page, pagination.limit);
         setOrderDialogOpen(false);
-      } else {
-        throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
       showSnackbar("Buyurtmani yetkazib berib boʻlmadi", "error");
@@ -386,15 +374,12 @@ function DashboardD() {
         showSnackbar("Buyurtma muvaffaqiyatli bekor qilindi", "warning");
         fetchOrders(pagination.page, pagination.limit);
         setOrderDialogOpen(false);
-      } else {
-        throw new Error(`Server xatosi: ${response.status}`);
       }
     } catch (error) {
       showSnackbar("Buyurtmani bekor qilib boʻlmadi", "error");
     }
   };
 
-  // ✅ KATEGORIYA FILTRI BILAN EXPORT QILISH
   const exportToExcel = async () => {
     try {
       setLoading((prev) => ({ ...prev, export: true }));
@@ -434,30 +419,18 @@ function DashboardD() {
 
       if (response.ok) {
         const blob = await response.blob();
-        if (blob.size === 0) {
-          throw new Error("Fayl bo'sh");
-        }
-
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        const fileName = `buyurtmalar_${
-          new Date().toISOString().split("T")[0]
-        }.xlsx`;
-        a.download = fileName;
-
+        a.download = `buyurtmalar_${new Date().toISOString().split("T")[0]}.xlsx`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
-
         showSnackbar("Excel fayl muvaffaqiyatli yuklab olindi", "success");
-      } else {
-        const errorText = await response.text();
-        throw new Error(`Server xatosi: ${response.status} - ${errorText}`);
       }
     } catch (error) {
-      showSnackbar(`Export qilib boʻlmadi: ${error.message}`, "error");
+      showSnackbar("Export qilib boʻlmadi", "error");
     } finally {
       setLoading((prev) => ({ ...prev, export: false }));
     }
@@ -571,14 +544,13 @@ function DashboardD() {
   useEffect(() => {
     fetchMarkets();
     fetchProducts();
-    fetchCategories(); // ✅ Kategoriyalarni yuklash
+    fetchCategories();
   }, []);
 
   useEffect(() => {
     fetchOrders(1, pagination.limit);
   }, [selectedMarket, filters]);
 
-  // ✅ VAQTNI QO'SHGAN JADVAL MA'LUMOTLARI
   const { productData, orderColumns, orderKeys } = calculateExcelTableData();
   const { rowTotals, columnTotals, grandTotal } = calculateTotals(
     productData,
@@ -589,7 +561,7 @@ function DashboardD() {
 
   return (
     <div className={styles.dashboard}>
-      {/* FILTR PANELI - datetime-local va kategoriya bilan */}
+      {/* FILTR PANELI */}
       <div className={styles.filterPanel}>
         <div className={styles.filterControls}>
           <div className={styles.filterGroup}>
@@ -625,7 +597,6 @@ function DashboardD() {
             </select>
           </div>
 
-          {/* ✅ YANGI: KATEGORIYA FILTRI */}
           <div className={styles.filterGroup}>
             <label className={styles.filterLabel}>Kategoriya</label>
             <select
@@ -636,7 +607,7 @@ function DashboardD() {
               }
               disabled={loading.categories}
             >
-              <option value="all">Barcha Kategoriyalar</option>
+              <option value="">Barcha Kategoriyalar</option>
               {categories.map((category) => (
                 <option key={category._id} value={category._id}>
                   {category.name}
@@ -645,7 +616,6 @@ function DashboardD() {
             </select>
           </div>
 
-          {/* ✅ DATETIME-LOCAL INPUTLARI */}
           <div className={styles.filterGroup}>
             <label className={styles.filterLabel}>Dan (sana va vaqt)</label>
             <input
@@ -757,9 +727,7 @@ function DashboardD() {
                           color: "white",
                         }}
                         onClick={() => order && fetchOrderDetails(order._id)}
-                        title={`${orderKey} - ${getStatusText(
-                          status
-                        )} (Batafsil ko'rish uchun bosing)`}
+                        title={`${orderKey} - ${getStatusText(status)}`}
                       >
                         <div className={styles.orderHeaderContent}>
                           <div className={styles.orderTitle}>
@@ -781,24 +749,37 @@ function DashboardD() {
                 </tr>
               </thead>
               <tbody>
-                {Object.keys(productData).map((productName, index) => (
-                  <tr 
-                    key={productName} 
-                    className={`${styles.productRow} ${
-                      index % 2 === 0 ? styles.evenRow : styles.oddRow
-                    }`}
-                  >
-                    <td className={styles.productCell}>{productName}</td>
-                    {orderKeys.map((orderKey) => (
-                      <td key={orderKey} className={styles.quantityCell}>
-                        {productData[productName][orderKey] || 0}
+                {Object.keys(productData).map((productName, index) => {
+                  // ✅ Mahsulot ID'sini topish
+                  const productId = findProductIdByName(productName);
+                  // ✅ Mahsulot birligini olish
+                  const unit = getProductUnit(productId || "");
+                  
+                  return (
+                    <tr 
+                      key={productName} 
+                      className={`${styles.productRow} ${
+                        index % 2 === 0 ? styles.evenRow : styles.oddRow
+                      }`}
+                    >
+                      <td className={styles.productCell}>
+                        {productName}
+                      
                       </td>
-                    ))}
-                    <td className={styles.rowTotal}>
-                      {rowTotals[productName]}
-                    </td>
-                  </tr>
-                ))}
+                      
+                      {orderKeys.map((orderKey) => (
+                        <td key={orderKey} className={styles.quantityCell}>
+                          {productData[productName][orderKey] || 0}
+                        </td>
+                      ))}
+                      
+                      <td className={styles.rowTotal}>
+                        {rowTotals[productName]}
+                        {unit && <span className={styles.unitLabel}> {unit}</span>}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -815,21 +796,22 @@ function DashboardD() {
 
       {/* DIALOG */}
       {orderDialogOpen && selectedOrder && (
-      <EditOrderModal setOrderDialogOpen={setOrderDialogOpen}
-      selectedOrder={selectedOrder}
-      loading={loading}
-      getMarketName={getMarketName}
-      getStatusColor={getStatusColor}
-      getStatusText={getStatusText}
-      formatDateTime={formatDateTime}
-      getProductName={getProductName}
-      acceptOrder={acceptOrder}
-      rejectOrder={rejectOrder}
-      deliverOrder={deliverOrder}
-      fetchOrders={fetchOrders}
-      products={products}
-      setSnackbar={setSnackbar}
-      />
+        <EditOrderModal 
+          setOrderDialogOpen={setOrderDialogOpen}
+          selectedOrder={selectedOrder}
+          loading={loading}
+          getMarketName={getMarketName}
+          getStatusColor={getStatusColor}
+          getStatusText={getStatusText}
+          formatDateTime={formatDateTime}
+          getProductName={getProductName}
+          acceptOrder={acceptOrder}
+          rejectOrder={rejectOrder}
+          deliverOrder={deliverOrder}
+          fetchOrders={fetchOrders}
+          products={products}
+          setSnackbar={setSnackbar}
+        />
       )}
 
       <Snackbar

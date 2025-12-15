@@ -294,7 +294,7 @@ function Login() {
                   <FaStore />
                 </div>
                 <div className={styles.toggleText}>
-                  <span className={styles.toggleMainText}>Market</span>
+                  <span className={styles.toggleMainText}>Buyurtmachi</span>
                   <span className={styles.toggleSubText}>Sotuv do'koni</span>
                 </div>
               </button>
@@ -316,24 +316,29 @@ function Login() {
 
             {/* Telefon raqami kiritish */}
             <TextField
-              fullWidth
-              label="Telefon Raqam"
-              name="phone"
-              value={formData.phone}
-              onChange={handlePhoneChange}
-              placeholder="90 123 45 67"
-              required
-              disabled={loading}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <FaPhone style={{ color: '#B85042' }} />
-                  </InputAdornment>
-                ),
-              }}
-              className={styles.textField}
-              
-            />
+  fullWidth
+  label="Telefon Raqam"
+  name="phone"
+  value={formData.phone}
+  onChange={handlePhoneChange}
+  placeholder="90 123 45 67"
+  required
+  disabled={loading}
+  inputProps={{
+    inputMode: 'numeric',       // mobil qurilmalarda raqamli klaviatura
+    pattern: '[0-9]*',          // faqat raqamlarni qabul qilish
+    maxLength: 9                // xohlaysizmi 9 ta raqam bo‘lishi uchun
+  }}
+  InputProps={{
+    startAdornment: (
+      <InputAdornment position="start">
+        <FaPhone style={{ color: '#B85042' }} />
+      </InputAdornment>
+    ),
+  }}
+  className={styles.textField}
+/>
+
 
             {/* Parol kiritish */}
             <TextField

@@ -81,29 +81,31 @@ function TopNavbar({ onMenuToggle, setOpenSidebar, openSidebar, handleLogout,  u
       </div>)
     }
 
-          <div onClick={() => setDarkMode(!darkMode)} className={styles.darkMode}>
-            <Stack direction="row" spacing={1}>
-              <IconButton aria-label="theme-toggle" className={styles.iconButton}>
-                {darkMode ? <CiSun /> : <CiDark />}
-              </IconButton>
-            </Stack>
-          </div>
-      
-          <div className={styles.logaut}>
-            <Stack 
-              onClick={handleLogout}
-              sx={{
-                
-                borderRadius:'50%'
-              }} 
-              direction="row" 
-              spacing={1}
-            >
-              <IconButton aria-label="logout" color='error' className={styles.iconButton}>
-                <CiLogout />
-              </IconButton>
-            </Stack>
-          </div>
+         {
+          userType==='deliver'? "":<> <div onClick={() => setDarkMode(!darkMode)} className={styles.darkMode}>
+          <Stack direction="row" spacing={1}>
+            <IconButton aria-label="theme-toggle" className={styles.iconButton}>
+              {darkMode ? <CiSun /> : <CiDark />}
+            </IconButton>
+          </Stack>
+        </div>
+    
+        <div className={styles.logaut}>
+          <Stack 
+            onClick={handleLogout}
+            sx={{
+              
+              borderRadius:'50%'
+            }} 
+            direction="row" 
+            spacing={1}
+          >
+            <IconButton aria-label="logout" color='error' className={styles.iconButton}>
+              <CiLogout />
+            </IconButton>
+          </Stack>
+        </div></> 
+         }
           
           <IconButton  
             className={userType==='deliver' ?  styles.menuButtonIconDeliver: styles.menuButtonIcon}

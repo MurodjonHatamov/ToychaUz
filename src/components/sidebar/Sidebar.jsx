@@ -77,9 +77,15 @@ const menuItems=getMenuItems();
     return openSidebar ? styles.sidebar : styles.sidebarHidden;
   };
 
+
+  const getDeliverSidebarClass = () => {  
+
+    return openSidebar ? styles.deliverMenu : styles.deliverMenuHidden;
+  }
+
   return (
     <Box
-      className={getSidebarClass()}
+      className={userType==="deliver" ? getDeliverSidebarClass() : getSidebarClass()}
  
     >
       {/* Header */}

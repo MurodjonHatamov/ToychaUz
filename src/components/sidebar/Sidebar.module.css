@@ -1,7 +1,7 @@
 /* Sidebar.module.css */
 
 /* Asosiy sidebar konteyneri */
-.sidebar {
+.sidebar,.deliverMenu {
   width: 280px;
   background: var(--surface);
   height: 100vh;
@@ -15,14 +15,15 @@
   transition: all 0.3s ease;
 }
 
+
 /* Yashiringan sidebar */
-.sidebarHidden {
+.sidebarHidden,.deliverMenuHidden {
   width: 280px;
   background: var(--surface);
   height: 100vh;
   position: fixed;
   top: 0;
-  left: -280px;
+  left: -280px ;
   box-shadow: var(--shadow);
   display: flex;
   flex-direction: column;
@@ -196,6 +197,7 @@ z-index: 10;
 
   .sidebarOpen {
     transform: translateX(0);
+    
   }
 }
 
