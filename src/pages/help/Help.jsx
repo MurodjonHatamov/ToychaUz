@@ -118,8 +118,9 @@ function Help() {
 
   // Shablon savollar
   const templateQuestions = [
+    "Asalomu alaykum",
     "Buyurtma qachon yetib keladi?",
-    "Mahsulot mavjudmi?",
+ 
   ];
 
   // Komponent yuklanganda chat tarixini olish
