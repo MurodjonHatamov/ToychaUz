@@ -748,39 +748,40 @@ function DashboardD() {
                   <th className={styles.totalHeader}>Jami</th>
                 </tr>
               </thead>
-              <tbody>
-                {Object.keys(productData).map((productName, index) => {
-                  // ✅ Mahsulot ID'sini topish
-                  const productId = findProductIdByName(productName);
-                  // ✅ Mahsulot birligini olish
-                  const unit = getProductUnit(productId || "");
-                  
-                  return (
-                    <tr 
-                      key={productName} 
-                      className={`${styles.productRow} ${
-                        index % 2 === 0 ? styles.evenRow : styles.oddRow
-                      }`}
-                    >
-                      <td className={styles.productCell}>
-                        {productName}
-                      
-                      </td>
-                      
-                      {orderKeys.map((orderKey) => (
-                        <td key={orderKey} className={styles.quantityCell}>
-                          {productData[productName][orderKey] || 0}
-                        </td>
-                      ))}
-                      
-                      <td className={styles.rowTotal}>
-                        {rowTotals[productName]}
-                        {unit && <span className={styles.unitLabel}> {unit}</span>}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
+     <tbody>
+  {Object.keys(productData)
+    .sort((a, b) => a.localeCompare(b)) // ✅ ALFABIT BO'YICHA TARTIBLASH
+    .map((productName, index) => {
+      // ✅ Mahsulot ID'sini topish
+      const productId = findProductIdByName(productName);
+      // ✅ Mahsulot birligini olish
+      const unit = getProductUnit(productId || "");
+      
+      return (
+        <tr 
+          key={productName} 
+          className={`${styles.productRow} ${
+            index % 2 === 0 ? styles.evenRow : styles.oddRow
+          }`}
+        >
+          <td className={styles.productCell}>
+            {productName}
+          </td>
+          
+          {orderKeys.map((orderKey) => (
+            <td key={orderKey} className={styles.quantityCell}>
+              {productData[productName][orderKey] || 0}
+            </td>
+          ))}
+          
+          <td className={styles.rowTotal}>
+            {rowTotals[productName]}
+            {unit && <span className={styles.unitLabel}> {unit}</span>}
+          </td>
+        </tr>
+      );
+    })}
+</tbody>
             </table>
           </div>
         ) : (

@@ -404,12 +404,7 @@ function Categories() {
                       Yaratilgan Sana
                     </div>
                   </TableCell>
-                  <TableCell className={styles.tableHeaderCell}>
-                    <div className={styles.dateHeader}>
-                      <FaCalendarAlt className={styles.dateIcon} />
-                      Yangilangan Sana
-                    </div>
-                  </TableCell>
+                
                   <TableCell className={styles.tableHeaderCell}>Harakatlar</TableCell>
                 </TableRow>
               </TableHead>
@@ -427,11 +422,7 @@ function Categories() {
                         {formatDate(category.createdAt)}
                       </span>
                     </TableCell>
-                    <TableCell className={styles.tableCell}>
-                      <span className={styles.dateText}>
-                        {formatDate(category.updatedAt)}
-                      </span>
-                    </TableCell>
+                  
                     <TableCell className={styles.tableCell}>
                       <div className={styles.actionButtons}>
                         <IconButton

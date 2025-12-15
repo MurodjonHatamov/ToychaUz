@@ -221,7 +221,7 @@
 .productCell {
   text-align: left;
   font-weight: 600;
-  background-color: var(--item);
+  background-color: var(--productCell);
   position: sticky;
   left: 0;
   z-index: 5;
@@ -251,13 +251,13 @@
 }
 
 /* Sticky columnlar uchun mos ranglar */
-.excelTable tbody .productRow:nth-child(even) .productCell {
+/* .excelTable tbody .productRow:nth-child(even) .productCell {
   background-color: var(--item);
 }
 
 .excelTable tbody .productRow:nth-child(odd) .productCell {
   background-color: var(--surface);
-}
+} */
 
 .excelTable tbody .productRow:nth-child(even) .rowTotal {
   background-color: #d4e8d4; /* Yengil yashil */
