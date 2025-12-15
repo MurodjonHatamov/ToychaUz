@@ -320,14 +320,18 @@ function Login() {
   label="Telefon Raqam"
   name="phone"
   value={formData.phone}
-  onChange={handlePhoneChange}
-  placeholder="90 123 45 67"
+  onChange={(e) => {
+    // Faqat raqamlarni qabul qilish
+    const numericValue = e.target.value.replace(/\D/g, '');
+    setFormData({ ...formData, phone: numericValue });
+  }}
+  placeholder="901234567"
   required
   disabled={loading}
   inputProps={{
-    inputMode: 'numeric',       // mobil qurilmalarda raqamli klaviatura
-    pattern: '[0-9]*',          // faqat raqamlarni qabul qilish
-    maxLength: 9                // xohlaysizmi 9 ta raqam bo‘lishi uchun
+    inputMode: 'numeric',  // mobil qurilmalarda raqamli klaviatura
+    pattern: '[0-9]*',
+    maxLength: 9,          // xohlaysizmi 9 raqam
   }}
   InputProps={{
     startAdornment: (
