@@ -129,7 +129,7 @@ logaut(response);
       if (response.ok) {
         const allMessagesData = await response.json();
         setAllMessages(allMessagesData);
-        console.log(allMessagesData);
+        
         
       }
     } catch (error) {

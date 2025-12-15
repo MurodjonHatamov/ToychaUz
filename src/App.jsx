@@ -372,6 +372,9 @@ function App() {
         const data = await res.json();
         const count = data.filter(msg => msg.status === 'new' && msg.from !== 'deliver').length;
         setNotifications(count);
+        console.log('Unread messages count:', count);
+        console.log(data);
+        
       }
     };
     fetchUnreadCount();
