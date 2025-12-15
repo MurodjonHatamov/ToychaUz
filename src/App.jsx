@@ -362,7 +362,7 @@ const AppContent = ({ openSidebar, setOpenSidebar, setNotifications, notificatio
 function App() {
   const [openSidebar, setOpenSidebar] = useState(true);
   const [notifications, setNotifications] = useState(0);
-  const [notificationsTrue, setNotificationsTrue] = useState(0);
+ 
 
 
   useEffect(() => {
@@ -376,6 +376,7 @@ function App() {
     };
     fetchUnreadCount();
   }, []);
+
   
   return (
     <BrowserRouter>

@@ -84,6 +84,7 @@ function Deliver() {
         const deliversData = await response.json();
         setDelivers(deliversData);
         setFilteredDelivers(deliversData);
+     console.log(deliversData);
      
         
       } else {
