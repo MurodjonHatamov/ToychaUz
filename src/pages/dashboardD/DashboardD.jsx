@@ -22,7 +22,7 @@ function DashboardD() {
   const [categories, setCategories] = useState([]);
   const [marketNames, setMarketNames] = useState({});
   const [productNames, setProductNames] = useState({});
-  const [productUnits, setProductUnits] = useState({}); // ✅ Mahsulot birliklari
+  const [productUnits, setProductUnits] = useState({});
 
   const [pagination, setPagination] = useState({
     page: 1,
@@ -55,17 +55,24 @@ function DashboardD() {
 
   const [orderDialogOpen, setOrderDialogOpen] = useState(false);
 
-  // ==================== API FUNCTIONS ====================
+  // ==================== PAGINATION FUNCTIONS ====================
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= pagination.totalPages) {
+      fetchOrders(newPage, pagination.limit);
+    }
+  };
 
+  const handleLimitChange = (newLimit) => {
+    fetchOrders(1, newLimit);
+  };
+
+  // ==================== API FUNCTIONS ====================
   const fetchMarkets = async () => {
     try {
-      setLoading((prev) => ({ ...prev, markets: true }));
+      setLoading(prev => ({ ...prev, markets: true }));
       const response = await fetch(`${baseURL}/markets`, {
         method: "GET",
-        headers: {
-          accept: "*/*",
-          "Content-Type": "application/json",
-        },
+        headers: { accept: "*/*", "Content-Type": "application/json" },
         credentials: "include",
       });
       logaut(response);
@@ -74,7 +81,7 @@ function DashboardD() {
         const marketsData = await response.json();
         setMarkets(marketsData);
         const marketMap = {};
-        marketsData.forEach((market) => {
+        marketsData.forEach(market => {
           marketMap[market._id] = market.name;
         });
         setMarketNames(marketMap);
@@ -82,19 +89,16 @@ function DashboardD() {
     } catch (error) {
       showSnackbar("Marketlarni yuklab boʻlmadi", "error");
     } finally {
-      setLoading((prev) => ({ ...prev, markets: false }));
+      setLoading(prev => ({ ...prev, markets: false }));
     }
   };
 
   const fetchCategories = async () => {
     try {
-      setLoading((prev) => ({ ...prev, categories: true }));
+      setLoading(prev => ({ ...prev, categories: true }));
       const response = await fetch(`${baseURL}/product-category`, {
         method: "GET",
-        headers: {
-          accept: "*/*",
-          "Content-Type": "application/json",
-        },
+        headers: { accept: "*/*", "Content-Type": "application/json" },
         credentials: "include",
       });
       logaut(response);
@@ -106,19 +110,16 @@ function DashboardD() {
     } catch (error) {
       showSnackbar("Kategoriyalarni yuklab boʻlmadi", "error");
     } finally {
-      setLoading((prev) => ({ ...prev, categories: false }));
+      setLoading(prev => ({ ...prev, categories: false }));
     }
   };
 
   const fetchProducts = async () => {
     try {
-      setLoading((prev) => ({ ...prev, products: true }));
+      setLoading(prev => ({ ...prev, products: true }));
       const response = await fetch(`${baseURL}/products`, {
         method: "GET",
-        headers: {
-          accept: "*/*",
-          "Content-Type": "application/json",
-        },
+        headers: { accept: "*/*", "Content-Type": "application/json" },
         credentials: "include",
       });
       logaut(response);
@@ -127,73 +128,61 @@ function DashboardD() {
         const productsData = await response.json();
         setProducts(productsData);
         const productMap = {};
-        const unitMap = {}; // ✅ Birliklar map'ini yaratish
-        productsData.forEach((product) => {
+        const unitMap = {};
+        productsData.forEach(product => {
           productMap[product._id] = product.name;
-          unitMap[product._id] = product.unit; // ✅ Birlikni saqlash
+          unitMap[product._id] = product.unit || "";
         });
         setProductNames(productMap);
-        setProductUnits(unitMap); // ✅ Birliklarni state'ga saqlash
+        setProductUnits(unitMap);
       }
     } catch (error) {
       showSnackbar("Mahsulotlarni yuklab boʻlmadi", "error");
     } finally {
-      setLoading((prev) => ({ ...prev, products: false }));
+      setLoading(prev => ({ ...prev, products: false }));
     }
   };
 
   const fetchOrders = async (page = 1, limit = 10) => {
     try {
-      setLoading((prev) => ({ ...prev, orders: true }));
+      setLoading(prev => ({ ...prev, orders: true }));
 
       const queryParams = new URLSearchParams();
-
       if (selectedMarket && selectedMarket !== "all") {
         queryParams.append("marketId", selectedMarket);
       }
-
       if (filters.status && filters.status !== "all") {
         queryParams.append("status", filters.status);
       }
-
-      if (filters.categoryId && filters.categoryId !== "all") {
+      if (filters.categoryId && filters.categoryId !== "") {
         queryParams.append("categoryId", filters.categoryId);
       }
-
       if (filters.from) {
         const fromDate = new Date(filters.from);
         queryParams.append("from", fromDate.toISOString());
       }
-
       if (filters.to) {
         const toDate = new Date(filters.to);
         queryParams.append("to", toDate.toISOString());
       }
-
       queryParams.append("page", page.toString());
       queryParams.append("limit", limit.toString());
 
-      const response = await fetch(
-        `${baseURL}/deliver/orders?${queryParams}`,
-        {
-          method: "GET",
-          headers: {
-            accept: "*/*",
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`${baseURL}/deliver/orders?${queryParams}`, {
+        method: "GET",
+        headers: { accept: "*/*", "Content-Type": "application/json" },
+        credentials: "include",
+      });
       logaut(response);
 
       if (response.ok) {
         const data = await response.json();
         setOrders(data.data || []);
-
+        
         const total = data.total || 0;
         const lim = data.limit || limit;
         const currentPage = data.page || page;
-
+        
         setPagination({
           page: currentPage,
           limit: lim,
@@ -204,24 +193,18 @@ function DashboardD() {
     } catch (error) {
       showSnackbar("Buyurtmalarni yuklab boʻlmadi", "error");
     } finally {
-      setLoading((prev) => ({ ...prev, orders: false }));
+      setLoading(prev => ({ ...prev, orders: false }));
     }
   };
 
   const fetchOrderDetails = async (orderId) => {
     try {
-      setLoading((prev) => ({ ...prev, details: true }));
-      const response = await fetch(
-        `${baseURL}/deliver/orders/${orderId}`,
-        {
-          method: "GET",
-          headers: {
-            accept: "*/*",
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        }
-      );
+      setLoading(prev => ({ ...prev, details: true }));
+      const response = await fetch(`${baseURL}/deliver/orders/${orderId}`, {
+        method: "GET",
+        headers: { accept: "*/*", "Content-Type": "application/json" },
+        credentials: "include",
+      });
       logaut(response);
 
       if (response.ok) {
@@ -232,61 +215,45 @@ function DashboardD() {
     } catch (error) {
       showSnackbar("Buyurtma ma'lumotlarini olish mumkin emas", "error");
     } finally {
-      setLoading((prev) => ({ ...prev, details: false }));
+      setLoading(prev => ({ ...prev, details: false }));
     }
   };
 
   // ==================== HELPER FUNCTIONS ====================
-
   const getMarketName = (marketId) => {
     if (!marketId) return "Noma'lum market";
-    if (typeof marketId === "object" && marketId.name) {
-      return marketId.name;
-    }
-    const marketName = marketNames[marketId];
-    return marketName || "Noma'lum market";
+    if (typeof marketId === "object" && marketId.name) return marketId.name;
+    return marketNames[marketId] || "Noma'lum market";
   };
 
   const getProductName = (productId) => {
     if (!productId) return "Noma'lum mahsulot";
-    if (typeof productId === "object" && productId.name) {
-      return productId.name;
-    }
-    const productName = productNames[productId];
-    return productName || "Noma'lum mahsulot";
+    if (typeof productId === "object" && productId.name) return productId.name;
+    return productNames[productId] || "Noma'lum mahsulot";
   };
 
-  // ✅ MAHSULOT BIRLIGINI OLISH
   const getProductUnit = (productId) => {
     if (!productId) return "";
-    
-    // Product ID obyekt bo'lishi mumkin
     const actualProductId = typeof productId === 'object' ? productId._id : productId;
-    
-    // Birlik map'idan olish
     const unit = productUnits[actualProductId];
     if (!unit) return "";
     
-    // O'lchov birligini formatlash
     const unitMap = {
       'piece': 'dona',
       'kg': 'kg',
       'liter': 'l',
+      'litr': 'l',
       'gram': 'gr',
       'meter': 'm',
-      'unit': 'dona',
-      'litr': 'l',
-      'metr': 'm'
+      'metr': 'm',
+      'unit': 'dona'
     };
     
-    return unitMap[unit] || unit || "";
+    return unitMap[unit] || unit;
   };
 
-  // ✅ MAHSULOT ID'SINI NOM BO'YICHA TOPISH
   const findProductIdByName = (productName) => {
-    return Object.keys(productNames).find(
-      key => productNames[key] === productName
-    );
+    return Object.keys(productNames).find(key => productNames[key] === productName);
   };
 
   const formatDateTime = (dateString) => {
@@ -302,21 +269,15 @@ function DashboardD() {
 
   const acceptOrder = async (orderId) => {
     try {
-      const response = await fetch(
-        `${baseURL}/deliver/${orderId}/accept-order`,
-        {
-          method: "PATCH",
-          headers: {
-            accept: "*/*",
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`${baseURL}/deliver/${orderId}/accept-order`, {
+        method: "PATCH",
+        headers: { accept: "*/*", "Content-Type": "application/json" },
+        credentials: "include",
+      });
       logaut(response);
 
       if (response.ok) {
-        showSnackbar("Buyurtma muvaffaqiyatli qabul qilindi", "success");
+        showSnackbar("Buyurtma qabul qilindi", "success");
         fetchOrders(pagination.page, pagination.limit);
         setOrderDialogOpen(false);
       }
@@ -327,21 +288,15 @@ function DashboardD() {
 
   const deliverOrder = async (orderId) => {
     try {
-      const response = await fetch(
-        `${baseURL}/deliver/${orderId}/delivered-order`,
-        {
-          method: "PATCH",
-          headers: {
-            accept: "*/*",
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`${baseURL}/deliver/${orderId}/delivered-order`, {
+        method: "PATCH",
+        headers: { accept: "*/*", "Content-Type": "application/json" },
+        credentials: "include",
+      });
       logaut(response);
 
       if (response.ok) {
-        showSnackbar("Buyurtma muvaffaqiyatli yetkazib berildi", "success");
+        showSnackbar("Buyurtma yetkazib berildi", "success");
         fetchOrders(pagination.page, pagination.limit);
         setOrderDialogOpen(false);
       }
@@ -352,26 +307,18 @@ function DashboardD() {
 
   const rejectOrder = async (orderId) => {
     try {
-      const isConfirmed = window.confirm(
-        "Haqiqatan ham bu buyurtmani bekor qilmoqchimisiz?"
-      );
+      const isConfirmed = window.confirm("Bu buyurtmani bekor qilmoqchimisiz?");
       if (!isConfirmed) return;
 
-      const response = await fetch(
-        `${baseURL}/deliver/${orderId}/reject-order`,
-        {
-          method: "PATCH",
-          headers: {
-            accept: "*/*",
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`${baseURL}/deliver/${orderId}/reject-order`, {
+        method: "PATCH",
+        headers: { accept: "*/*", "Content-Type": "application/json" },
+        credentials: "include",
+      });
       logaut(response);
 
       if (response.ok) {
-        showSnackbar("Buyurtma muvaffaqiyatli bekor qilindi", "warning");
+        showSnackbar("Buyurtma bekor qilindi", "warning");
         fetchOrders(pagination.page, pagination.limit);
         setOrderDialogOpen(false);
       }
@@ -382,39 +329,20 @@ function DashboardD() {
 
   const exportToExcel = async () => {
     try {
-      setLoading((prev) => ({ ...prev, export: true }));
+      setLoading(prev => ({ ...prev, export: true }));
 
       const queryParams = new URLSearchParams();
+      if (selectedMarket !== "all") queryParams.append("marketId", selectedMarket);
+      if (filters.status !== "all") queryParams.append("status", filters.status);
+      if (filters.categoryId) queryParams.append("categoryId", filters.categoryId);
+      if (filters.from) queryParams.append("from", new Date(filters.from).toISOString());
+      if (filters.to) queryParams.append("to", new Date(filters.to).toISOString());
 
-      if (selectedMarket && selectedMarket !== "all") {
-        queryParams.append("marketId", selectedMarket);
-      }
-      if (filters.status && filters.status !== "all") {
-        queryParams.append("status", filters.status);
-      }
-      if (filters.categoryId && filters.categoryId !== "all") {
-        queryParams.append("categoryId", filters.categoryId);
-      }
-      if (filters.from) {
-        const fromDate = new Date(filters.from);
-        queryParams.append("from", fromDate.toISOString());
-      }
-      if (filters.to) {
-        const toDate = new Date(filters.to);
-        queryParams.append("to", toDate.toISOString());
-      }
-
-      const response = await fetch(
-        `${baseURL}/deliver/export?${queryParams}`,
-        {
-          method: "GET",
-          headers: {
-            accept:
-              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-          },
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`${baseURL}/deliver/export?${queryParams}`, {
+        method: "GET",
+        headers: { accept: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" },
+        credentials: "include",
+      });
       logaut(response);
 
       if (response.ok) {
@@ -427,22 +355,21 @@ function DashboardD() {
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
-        showSnackbar("Excel fayl muvaffaqiyatli yuklab olindi", "success");
+        showSnackbar("Excel fayli yuklab olindi", "success");
       }
     } catch (error) {
       showSnackbar("Export qilib boʻlmadi", "error");
     } finally {
-      setLoading((prev) => ({ ...prev, export: false }));
+      setLoading(prev => ({ ...prev, export: false }));
     }
   };
 
   // ==================== EXCEL TABLE FUNCTIONS ====================
-
   const calculateExcelTableData = () => {
     const productData = {};
     const orderColumns = {};
 
-    orders.forEach((order) => {
+    orders.forEach(order => {
       const marketName = getMarketName(order.marketId);
       const dateTime = formatDateTime(order.createdAt);
       const status = order.status;
@@ -455,19 +382,25 @@ function DashboardD() {
         dateTime: dateTime,
       };
 
-      order.products?.forEach((product) => {
+      order.products?.forEach(product => {
         const productName = getProductName(product.productId);
-
-        if (!productData[productName]) {
-          productData[productName] = {};
-        }
-
+        if (!productData[productName]) productData[productName] = {};
         productData[productName][orderKey] = product.quantity;
       });
     });
 
+    // ✅ Mahsulot nomlarini alfabit bo'yicha tartiblash (XATOSIZ)
+    const sortedProductNames = Object.keys(productData).sort((a, b) => {
+      return a.localeCompare(b, 'uz', { sensitivity: 'base' });
+    });
+
+    const sortedProductData = {};
+    sortedProductNames.forEach(name => {
+      sortedProductData[name] = productData[name];
+    });
+
     return {
-      productData,
+      productData: sortedProductData,
       orderColumns,
       orderKeys: Object.keys(orderColumns).sort(),
     };
@@ -478,69 +411,48 @@ function DashboardD() {
     const columnTotals = {};
     let grandTotal = 0;
 
-    Object.keys(productData).forEach((productName) => {
+    Object.keys(productData).forEach(productName => {
       rowTotals[productName] = orderKeys.reduce((sum, orderKey) => {
         return sum + (productData[productName][orderKey] || 0);
       }, 0);
     });
 
-    orderKeys.forEach((orderKey) => {
-      columnTotals[orderKey] = Object.keys(productData).reduce(
-        (sum, productName) => {
-          return sum + (productData[productName][orderKey] || 0);
-        },
-        0
-      );
+    orderKeys.forEach(orderKey => {
+      columnTotals[orderKey] = Object.keys(productData).reduce((sum, productName) => {
+        return sum + (productData[productName][orderKey] || 0);
+      }, 0);
     });
 
-    grandTotal = Object.values(rowTotals).reduce(
-      (sum, total) => sum + total,
-      0
-    );
+    grandTotal = Object.values(rowTotals).reduce((sum, total) => sum + total, 0);
 
     return { rowTotals, columnTotals, grandTotal };
   };
 
   const showSnackbar = (message, severity) => {
-    setSnackbar({
-      open: true,
-      message,
-      severity,
-    });
+    setSnackbar({ open: true, message, severity });
   };
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "new":
-        return "#1976d2";
-      case "accepted":
-        return "#ed6c02";
-      case "delivered":
-        return "#2e7d32";
-      case "rejected":
-        return "#d32f2f";
-      default:
-        return "#666666";
+      case "new": return "#1976d2";
+      case "accepted": return "#ed6c02";
+      case "delivered": return "#2e7d32";
+      case "rejected": return "#d32f2f";
+      default: return "#666666";
     }
   };
 
   const getStatusText = (status) => {
     switch (status) {
-      case "new":
-        return "Yangi";
-      case "accepted":
-        return "Qabul qilindi";
-      case "delivered":
-        return "Yetkazib berildi";
-      case "rejected":
-        return "Rad etildi";
-      default:
-        return status;
+      case "new": return "Yangi";
+      case "accepted": return "Qabul qilindi";
+      case "delivered": return "Yetkazib berildi";
+      case "rejected": return "Rad etildi";
+      default: return status;
     }
   };
 
   // ==================== USE EFFECT HOOKS ====================
-
   useEffect(() => {
     fetchMarkets();
     fetchProducts();
@@ -551,17 +463,13 @@ function DashboardD() {
     fetchOrders(1, pagination.limit);
   }, [selectedMarket, filters]);
 
-  const { productData, orderColumns, orderKeys } = calculateExcelTableData();
-  const { rowTotals, columnTotals, grandTotal } = calculateTotals(
-    productData,
-    orderKeys
-  );
-
   // ==================== RENDER ====================
+  const { productData, orderColumns, orderKeys } = calculateExcelTableData();
+  const { rowTotals } = calculateTotals(productData, orderKeys);
 
   return (
     <div className={styles.dashboard}>
-      {/* FILTR PANELI */}
+      {/* FILTR PANELI - datetime-local va kategoriya bilan */}
       <div className={styles.filterPanel}>
         <div className={styles.filterControls}>
           <div className={styles.filterGroup}>
@@ -572,7 +480,7 @@ function DashboardD() {
               onChange={(e) => setSelectedMarket(e.target.value)}
             >
               <option value="all">Barcha Marketlar</option>
-              {markets.map((market) => (
+              {markets.map(market => (
                 <option key={market._id} value={market._id}>
                   {market.name}
                 </option>
@@ -585,9 +493,7 @@ function DashboardD() {
             <select
               className={styles.filterSelect}
               value={filters.status}
-              onChange={(e) =>
-                setFilters((prev) => ({ ...prev, status: e.target.value }))
-              }
+              onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
             >
               <option value="all">Barchasi</option>
               <option value="new">Yangi</option>
@@ -602,13 +508,10 @@ function DashboardD() {
             <select
               className={styles.filterSelect}
               value={filters.categoryId}
-              onChange={(e) =>
-                setFilters((prev) => ({ ...prev, categoryId: e.target.value }))
-              }
-              disabled={loading.categories}
+              onChange={(e) => setFilters(prev => ({ ...prev, categoryId: e.target.value }))}
             >
               <option value="">Barcha Kategoriyalar</option>
-              {categories.map((category) => (
+              {categories.map(category => (
                 <option key={category._id} value={category._id}>
                   {category.name}
                 </option>
@@ -622,9 +525,7 @@ function DashboardD() {
               type="datetime-local"
               className={styles.filterInput}
               value={filters.from}
-              onChange={(e) =>
-                setFilters((prev) => ({ ...prev, from: e.target.value }))
-              }
+              onChange={(e) => setFilters(prev => ({ ...prev, from: e.target.value }))}
             />
           </div>
 
@@ -634,9 +535,7 @@ function DashboardD() {
               type="datetime-local"
               className={styles.filterInput}
               value={filters.to}
-              onChange={(e) =>
-                setFilters((prev) => ({ ...prev, to: e.target.value }))
-              }
+              onChange={(e) => setFilters(prev => ({ ...prev, to: e.target.value }))}
             />
           </div>
 
@@ -659,8 +558,7 @@ function DashboardD() {
       {orders.length > 0 && (
         <div className={styles.paginationContainer}>
           <div className={styles.paginationInfo}>
-            Jami: {pagination.total} ta buyurtma | Sahifa: {pagination.page} /{" "}
-            {pagination.totalPages}
+            Jami: {pagination.total} ta buyurtma | Sahifa: {pagination.page} / {pagination.totalPages}
           </div>
 
           <div className={styles.paginationControls}>
@@ -710,10 +608,8 @@ function DashboardD() {
             <table className={styles.excelTable}>
               <thead>
                 <tr>
-                  <th className={styles.productHeader}>
-                    Mahsulot nomi
-                  </th>
-                  {orderKeys.map((orderKey) => {
+                  <th className={styles.productHeader}>Mahsulot nomi</th>
+                  {orderKeys.map(orderKey => {
                     const order = orderColumns[orderKey]?.order;
                     const status = orderColumns[orderKey]?.status;
                     const dateTime = orderColumns[orderKey]?.dateTime;
@@ -722,10 +618,7 @@ function DashboardD() {
                       <th
                         key={orderKey}
                         className={styles.orderHeader}
-                        style={{
-                          backgroundColor: getStatusColor(status),
-                          color: "white",
-                        }}
+                        style={{ backgroundColor: getStatusColor(status), color: "white" }}
                         onClick={() => order && fetchOrderDetails(order._id)}
                         title={`${orderKey} - ${getStatusText(status)}`}
                       >
@@ -748,40 +641,34 @@ function DashboardD() {
                   <th className={styles.totalHeader}>Jami</th>
                 </tr>
               </thead>
-     <tbody>
-  {Object.keys(productData)
-    .sort((a, b) => a.localeCompare(b)) // ✅ ALFABIT BO'YICHA TARTIBLASH
-    .map((productName, index) => {
-      // ✅ Mahsulot ID'sini topish
-      const productId = findProductIdByName(productName);
-      // ✅ Mahsulot birligini olish
-      const unit = getProductUnit(productId || "");
-      
-      return (
-        <tr 
-          key={productName} 
-          className={`${styles.productRow} ${
-            index % 2 === 0 ? styles.evenRow : styles.oddRow
-          }`}
-        >
-          <td className={styles.productCell}>
-            {productName}
-          </td>
-          
-          {orderKeys.map((orderKey) => (
-            <td key={orderKey} className={styles.quantityCell}>
-              {productData[productName][orderKey] || 0}
-            </td>
-          ))}
-          
-          <td className={styles.rowTotal}>
-            {rowTotals[productName]}
-            {unit && <span className={styles.unitLabel}> {unit}</span>}
-          </td>
-        </tr>
-      );
-    })}
-</tbody>
+              <tbody>
+                {Object.keys(productData).map((productName, index) => {
+                  const productId = findProductIdByName(productName);
+                  const unit = getProductUnit(productId || "");
+                  
+                  return (
+                    <tr 
+                      key={productName} 
+                      className={`${styles.productRow} ${index % 2 === 0 ? styles.evenRow : styles.oddRow}`}
+                    >
+                      <td className={styles.productCell}>
+                        {productName}
+                      </td>
+                      
+                      {orderKeys.map(orderKey => (
+                        <td key={orderKey} className={styles.quantityCell}>
+                          {productData[productName][orderKey] || 0}
+                        </td>
+                      ))}
+                      
+                      <td className={styles.rowTotal}>
+                        {rowTotals[productName]}
+                        {unit && <span className={styles.unitLabel}> {unit}</span>}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
             </table>
           </div>
         ) : (
@@ -818,13 +705,10 @@ function DashboardD() {
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}
-        onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
+        onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
       >
-        <Alert
-          severity={snackbar.severity}
-          onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
-        >
+        <Alert severity={snackbar.severity}>
           {snackbar.message}
         </Alert>
       </Snackbar>
