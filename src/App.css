@@ -98,7 +98,6 @@ body {
 @media (max-width: 1024px) {
   .main-content {
       margin-left: 0;
-      padding-bottom: 80px;
   }
   
   .top-navbar-container {
@@ -112,6 +111,10 @@ body {
 }
 
 @media (max-width: 768px) {
+  .main-content{
+    padding-bottom: 80px;
+
+  }
   .content {
       padding: 16px;
       padding-top: 70px;

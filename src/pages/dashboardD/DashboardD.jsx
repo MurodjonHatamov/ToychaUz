@@ -63,14 +63,14 @@ function DashboardD() {
   };
 
   const handleLimitChange = (newLimit) => {
-    setPagination(prev => ({ ...prev, limit: newLimit, page: 1 }));
+    setPagination((prev) => ({ ...prev, limit: newLimit, page: 1 }));
     fetchOrders(1, newLimit);
   };
 
   // ==================== API FUNCTIONS ====================
   const fetchMarkets = async () => {
     try {
-      setLoading(prev => ({ ...prev, markets: true }));
+      setLoading((prev) => ({ ...prev, markets: true }));
       const response = await fetch(`${baseURL}/markets`, {
         method: "GET",
         headers: { accept: "*/*", "Content-Type": "application/json" },
@@ -82,7 +82,7 @@ function DashboardD() {
         const marketsData = await response.json();
         setMarkets(marketsData);
         const marketMap = {};
-        marketsData.forEach(market => {
+        marketsData.forEach((market) => {
           marketMap[market._id] = market.name;
         });
         setMarketNames(marketMap);
@@ -90,13 +90,13 @@ function DashboardD() {
     } catch (error) {
       showSnackbar("Marketlarni yuklab boʻlmadi", "error");
     } finally {
-      setLoading(prev => ({ ...prev, markets: false }));
+      setLoading((prev) => ({ ...prev, markets: false }));
     }
   };
 
   const fetchCategories = async () => {
     try {
-      setLoading(prev => ({ ...prev, categories: true }));
+      setLoading((prev) => ({ ...prev, categories: true }));
       const response = await fetch(`${baseURL}/product-category`, {
         method: "GET",
         headers: { accept: "*/*", "Content-Type": "application/json" },
@@ -111,13 +111,13 @@ function DashboardD() {
     } catch (error) {
       showSnackbar("Kategoriyalarni yuklab boʻlmadi", "error");
     } finally {
-      setLoading(prev => ({ ...prev, categories: false }));
+      setLoading((prev) => ({ ...prev, categories: false }));
     }
   };
 
   const fetchProducts = async () => {
     try {
-      setLoading(prev => ({ ...prev, products: true }));
+      setLoading((prev) => ({ ...prev, products: true }));
       const response = await fetch(`${baseURL}/products`, {
         method: "GET",
         headers: { accept: "*/*", "Content-Type": "application/json" },
@@ -130,7 +130,7 @@ function DashboardD() {
         setProducts(productsData);
         const productMap = {};
         const unitMap = {};
-        productsData.forEach(product => {
+        productsData.forEach((product) => {
           productMap[product._id] = product.name;
           unitMap[product._id] = product.unit || "";
         });
@@ -140,13 +140,13 @@ function DashboardD() {
     } catch (error) {
       showSnackbar("Mahsulotlarni yuklab boʻlmadi", "error");
     } finally {
-      setLoading(prev => ({ ...prev, products: false }));
+      setLoading((prev) => ({ ...prev, products: false }));
     }
   };
 
   const fetchOrders = async (page = 1, limit = 10) => {
     try {
-      setLoading(prev => ({ ...prev, orders: true }));
+      setLoading((prev) => ({ ...prev, orders: true }));
 
       const queryParams = new URLSearchParams();
       if (selectedMarket && selectedMarket !== "all") {
@@ -178,15 +178,16 @@ function DashboardD() {
 
       if (response.ok) {
         const result = await response.json();
-        
+
         // Buyurtmalar ro'yxatini olish
         const ordersList = result.data || result.orders || [];
-        
+
         // Pagination ma'lumotlarini olish
         const total = result.total || result.totalOrders || 0;
         const currentPage = result.page || page;
         const currentLimit = result.limit || limit;
-        const totalPages = result.totalPages || Math.ceil(total / currentLimit) || 1;
+        const totalPages =
+          result.totalPages || Math.ceil(total / currentLimit) || 1;
 
         console.log("API dan kelgan orders:", ordersList.length, "ta");
         console.log("Birinchi order:", ordersList[0]);
@@ -198,7 +199,6 @@ function DashboardD() {
           total: total,
           totalPages: totalPages,
         });
-
       } else {
         showSnackbar(`Server xatosi: ${response.status}`, "error");
       }
@@ -206,13 +206,13 @@ function DashboardD() {
       console.error("Fetch orders error:", error);
       showSnackbar("Buyurtmalarni yuklab boʻlmadi", "error");
     } finally {
-      setLoading(prev => ({ ...prev, orders: false }));
+      setLoading((prev) => ({ ...prev, orders: false }));
     }
   };
 
   const fetchOrderDetails = async (orderId) => {
     try {
-      setLoading(prev => ({ ...prev, details: true }));
+      setLoading((prev) => ({ ...prev, details: true }));
       const response = await fetch(`${baseURL}/deliver/orders/${orderId}`, {
         method: "GET",
         headers: { accept: "*/*", "Content-Type": "application/json" },
@@ -228,14 +228,14 @@ function DashboardD() {
     } catch (error) {
       showSnackbar("Buyurtma ma'lumotlarini olish mumkin emas", "error");
     } finally {
-      setLoading(prev => ({ ...prev, details: false }));
+      setLoading((prev) => ({ ...prev, details: false }));
     }
   };
 
   // ==================== HELPER FUNCTIONS ====================
   const getMarketName = (marketId) => {
     if (!marketId) return "Noma'lum market";
-    
+
     // Agar marketId object bo'lsa
     if (typeof marketId === "object") {
       // 1. Agar direct name property bo'lsa
@@ -245,44 +245,45 @@ function DashboardD() {
       // 3. Agar marketInfo bo'lsa
       if (marketId.marketInfo?.name) return marketId.marketInfo.name;
     }
-    
+
     // Agar string bo'lsa
     return marketNames[marketId] || "Noma'lum market";
   };
 
   const getProductName = (productId) => {
     if (!productId) return "Noma'lum mahsulot";
-    
+
     // Agar productId object bo'lsa
     if (typeof productId === "object") {
       // 1. Agar direct name property bo'lsa
       if (productId.name) return productId.name;
       // 2. Agar _id bo'lsa, productNames map'dan qidirish
-      if (productId._id) return productNames[productId._id] || "Noma'lum mahsulot";
+      if (productId._id)
+        return productNames[productId._id] || "Noma'lum mahsulot";
     }
-    
+
     // Agar string bo'lsa
     return productNames[productId] || "Noma'lum mahsulot";
   };
 
   const getProductUnit = (productId) => {
     if (!productId) return "";
-    
+
     let actualProductId;
-    
+
     // Agar productId object bo'lsa
     if (typeof productId === "object") {
       // 1. Agar direct unit property bo'lsa
       if (productId.unit) {
         const unitMap = {
-          'piece': 'dona',
-          'kg': 'kg',
-          'liter': 'l',
-          'litr': 'l',
-          'gram': 'gr',
-          'meter': 'm',
-          'metr': 'm',
-          'unit': 'dona'
+          piece: "dona",
+          kg: "kg",
+          liter: "l",
+          litr: "l",
+          gram: "gr",
+          meter: "m",
+          metr: "m",
+          unit: "dona",
         };
         return unitMap[productId.unit] || productId.unit;
       }
@@ -291,27 +292,29 @@ function DashboardD() {
     } else {
       actualProductId = productId;
     }
-    
+
     // Agar unit map'dan topilsa
     const unit = productUnits[actualProductId];
     if (!unit) return "";
-    
+
     const unitMap = {
-      'piece': 'dona',
-      'kg': 'kg',
-      'liter': 'l',
-      'litr': 'l',
-      'gram': 'gr',
-      'meter': 'm',
-      'metr': 'm',
-      'unit': 'dona'
+      piece: "dona",
+      kg: "kg",
+      liter: "l",
+      litr: "l",
+      gram: "gr",
+      meter: "m",
+      metr: "m",
+      unit: "dona",
     };
-    
+
     return unitMap[unit] || unit;
   };
 
   const findProductIdByName = (productName) => {
-    return Object.keys(productNames).find(key => productNames[key] === productName);
+    return Object.keys(productNames).find(
+      (key) => productNames[key] === productName
+    );
   };
 
   const formatDateTime = (dateString) => {
@@ -319,13 +322,13 @@ function DashboardD() {
     try {
       const date = new Date(dateString);
       if (isNaN(date.getTime())) return "";
-      
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      const day = date.getDate().toString().padStart(2, '0');
+
+      const month = (date.getMonth() + 1).toString().padStart(2, "0");
+      const day = date.getDate().toString().padStart(2, "0");
       const year = date.getFullYear();
-      const hours = date.getHours().toString().padStart(2, '0');
-      const minutes = date.getMinutes().toString().padStart(2, '0');
-      const seconds = date.getSeconds().toString().padStart(2, '0');
+      const hours = date.getHours().toString().padStart(2, "0");
+      const minutes = date.getMinutes().toString().padStart(2, "0");
+      const seconds = date.getSeconds().toString().padStart(2, "0");
       return `${month}/${day}/${year} ${hours}:${minutes}:${seconds}`;
     } catch (error) {
       return "";
@@ -334,11 +337,14 @@ function DashboardD() {
 
   const acceptOrder = async (orderId) => {
     try {
-      const response = await fetch(`${baseURL}/deliver/${orderId}/accept-order`, {
-        method: "PATCH",
-        headers: { accept: "*/*", "Content-Type": "application/json" },
-        credentials: "include",
-      });
+      const response = await fetch(
+        `${baseURL}/deliver/${orderId}/accept-order`,
+        {
+          method: "PATCH",
+          headers: { accept: "*/*", "Content-Type": "application/json" },
+          credentials: "include",
+        }
+      );
       logaut(response);
 
       if (response.ok) {
@@ -353,11 +359,14 @@ function DashboardD() {
 
   const deliverOrder = async (orderId) => {
     try {
-      const response = await fetch(`${baseURL}/deliver/${orderId}/delivered-order`, {
-        method: "PATCH",
-        headers: { accept: "*/*", "Content-Type": "application/json" },
-        credentials: "include",
-      });
+      const response = await fetch(
+        `${baseURL}/deliver/${orderId}/delivered-order`,
+        {
+          method: "PATCH",
+          headers: { accept: "*/*", "Content-Type": "application/json" },
+          credentials: "include",
+        }
+      );
       logaut(response);
 
       if (response.ok) {
@@ -375,11 +384,14 @@ function DashboardD() {
       const isConfirmed = window.confirm("Bu buyurtmani bekor qilmoqchimisiz?");
       if (!isConfirmed) return;
 
-      const response = await fetch(`${baseURL}/deliver/${orderId}/reject-order`, {
-        method: "PATCH",
-        headers: { accept: "*/*", "Content-Type": "application/json" },
-        credentials: "include",
-      });
+      const response = await fetch(
+        `${baseURL}/deliver/${orderId}/reject-order`,
+        {
+          method: "PATCH",
+          headers: { accept: "*/*", "Content-Type": "application/json" },
+          credentials: "include",
+        }
+      );
       logaut(response);
 
       if (response.ok) {
@@ -394,18 +406,26 @@ function DashboardD() {
 
   const exportToExcel = async () => {
     try {
-      setLoading(prev => ({ ...prev, export: true }));
+      setLoading((prev) => ({ ...prev, export: true }));
 
       const queryParams = new URLSearchParams();
-      if (selectedMarket !== "all") queryParams.append("marketId", selectedMarket);
-      if (filters.status !== "all") queryParams.append("status", filters.status);
-      if (filters.categoryId) queryParams.append("categoryId", filters.categoryId);
-      if (filters.from) queryParams.append("from", new Date(filters.from).toISOString());
-      if (filters.to) queryParams.append("to", new Date(filters.to).toISOString());
+      if (selectedMarket !== "all")
+        queryParams.append("marketId", selectedMarket);
+      if (filters.status !== "all")
+        queryParams.append("status", filters.status);
+      if (filters.categoryId)
+        queryParams.append("categoryId", filters.categoryId);
+      if (filters.from)
+        queryParams.append("from", new Date(filters.from).toISOString());
+      if (filters.to)
+        queryParams.append("to", new Date(filters.to).toISOString());
 
       const response = await fetch(`${baseURL}/deliver/export?${queryParams}`, {
         method: "GET",
-        headers: { accept: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" },
+        headers: {
+          accept:
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        },
         credentials: "include",
       });
       logaut(response);
@@ -415,7 +435,9 @@ function DashboardD() {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = `buyurtmalar_${new Date().toISOString().split("T")[0]}.xlsx`;
+        a.download = `buyurtmalar_${
+          new Date().toISOString().split("T")[0]
+        }.xlsx`;
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
@@ -425,14 +447,14 @@ function DashboardD() {
     } catch (error) {
       showSnackbar("Export qilib boʻlmadi", "error");
     } finally {
-      setLoading(prev => ({ ...prev, export: false }));
+      setLoading((prev) => ({ ...prev, export: false }));
     }
   };
 
   // ==================== EXCEL TABLE FUNCTIONS ====================
   const calculateExcelTableData = () => {
     console.log("Orders soni:", orders.length);
-    
+
     const productData = {};
     const orderColumns = {};
 
@@ -441,10 +463,10 @@ function DashboardD() {
       const marketName = getMarketName(order.marketId);
       const dateTime = formatDateTime(order.createdAt);
       const status = order.status;
-      
+
       // HAR BIR ORDER UCHUN UNIQUE KEY - ORDER ID SI
       const orderKey = order._id;
-      
+
       // Order column ma'lumotlarini saqlash
       orderColumns[orderKey] = {
         order: order,
@@ -452,14 +474,14 @@ function DashboardD() {
         marketName: marketName,
         dateTime: dateTime,
         orderNumber: index + 1,
-        createdAt: order.createdAt
+        createdAt: order.createdAt,
       };
 
       // Agar orderda mahsulotlar bo'lsa
       if (order.products && Array.isArray(order.products)) {
         order.products.forEach((product) => {
           const productName = getProductName(product.productId);
-          
+
           if (!productData[productName]) {
             productData[productName] = {};
           }
@@ -474,11 +496,11 @@ function DashboardD() {
 
     // Mahsulot nomlarini tartiblash
     const sortedProductNames = Object.keys(productData).sort((a, b) => {
-      return a.localeCompare(b, 'uz', { sensitivity: 'base' });
+      return a.localeCompare(b, "uz", { sensitivity: "base" });
     });
 
     const sortedProductData = {};
-    sortedProductNames.forEach(name => {
+    sortedProductNames.forEach((name) => {
       sortedProductData[name] = productData[name];
     });
 
@@ -501,19 +523,25 @@ function DashboardD() {
     const columnTotals = {};
     let grandTotal = 0;
 
-    Object.keys(productData).forEach(productName => {
+    Object.keys(productData).forEach((productName) => {
       rowTotals[productName] = orderKeys.reduce((sum, orderKey) => {
         return sum + (productData[productName][orderKey] || 0);
       }, 0);
     });
 
-    orderKeys.forEach(orderKey => {
-      columnTotals[orderKey] = Object.keys(productData).reduce((sum, productName) => {
-        return sum + (productData[productName][orderKey] || 0);
-      }, 0);
+    orderKeys.forEach((orderKey) => {
+      columnTotals[orderKey] = Object.keys(productData).reduce(
+        (sum, productName) => {
+          return sum + (productData[productName][orderKey] || 0);
+        },
+        0
+      );
     });
 
-    grandTotal = Object.values(rowTotals).reduce((sum, total) => sum + total, 0);
+    grandTotal = Object.values(rowTotals).reduce(
+      (sum, total) => sum + total,
+      0
+    );
 
     return { rowTotals, columnTotals, grandTotal };
   };
@@ -524,21 +552,31 @@ function DashboardD() {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "new": return "#1976d2";
-      case "accepted": return "#ed6c02";
-      case "delivered": return "#2e7d32";
-      case "rejected": return "#d32f2f";
-      default: return "#666666";
+      case "new":
+        return "#1976d2";
+      case "accepted":
+        return "#ed6c02";
+      case "delivered":
+        return "#2e7d32";
+      case "rejected":
+        return "#d32f2f";
+      default:
+        return "#666666";
     }
   };
 
   const getStatusText = (status) => {
     switch (status) {
-      case "new": return "Yangi";
-      case "accepted": return "Qabul qilindi";
-      case "delivered": return "Yetkazib berildi";
-      case "rejected": return "Rad etildi";
-      default: return status;
+      case "new":
+        return "Yangi";
+      case "accepted":
+        return "Qabul qilindi";
+      case "delivered":
+        return "Yetkazib berildi";
+      case "rejected":
+        return "Rad etildi";
+      default:
+        return status;
     }
   };
 
@@ -572,7 +610,7 @@ function DashboardD() {
               onChange={(e) => setSelectedMarket(e.target.value)}
             >
               <option value="all">Barcha Marketlar</option>
-              {markets.map(market => (
+              {markets.map((market) => (
                 <option key={market._id} value={market._id}>
                   {market.name}
                 </option>
@@ -585,7 +623,9 @@ function DashboardD() {
             <select
               className={styles.filterSelect}
               value={filters.status}
-              onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, status: e.target.value }))
+              }
             >
               <option value="all">Barchasi</option>
               <option value="new">Yangi</option>
@@ -600,10 +640,12 @@ function DashboardD() {
             <select
               className={styles.filterSelect}
               value={filters.categoryId}
-              onChange={(e) => setFilters(prev => ({ ...prev, categoryId: e.target.value }))}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, categoryId: e.target.value }))
+              }
             >
               <option value="">Barcha Kategoriyalar</option>
-              {categories.map(category => (
+              {categories.map((category) => (
                 <option key={category._id} value={category._id}>
                   {category.name}
                 </option>
@@ -617,7 +659,9 @@ function DashboardD() {
               type="datetime-local"
               className={styles.filterInput}
               value={filters.from}
-              onChange={(e) => setFilters(prev => ({ ...prev, from: e.target.value }))}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, from: e.target.value }))
+              }
             />
           </div>
 
@@ -627,7 +671,9 @@ function DashboardD() {
               type="datetime-local"
               className={styles.filterInput}
               value={filters.to}
-              onChange={(e) => setFilters(prev => ({ ...prev, to: e.target.value }))}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, to: e.target.value }))
+              }
             />
           </div>
 
@@ -650,9 +696,8 @@ function DashboardD() {
       {orders.length > 0 && (
         <div className={styles.paginationContainer}>
           <div className={styles.paginationInfo}>
-            Jami: {pagination.total} ta buyurtma | 
-            Sahifa: {pagination.page} / {pagination.totalPages} | 
-            Ko'rsatilmoqda: {orders.length} ta
+            Jami: {pagination.total} ta buyurtma | Sahifa: {pagination.page} /{" "}
+            {pagination.totalPages} | Ko'rsatilmoqda: {orders.length} ta
           </div>
 
           <div className={styles.paginationControls}>
@@ -705,23 +750,27 @@ function DashboardD() {
                 <thead>
                   <tr>
                     <th className={styles.productHeader}>Mahsulot nomi</th>
-                    {orderKeys.map(orderKey => {
+                    {orderKeys.map((orderKey) => {
                       const order = orderColumns[orderKey]?.order;
                       const status = orderColumns[orderKey]?.status;
                       const marketName = orderColumns[orderKey]?.marketName;
                       const dateTime = orderColumns[orderKey]?.dateTime;
                       const orderNumber = orderColumns[orderKey]?.orderNumber;
-                      
+
                       return (
                         <th
                           key={orderKey}
                           className={styles.orderHeader}
-                          style={{ backgroundColor: getStatusColor(status), color: "white" }}
+                          style={{
+                            backgroundColor: getStatusColor(status),
+                            color: "white",
+                          }}
                           onClick={() => order && fetchOrderDetails(order._id)}
-                          title={`${marketName} - ${dateTime} - ${getStatusText(status)}`}
+                          title={`${marketName} - ${dateTime} - ${getStatusText(
+                            status
+                          )}`}
                         >
                           <div className={styles.orderHeaderContent}>
-                       
                             <div className={styles.orderTitle}>
                               <div className={styles.marketName}>
                                 {marketName}
@@ -745,33 +794,39 @@ function DashboardD() {
                     Object.keys(productData).map((productName, index) => {
                       const productId = findProductIdByName(productName);
                       const unit = getProductUnit(productId || "");
-                      
+
                       return (
-                        <tr 
-                          key={productName} 
-                          className={`${styles.productRow} ${index % 2 === 0 ? styles.evenRow : styles.oddRow}`}
+                        <tr
+                          key={productName}
+                          className={`${styles.productRow} ${
+                            index % 2 === 0 ? styles.evenRow : styles.oddRow
+                          }`}
                         >
-                          <td className={styles.productCell}>
-                            {productName}
-                          </td>
-                          
-                          {orderKeys.map(orderKey => (
+                          <td className={styles.productCell}>{productName}</td>
+
+                          {orderKeys.map((orderKey) => (
                             <td key={orderKey} className={styles.quantityCell}>
                               {productData[productName][orderKey] || 0}
                             </td>
                           ))}
-                          
+
                           <td className={styles.rowTotal}>
                             {rowTotals[productName]}
-                            {unit && <span className={styles.unitLabel}> {unit}</span>}
+                            {unit && (
+                              <span className={styles.unitLabel}> {unit}</span>
+                            )}
                           </td>
                         </tr>
                       );
                     })
                   ) : (
                     <tr>
-                      <td colSpan={orderKeys.length + 2} style={{ textAlign: "center", padding: "20px" }}>
-                        Mahsulotlar topilmadi. Buyurtmalarda mahsulotlar mavjud emas yoki ma'lumotlar to'g'ri olinmadi.
+                      <td
+                        colSpan={orderKeys.length + 2}
+                        style={{ textAlign: "center", padding: "20px" }}
+                      >
+                        Mahsulotlar topilmadi. Buyurtmalarda mahsulotlar mavjud
+                        emas yoki ma'lumotlar to'g'ri olinmadi.
                       </td>
                     </tr>
                   )}
@@ -792,7 +847,7 @@ function DashboardD() {
 
       {/* DIALOG */}
       {orderDialogOpen && selectedOrder && (
-        <EditOrderModal 
+        <EditOrderModal
           setOrderDialogOpen={setOrderDialogOpen}
           selectedOrder={selectedOrder}
           loading={loading}
@@ -813,15 +868,13 @@ function DashboardD() {
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}
-        onClose={() => setSnackbar(prev => ({ ...prev, open: false }))}
+        onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
       >
-        <Alert severity={snackbar.severity}>
-          {snackbar.message}
-        </Alert>
+        <Alert severity={snackbar.severity}>{snackbar.message}</Alert>
       </Snackbar>
     </div>
   );
 }
 
-export default DashboardD;  
+export default DashboardD;
