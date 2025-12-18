@@ -63,6 +63,7 @@ function DashboardD() {
   };
 
   const handleLimitChange = (newLimit) => {
+    setPagination(prev => ({ ...prev, limit: newLimit, page: 1 }));
     fetchOrders(1, newLimit);
   };
 
@@ -176,21 +177,33 @@ function DashboardD() {
       logaut(response);
 
       if (response.ok) {
-        const data = await response.json();
-        setOrders(data.data || []);
+        const result = await response.json();
         
-        const total = data.total || 0;
-        const lim = data.limit || limit;
-        const currentPage = data.page || page;
+        // Buyurtmalar ro'yxatini olish
+        const ordersList = result.data || result.orders || [];
         
+        // Pagination ma'lumotlarini olish
+        const total = result.total || result.totalOrders || 0;
+        const currentPage = result.page || page;
+        const currentLimit = result.limit || limit;
+        const totalPages = result.totalPages || Math.ceil(total / currentLimit) || 1;
+
+        console.log("API dan kelgan orders:", ordersList.length, "ta");
+        console.log("Birinchi order:", ordersList[0]);
+
+        setOrders(ordersList);
         setPagination({
           page: currentPage,
-          limit: lim,
+          limit: currentLimit,
           total: total,
-          totalPages: Math.ceil(total / lim),
+          totalPages: totalPages,
         });
+
+      } else {
+        showSnackbar(`Server xatosi: ${response.status}`, "error");
       }
     } catch (error) {
+      console.error("Fetch orders error:", error);
       showSnackbar("Buyurtmalarni yuklab boʻlmadi", "error");
     } finally {
       setLoading(prev => ({ ...prev, orders: false }));
@@ -222,19 +235,64 @@ function DashboardD() {
   // ==================== HELPER FUNCTIONS ====================
   const getMarketName = (marketId) => {
     if (!marketId) return "Noma'lum market";
-    if (typeof marketId === "object" && marketId.name) return marketId.name;
+    
+    // Agar marketId object bo'lsa
+    if (typeof marketId === "object") {
+      // 1. Agar direct name property bo'lsa
+      if (marketId.name) return marketId.name;
+      // 2. Agar _id bo'lsa, marketNames map'dan qidirish
+      if (marketId._id) return marketNames[marketId._id] || "Noma'lum market";
+      // 3. Agar marketInfo bo'lsa
+      if (marketId.marketInfo?.name) return marketId.marketInfo.name;
+    }
+    
+    // Agar string bo'lsa
     return marketNames[marketId] || "Noma'lum market";
   };
 
   const getProductName = (productId) => {
     if (!productId) return "Noma'lum mahsulot";
-    if (typeof productId === "object" && productId.name) return productId.name;
+    
+    // Agar productId object bo'lsa
+    if (typeof productId === "object") {
+      // 1. Agar direct name property bo'lsa
+      if (productId.name) return productId.name;
+      // 2. Agar _id bo'lsa, productNames map'dan qidirish
+      if (productId._id) return productNames[productId._id] || "Noma'lum mahsulot";
+    }
+    
+    // Agar string bo'lsa
     return productNames[productId] || "Noma'lum mahsulot";
   };
 
   const getProductUnit = (productId) => {
     if (!productId) return "";
-    const actualProductId = typeof productId === 'object' ? productId._id : productId;
+    
+    let actualProductId;
+    
+    // Agar productId object bo'lsa
+    if (typeof productId === "object") {
+      // 1. Agar direct unit property bo'lsa
+      if (productId.unit) {
+        const unitMap = {
+          'piece': 'dona',
+          'kg': 'kg',
+          'liter': 'l',
+          'litr': 'l',
+          'gram': 'gr',
+          'meter': 'm',
+          'metr': 'm',
+          'unit': 'dona'
+        };
+        return unitMap[productId.unit] || productId.unit;
+      }
+      // 2. Agar _id bo'lsa, productUnits map'dan qidirish
+      if (productId._id) actualProductId = productId._id;
+    } else {
+      actualProductId = productId;
+    }
+    
+    // Agar unit map'dan topilsa
     const unit = productUnits[actualProductId];
     if (!unit) return "";
     
@@ -258,13 +316,20 @@ function DashboardD() {
 
   const formatDateTime = (dateString) => {
     if (!dateString) return "";
-    const date = new Date(dateString);
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    const year = date.getFullYear();
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    return `(${month}/${day}/${year} ${hours}:${minutes})`;
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return "";
+      
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const day = date.getDate().toString().padStart(2, '0');
+      const year = date.getFullYear();
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      const seconds = date.getSeconds().toString().padStart(2, '0');
+      return `${month}/${day}/${year} ${hours}:${minutes}:${seconds}`;
+    } catch (error) {
+      return "";
+    }
   };
 
   const acceptOrder = async (orderId) => {
@@ -366,30 +431,48 @@ function DashboardD() {
 
   // ==================== EXCEL TABLE FUNCTIONS ====================
   const calculateExcelTableData = () => {
+    console.log("Orders soni:", orders.length);
+    
     const productData = {};
     const orderColumns = {};
 
-    orders.forEach(order => {
+    // Har bir order uchun alohida column yaratish
+    orders.forEach((order, index) => {
       const marketName = getMarketName(order.marketId);
       const dateTime = formatDateTime(order.createdAt);
       const status = order.status;
-      const orderKey = `${marketName} (${dateTime})`;
-
+      
+      // HAR BIR ORDER UCHUN UNIQUE KEY - ORDER ID SI
+      const orderKey = order._id;
+      
+      // Order column ma'lumotlarini saqlash
       orderColumns[orderKey] = {
         order: order,
         status: status,
         marketName: marketName,
         dateTime: dateTime,
+        orderNumber: index + 1,
+        createdAt: order.createdAt
       };
 
-      order.products?.forEach(product => {
-        const productName = getProductName(product.productId);
-        if (!productData[productName]) productData[productName] = {};
-        productData[productName][orderKey] = product.quantity;
-      });
+      // Agar orderda mahsulotlar bo'lsa
+      if (order.products && Array.isArray(order.products)) {
+        order.products.forEach((product) => {
+          const productName = getProductName(product.productId);
+          
+          if (!productData[productName]) {
+            productData[productName] = {};
+          }
+          // Har bir order uchun alohida miqdor
+          productData[productName][orderKey] = product.quantity || 0;
+        });
+      }
     });
 
-    // ✅ Mahsulot nomlarini alfabit bo'yicha tartiblash (XATOSIZ)
+    console.log("Jadvaldagi ustunlar soni:", Object.keys(orderColumns).length);
+    console.log("Mahsulotlar soni:", Object.keys(productData).length);
+
+    // Mahsulot nomlarini tartiblash
     const sortedProductNames = Object.keys(productData).sort((a, b) => {
       return a.localeCompare(b, 'uz', { sensitivity: 'base' });
     });
@@ -399,10 +482,17 @@ function DashboardD() {
       sortedProductData[name] = productData[name];
     });
 
+    // Orderlarni yaratilish vaqti bo'yicha tartiblash
+    const sortedOrderKeys = Object.keys(orderColumns).sort((a, b) => {
+      const dateA = new Date(orderColumns[a].createdAt);
+      const dateB = new Date(orderColumns[b].createdAt);
+      return dateB - dateA; // Yangilarni birinchi
+    });
+
     return {
       productData: sortedProductData,
       orderColumns,
-      orderKeys: Object.keys(orderColumns).sort(),
+      orderKeys: sortedOrderKeys,
     };
   };
 
@@ -460,7 +550,9 @@ function DashboardD() {
   }, []);
 
   useEffect(() => {
+    // Filtrlarni o'zgartirganda 1-sahifadan boshlash
     fetchOrders(1, pagination.limit);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedMarket, filters]);
 
   // ==================== RENDER ====================
@@ -469,7 +561,7 @@ function DashboardD() {
 
   return (
     <div className={styles.dashboard}>
-      {/* FILTR PANELI - datetime-local va kategoriya bilan */}
+      {/* FILTR PANELI */}
       <div className={styles.filterPanel}>
         <div className={styles.filterControls}>
           <div className={styles.filterGroup}>
@@ -558,7 +650,9 @@ function DashboardD() {
       {orders.length > 0 && (
         <div className={styles.paginationContainer}>
           <div className={styles.paginationInfo}>
-            Jami: {pagination.total} ta buyurtma | Sahifa: {pagination.page} / {pagination.totalPages}
+            Jami: {pagination.total} ta buyurtma | 
+            Sahifa: {pagination.page} / {pagination.totalPages} | 
+            Ko'rsatilmoqda: {orders.length} ta
           </div>
 
           <div className={styles.paginationControls}>
@@ -571,6 +665,7 @@ function DashboardD() {
               <option value={10}>10 ta</option>
               <option value={25}>25 ta</option>
               <option value={50}>50 ta</option>
+              <option value={100}>100 ta</option>
             </select>
 
             <button
@@ -605,71 +700,84 @@ function DashboardD() {
           </div>
         ) : orders.length > 0 ? (
           <div className={styles.excelTableContainer}>
-            <table className={styles.excelTable}>
-              <thead>
-                <tr>
-                  <th className={styles.productHeader}>Mahsulot nomi</th>
-                  {orderKeys.map(orderKey => {
-                    const order = orderColumns[orderKey]?.order;
-                    const status = orderColumns[orderKey]?.status;
-                    const dateTime = orderColumns[orderKey]?.dateTime;
-                    
-                    return (
-                      <th
-                        key={orderKey}
-                        className={styles.orderHeader}
-                        style={{ backgroundColor: getStatusColor(status), color: "white" }}
-                        onClick={() => order && fetchOrderDetails(order._id)}
-                        title={`${orderKey} - ${getStatusText(status)}`}
-                      >
-                        <div className={styles.orderHeaderContent}>
-                          <div className={styles.orderTitle}>
-                            <div className={styles.marketName}>
-                              {orderColumns[orderKey]?.marketName}
+            <div className={styles.tableWrapper}>
+              <table className={styles.excelTable}>
+                <thead>
+                  <tr>
+                    <th className={styles.productHeader}>Mahsulot nomi</th>
+                    {orderKeys.map(orderKey => {
+                      const order = orderColumns[orderKey]?.order;
+                      const status = orderColumns[orderKey]?.status;
+                      const marketName = orderColumns[orderKey]?.marketName;
+                      const dateTime = orderColumns[orderKey]?.dateTime;
+                      const orderNumber = orderColumns[orderKey]?.orderNumber;
+                      
+                      return (
+                        <th
+                          key={orderKey}
+                          className={styles.orderHeader}
+                          style={{ backgroundColor: getStatusColor(status), color: "white" }}
+                          onClick={() => order && fetchOrderDetails(order._id)}
+                          title={`${marketName} - ${dateTime} - ${getStatusText(status)}`}
+                        >
+                          <div className={styles.orderHeaderContent}>
+                       
+                            <div className={styles.orderTitle}>
+                              <div className={styles.marketName}>
+                                {marketName}
+                              </div>
+                              <div className={styles.orderDateTime}>
+                                {dateTime}
+                              </div>
                             </div>
-                            <div className={styles.orderDateTime}>
-                              {dateTime}
+                            <div className={styles.statusBadge}>
+                              {getStatusText(status)}
                             </div>
                           </div>
-                          <div className={styles.statusBadge}>
-                            {getStatusText(status)}
-                          </div>
-                        </div>
-                      </th>
-                    );
-                  })}
-                  <th className={styles.totalHeader}>Jami</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Object.keys(productData).map((productName, index) => {
-                  const productId = findProductIdByName(productName);
-                  const unit = getProductUnit(productId || "");
-                  
-                  return (
-                    <tr 
-                      key={productName} 
-                      className={`${styles.productRow} ${index % 2 === 0 ? styles.evenRow : styles.oddRow}`}
-                    >
-                      <td className={styles.productCell}>
-                        {productName}
-                      </td>
+                        </th>
+                      );
+                    })}
+                    <th className={styles.totalHeader}>Jami</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.keys(productData).length > 0 ? (
+                    Object.keys(productData).map((productName, index) => {
+                      const productId = findProductIdByName(productName);
+                      const unit = getProductUnit(productId || "");
                       
-                      {orderKeys.map(orderKey => (
-                        <td key={orderKey} className={styles.quantityCell}>
-                          {productData[productName][orderKey] || 0}
-                        </td>
-                      ))}
-                      
-                      <td className={styles.rowTotal}>
-                        {rowTotals[productName]}
-                        {unit && <span className={styles.unitLabel}> {unit}</span>}
+                      return (
+                        <tr 
+                          key={productName} 
+                          className={`${styles.productRow} ${index % 2 === 0 ? styles.evenRow : styles.oddRow}`}
+                        >
+                          <td className={styles.productCell}>
+                            {productName}
+                          </td>
+                          
+                          {orderKeys.map(orderKey => (
+                            <td key={orderKey} className={styles.quantityCell}>
+                              {productData[productName][orderKey] || 0}
+                            </td>
+                          ))}
+                          
+                          <td className={styles.rowTotal}>
+                            {rowTotals[productName]}
+                            {unit && <span className={styles.unitLabel}> {unit}</span>}
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    <tr>
+                      <td colSpan={orderKeys.length + 2} style={{ textAlign: "center", padding: "20px" }}>
+                        Mahsulotlar topilmadi. Buyurtmalarda mahsulotlar mavjud emas yoki ma'lumotlar to'g'ri olinmadi.
                       </td>
                     </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         ) : (
           <div className={styles.noData}>
@@ -716,4 +824,4 @@ function DashboardD() {
   );
 }
 
-export default DashboardD;
+export default DashboardD;  
