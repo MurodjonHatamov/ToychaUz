@@ -112,7 +112,7 @@ body {
 
 @media (max-width: 768px) {
   .main-content{
-    padding-bottom: 80px;
+    /* padding-bottom: 80px;  */
 
   }
   .content {

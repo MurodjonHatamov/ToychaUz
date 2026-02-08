@@ -317,7 +317,7 @@ function Login() {
             {/* Telefon raqami kiritish */}
             <TextField
   fullWidth
-  label="Telefon Raqam"
+  label="Telefon Raqam:000000000"
   name="phone"
   value={formData.phone}
   onChange={(e) => {
@@ -347,7 +347,7 @@ function Login() {
             {/* Parol kiritish */}
             <TextField
               fullWidth
-              label="Parol"
+              label="Parol:admin"
               name="password"
               type={showPassword ? 'text' : 'password'}
               value={formData.password}
