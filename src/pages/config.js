@@ -1,3 +1,3 @@
-export const baseURL="http://localhost:2277"
+export const baseURL="https://otoy.hurshidbe.uz"
 
 // https://toycha-bcknd.hurshidbe.uz
