@@ -1,36 +1,21 @@
 import React, { useState } from 'react';
 import { 
-  TextField, 
-  Button, 
-  Card, 
-  Typography, 
-  Box, 
-  Alert,
-  CircularProgress,
-  InputAdornment,
-  IconButton
+  TextField, Button, Card, Typography, Box, Alert,
+  CircularProgress, InputAdornment, IconButton
 } from '@mui/material';
 import { 
-  FaStore, 
-  FaTruck, 
-  FaPhone, 
-  FaLock, 
-  FaEye, 
-  FaEyeSlash,
-  FaSignInAlt,
-  FaExclamationTriangle,
-  FaShieldAlt,
-  FaBolt,
-  FaCheckCircle,
-  FaShoppingBag,
-  FaTruckLoading,
-  FaLock as FaLockIcon
+  FaStore, FaTruck, FaPhone, FaLock, FaEye, FaEyeSlash,
+  FaSignInAlt, FaExclamationTriangle, FaShieldAlt, FaBolt,
+  FaCheckCircle, FaShoppingBag, FaTruckLoading
 } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import styles from "./Login.module.css";
 import { baseURL } from '../config';
 
 function Login() {
+  const navigate = useNavigate();
+  
+  // State'lar
   const [formData, setFormData] = useState({
     loginType: 'market',
     phone: '',
@@ -39,70 +24,46 @@ function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const navigate = useNavigate();
 
+  // Ma'lumotlarni yangilash
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
     if (error) setError('');
   };
 
+  // Telefon raqamini formatlash (90 123 45 67)
   const handlePhoneChange = (e) => {
     let value = e.target.value.replace(/\D/g, '');
-    
     if (value.length > 9) value = value.slice(0, 9);
     
-    if (value.length > 0) {
-      let formattedValue = value;
-      if (value.length > 2) {
-        formattedValue = value.substring(0, 2) + ' ' + value.substring(2);
-      }
-      if (value.length > 5) {
-        formattedValue = value.substring(0, 2) + ' ' + value.substring(2, 5) + ' ' + value.substring(5);
-      }
-      if (value.length > 7) {
-        formattedValue = value.substring(0, 2) + ' ' + value.substring(2, 5) + ' ' + value.substring(5, 7) + ' ' + value.substring(7);
-      }
-      value = formattedValue;
-    }
+    let formatted = value;
+    if (value.length > 2) formatted = `${value.slice(0, 2)} ${value.slice(2)}`;
+    if (value.length > 5) formatted = `${value.slice(0, 2)} ${value.slice(2, 5)} ${value.slice(5)}`;
+    if (value.length > 7) formatted = `${value.slice(0, 2)} ${value.slice(2, 5)} ${value.slice(5, 7)} ${value.slice(7)}`;
     
-    setFormData(prev => ({
-      ...prev,
-      phone: value
-    }));
-    
+    setFormData(prev => ({ ...prev, phone: formatted }));
     if (error) setError('');
   };
 
+  // Tizim turini o'zgartirish
   const handleLoginTypeChange = (type) => {
-    setFormData(prev => ({
-      ...prev,
-      loginType: type,
-      phone: ''
-    }));
+    setFormData(prev => ({ ...prev, loginType: type, phone: '' }));
     if (error) setError('');
   };
 
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
+  // Kirish funksiyasi
   const handleLogin = async (e) => {
     e.preventDefault();
-    
     const cleanPhone = formData.phone.replace(/\D/g, '');
     
     if (!cleanPhone || !formData.password) {
-      setError('Iltimos, barcha maydonlarni to\'ldiring');
+      setError("Iltimos, barcha maydonlarni to'ldiring");
       return;
     }
 
-    const phoneRegex = /^\d{9}$/;
-    if (!phoneRegex.test(cleanPhone)) {
-      setError('Iltimos, 9 xonali telefon raqamini kiriting (90 166 95 65)');
+    if (cleanPhone.length !== 9) {
+      setError("Iltimos, 9 xonali telefon raqamini kiriting (masalan: 90 166 95 65)");
       return;
     }
 
@@ -110,13 +71,8 @@ function Login() {
     setError('');
 
     try {
-      const apiUrl = formData.loginType === 'market' 
-        ? `${baseURL}/auth/market-login`
-        : `${baseURL}/auth/deliver-login`;
-  
-      const phoneForApi = cleanPhone;
-
-      const response = await fetch(apiUrl, {
+      const endpoint = formData.loginType === 'market' ? 'market-login' : 'deliver-login';
+      const response = await fetch(`${baseURL}/auth/${endpoint}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -124,7 +80,7 @@ function Login() {
         },
         credentials: 'include',
         body: JSON.stringify({
-          phone: phoneForApi,
+          phone: cleanPhone,
           password: formData.password
         })
       });
@@ -137,113 +93,66 @@ function Login() {
         window.dispatchEvent(new Event('storage'));
         navigate('/');
       } else if (response.status === 404) {
-        setError('Telefon raqam yoki parol noto\'g\'ri');
+        setError("Telefon raqam yoki parol noto'g'ri");
       } else if (response.status === 401) {
-        setError('Kirish rad etildi. Parolni tekshiring');
+        setError("Kirish rad etildi. Parolni tekshiring");
       } else {
-        try {
-          const errorData = await response.json();
-          setError(errorData.message || `Login xatosi: ${response.status}`);
-        } catch {
-          setError(`Server xatosi: ${response.status}`);
-     
-          
-        }
+        const errorData = await response.json().catch(() => ({}));
+        setError(errorData.message || `Login xatosi: ${response.status}`);
       }
-    } catch (error) {
-
-      setError('Serverga ulanishda xatolik. Internet aloqasini tekshiring.');
+    } catch (err) {
+      setError("Serverga ulanishda xatolik. Internet aloqasini tekshiring.");
     } finally {
       setLoading(false);
     }
   };
 
-  const getLoginTypeName = () => {
-    return formData.loginType === 'market' ? 'Market' : 'Deliver';
-  };
-
-  const getLoginTypeIcon = () => {
-    return formData.loginType === 'market' ? <FaStore /> : <FaTruck />;
-  };
-
-  const getLoginTypeDescription = () => {
-    return formData.loginType === 'market' 
-      ? 'Mahsulotlarni boshqarish va buyurtmalarni qabul qilish tizimi' 
-      : 'Yetkazib berish va buyurtmalarni yetkazish tizimi';
-  };
-
-  const getFeatures = () => {
-    if (formData.loginType === 'market') {
-      return [
-        {
-          icon: <FaShoppingBag />,
-          title: 'Mahsulotlar boshqaruvi',
-          description: 'Oson va tezkor mahsulot qo\'shish va tahrirlash'
-        },
-        {
-          icon: <FaLockIcon />,
-          title: 'Xavfsiz buyurtmalar',
-          description: 'Shifrlangan va himoyalangan buyurtma jarayoni'
-        },
-        {
-          icon: <FaCheckCircle />,
-          title: 'Real vaqt monitoringi',
-          description: 'Buyurtmalarni onlayn kuzatish va boshqarish'
-        }
-      ];
-    } else {
-      return [
-        {
-          icon: <FaTruckLoading />,
-          title: 'Yetkazib berish boshqaruvi',
-          description: 'Buyurtmalarni samarali taqsimlash va yetkazish'
-        },
-        {
-          icon: <FaBolt />,
-          title: 'Tezkor xabar almashish',
-          description: 'Marketlar bilan tezkor aloqa va muloqot'
-        },
-        {
-          icon: <FaShieldAlt />,
-          title: 'Yo\'l xavfsizligi',
-          description: 'Yetkazib berish jarayonida xavfsizlik kafolati'
-        }
-      ];
-    }
-  };
+  // UI uchun dinamik ma'lumotlar
+  const isMarket = formData.loginType === 'market';
+  
+  const features = isMarket ? [
+    { icon: <FaShoppingBag />, title: "Mahsulotlar boshqaruvi", desc: "Oson va tezkor mahsulot qo'shish va tahrirlash" },
+    { icon: <FaLock />, title: "Xavfsiz buyurtmalar", desc: "Shifrlangan va himoyalangan buyurtma jarayoni" },
+    { icon: <FaCheckCircle />, title: "Real vaqt monitoringi", desc: "Buyurtmalarni onlayn kuzatish va boshqarish" }
+  ] : [
+    { icon: <FaTruckLoading />, title: "Yetkazib berish boshqaruvi", desc: "Buyurtmalarni samarali taqsimlash va yetkazish" },
+    { icon: <FaBolt />, title: "Tezkor xabar almashish", desc: "Marketlar bilan tezkor aloqa va muloqot" },
+    { icon: <FaShieldAlt />, title: "Yo'l xavfsizligi", desc: "Yetkazib berish jarayonida xavfsizlik kafolati" }
+  ];
 
   return (
     <div className={styles.loginContainer}>
+      
       {/* Chap tomon - Tasvir qismi */}
       <div className={styles.illustrationSection}>
         <div className={styles.geometricShapes}>
-          <div className={`${styles.shape} ${styles.shape1}`}></div>
-          <div className={`${styles.shape} ${styles.shape2}`}></div>
-          <div className={`${styles.shape} ${styles.shape3}`}></div>
+          <div className={`${styles.shape} ${styles.shape1}`} />
+          <div className={`${styles.shape} ${styles.shape2}`} />
+          <div className={`${styles.shape} ${styles.shape3}`} />
         </div>
         
         <div className={styles.illustrationContent}>
           <div className={styles.illustrationIcon}>
-            {getLoginTypeIcon()}
+            {isMarket ? <FaStore /> : <FaTruck />}
           </div>
           
           <h1 className={styles.illustrationTitle}>
-            {getLoginTypeName()} Tizimiga Xush Kelibsiz
+            {isMarket ? 'Market' : 'Deliver'} Tizimiga Xush Kelibsiz
           </h1>
           
           <p className={styles.illustrationSubtitle}>
-            {getLoginTypeDescription()}
+            {isMarket 
+              ? "Mahsulotlarni boshqarish va buyurtmalarni qabul qilish tizimi" 
+              : "Yetkazib berish va buyurtmalarni yetkazish tizimi"}
           </p>
           
           <div className={styles.featureList}>
-            {getFeatures().map((feature, index) => (
-              <div key={index} className={styles.featureItem}>
-                <div className={styles.featureIcon}>
-                  {feature.icon}
-                </div>
+            {features.map((feature, idx) => (
+              <div key={idx} className={styles.featureItem}>
+                <div className={styles.featureIcon}>{feature.icon}</div>
                 <div className={styles.featureContent}>
                   <h3 className={styles.featureTitle}>{feature.title}</h3>
-                  <p className={styles.featureDescription}>{feature.description}</p>
+                  <p className={styles.featureDescription}>{feature.desc}</p>
                 </div>
               </div>
             ))}
@@ -264,7 +173,7 @@ function Login() {
               <img src="/imgs/Light.png" alt="ToychaUz Logotipi" className={styles.logoImage} />
             </div>
             <Typography variant="h4" component="h1" className={styles.title}>
-              ToychaUz {getLoginTypeName()} Tizimi
+              ToychaUz {isMarket ? 'Market' : 'Deliver'} Tizimi
             </Typography>
             <Typography variant="subtitle1" className={styles.subtitle}>
               Hisobingizga xavfsiz kirish
@@ -273,11 +182,7 @@ function Login() {
 
           <form onSubmit={handleLogin} className={styles.loginForm}>
             {error && (
-              <Alert 
-                severity="error" 
-                className={styles.alert}
-                icon={<FaExclamationTriangle />}
-              >
+              <Alert severity="error" className={styles.alert} icon={<FaExclamationTriangle />}>
                 {error}
               </Alert>
             )}
@@ -286,27 +191,24 @@ function Login() {
             <Box className={styles.toggleContainer}>
               <button
                 type="button"
-                className={`${styles.toggleButton} ${formData.loginType === 'market' ? styles.active : ''}`}
+                className={`${styles.toggleButton} ${isMarket ? styles.active : ''}`}
                 onClick={() => handleLoginTypeChange('market')}
                 disabled={loading}
               >
-                <div className={styles.toggleIcon}>
-                  <FaStore />
-                </div>
+                <div className={styles.toggleIcon}><FaStore /></div>
                 <div className={styles.toggleText}>
                   <span className={styles.toggleMainText}>Buyurtmachi</span>
                   <span className={styles.toggleSubText}>Sotuv do'koni</span>
                 </div>
               </button>
+              
               <button
                 type="button"
-                className={`${styles.toggleButton} ${formData.loginType === 'deliver' ? styles.active : ''}`}
+                className={`${styles.toggleButton} ${!isMarket ? styles.active : ''}`}
                 onClick={() => handleLoginTypeChange('deliver')}
                 disabled={loading}
               >
-                <div className={styles.toggleIcon}>
-                  <FaTruck />
-                </div>
+                <div className={styles.toggleIcon}><FaTruck /></div>
                 <div className={styles.toggleText}>
                   <span className={styles.toggleMainText}>Deliver</span>
                   <span className={styles.toggleSubText}>Yetkazib beruvchi</span>
@@ -314,40 +216,31 @@ function Login() {
               </button>
             </Box>
 
-            {/* Telefon raqami kiritish */}
-            <TextField
-  fullWidth
-  label="Telefon Raqam:000000000"
-  name="phone"
-  value={formData.phone}
-  onChange={(e) => {
-    // Faqat raqamlarni qabul qilish
-    const numericValue = e.target.value.replace(/\D/g, '');
-    setFormData({ ...formData, phone: numericValue });
-  }}
-  placeholder="901234567"
-  required
-  disabled={loading}
-  inputProps={{
-    inputMode: 'numeric',  // mobil qurilmalarda raqamli klaviatura
-    pattern: '[0-9]*',
-    maxLength: 9,          // xohlaysizmi 9 raqam
-  }}
-  InputProps={{
-    startAdornment: (
-      <InputAdornment position="start">
-        <FaPhone style={{ color: '#B85042' }} />
-      </InputAdornment>
-    ),
-  }}
-  className={styles.textField}
-/>
-
-
-            {/* Parol kiritish */}
+            {/* Telefon raqami */}
             <TextField
               fullWidth
-              label="Parol:admin"
+              label="Telefon Raqam: 90 123 45 67"
+              name="phone"
+              value={formData.phone}
+              onChange={handlePhoneChange}
+              placeholder="90 123 45 67"
+              required
+              disabled={loading}
+              inputProps={{ inputMode: 'numeric', maxLength: 12 }}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <FaPhone style={{ color: '#B85042' }} />
+                  </InputAdornment>
+                ),
+              }}
+              className={styles.textField}
+            />
+
+            {/* Parol */}
+            <TextField
+              fullWidth
+              label="Parol: admin"
               name="password"
               type={showPassword ? 'text' : 'password'}
               value={formData.password}
@@ -363,7 +256,7 @@ function Login() {
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
-                      onClick={handleClickShowPassword}
+                      onClick={() => setShowPassword(!showPassword)}
                       edge="end"
                       disabled={loading}
                       size="small"
@@ -374,7 +267,6 @@ function Login() {
                 ),
               }}
               className={styles.textField}
-            
             />
 
             {/* Kirish tugmasi */}
@@ -385,15 +277,7 @@ function Login() {
               size="large"
               disabled={loading}
               className={styles.loginButton}
-              startIcon={
-                loading ? (
-                  <div className={styles.loadingSpinner}>
-                    <CircularProgress size={20} color="inherit" />
-                  </div>
-                ) : (
-                  <FaSignInAlt />
-                )
-              }
+              startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <FaSignInAlt />}
             >
               {loading ? 'Kirilmoqda...' : 'Hisobga kirish'}
             </Button>
@@ -401,8 +285,6 @@ function Login() {
 
           {/* Pastki qism */}
           <Box className={styles.loginFooter}>
-      
-            
             <Typography variant="caption" align="center" className={styles.helpText}>
               Kirishda muammo bo'lsa, qo'llab-quvvatlash: +998 93 945 34 05
             </Typography>
