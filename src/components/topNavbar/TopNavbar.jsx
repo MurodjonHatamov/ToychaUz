@@ -22,7 +22,7 @@ function TopNavbar({ onMenuToggle, setOpenSidebar, openSidebar, handleLogout,  u
         },
         credentials: 'include'
       });
-      logaut(response);
+      // logaut(response);
  
       if (response.ok) {
         const allMessagesData = await response.json();
