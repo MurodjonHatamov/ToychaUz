@@ -48,6 +48,7 @@ const url = userType === 'deliver'
       const data = await response.json();
       setUserData(data);
 console.log(data);
+console.log("yangilandi");
       
       
     } catch (error) {
